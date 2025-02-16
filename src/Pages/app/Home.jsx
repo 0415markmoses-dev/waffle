@@ -77,7 +77,7 @@ export const Home = () => {
                                     <CardBody>
                                         {currentProject !== null && (
                                             <div
-                                                className="w-100 d-flex flex-row gap-lg align-items-center justify-content-center position-relative">
+                                                className="w-100 d-flex flex-row gap-lg align-items-center justify-content-around position-relative">
                                                 <SingleMetricDisplay
                                                     label={currentProject.totalReleases > 1 ? 'Releases' : 'Release'}
                                                     value={currentProject.totalReleases}/>

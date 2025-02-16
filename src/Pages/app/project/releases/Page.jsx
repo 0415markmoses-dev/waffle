@@ -13,6 +13,9 @@ import {useEffect, useState} from "react";
 import ReleasesService from "../../../../Services/PrivateApi/ReleasesService.js";
 import {Loader} from "../../../../Components/UI/Loader.jsx";
 import {Error404} from "../../../../Components/UI/Error404.jsx";
+import {SingleMetricDisplay} from "../../../../Components/UI/Metrics/SingleMetricDisplay.jsx";
+import {MetricVerticalSeparator} from "../../../../Components/UI/Metrics/MetricVerticalSeparator.jsx";
+import {ProgressBar} from "../../../../Components/UI/Metrics/ProgressBar.jsx";
 
 export const Page = () => {
     let navigate = useNavigate();
@@ -20,7 +23,25 @@ export const Page = () => {
     const {currentProject} = useProjectStore();
     const [pageStatus, setPageStatus] = useState(200);
     const [releaseData, setReleaseData] = useState([]);
+    const [releaseStats, setReleaseStats] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const loadReleaseStats = () => {
+        setReleaseStats([]);
+        ReleasesService.getReleaseStats(params.rid)
+            .then(response => {
+                if (response?.data?.id !== undefined) {
+                    setReleaseStats(response.data);
+                    return;
+                }
+                throw new Error('No data found');
+            })
+            .catch(err => {
+                setReleaseStats([]);
+                console.error(err);
+            })
+        ;
+    }
 
     useEffect(() => {
         setLoading(true);
@@ -28,6 +49,7 @@ export const Page = () => {
             .then(response => {
                 if (response?.data?.id !== undefined) {
                     setReleaseData(response.data);
+                    loadReleaseStats();
                     return;
                 }
                 throw new Error('No data found');
@@ -66,7 +88,36 @@ export const Page = () => {
                             <Col>
                                 <Card>
                                     <CardBody>
-                                        {loading && <Loader/>}
+                                        {!loading && (
+                                            <>
+                                                <div className="w-100 d-flex flex-column gap-lg">
+                                                    <div
+                                                        className="w-100 d-flex flex-row gap-lg align-items-center justify-content-around position-relative">
+                                                        <SingleMetricDisplay
+                                                            label={releaseStats.plans > 1 ? 'Plans' : 'Plan'}
+                                                            value={releaseStats.plans}/>
+                                                        <MetricVerticalSeparator/>
+                                                        <SingleMetricDisplay
+                                                            label={releaseStats.questions > 1 ? 'Scenarios' : 'Scenario'}
+                                                            value={releaseStats.questions}/>
+                                                        <MetricVerticalSeparator/>
+                                                        <SingleMetricDisplay
+                                                            label={releaseStats.responded > 1 ? 'Responses' : 'Response'}
+                                                            value={releaseStats.responded}/>
+                                                    </div>
+                                                    <div className="w-100">
+                                                        <ProgressBar value={releaseStats.percentage_done}/>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </CardBody>
+                                </Card>
+                            </Col>
+                            <Col>
+                                <Card>
+                                    <CardBody>
+                                        :D
                                     </CardBody>
                                 </Card>
                             </Col>

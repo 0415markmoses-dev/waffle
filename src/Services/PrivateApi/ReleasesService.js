@@ -10,6 +10,9 @@ const ReleasesService = {
     },
     getRelease(id) {
         return Http.get('/api/releases/' + id);
+    },
+    getReleaseStats(id) {
+        return Http.get('/apx/stats/releases/' + id);
     }
 }
 

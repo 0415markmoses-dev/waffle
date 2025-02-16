@@ -11,7 +11,8 @@ export const Footer = () => {
                    href="https://github.com/arkdevuk/testgator_client/tree/main/documentation">Documentation</a>
                 <a target="_blank" rel="noopener"
                    href="https://github.com/arkdevuk/testgator_client/issues">Issues</a>
-                <a href="#">License</a>
+                <a target="_blank" rel="noopener"
+                   href="https://github.com/arkdevuk/testgator_client/blob/main/LICENSE?raw=true">License</a>
             </div>
         </div>
     </footer>
