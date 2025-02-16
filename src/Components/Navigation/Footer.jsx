@@ -5,9 +5,12 @@ export const Footer = () => {
                 <span className="opacity-25">2025 © TestGator</span>
             </div>
             <div className="footer-right">
-                <a href="#">Github</a>
-                <a href="#">Documentation</a>
-                <a href="#">Issues</a>
+                <a target="_blank" rel="noopener"
+                   href="https://github.com/arkdevuk/testgator_client/">Github</a>
+                <a target="_blank" rel="noopener"
+                   href="https://github.com/arkdevuk/testgator_client/issues">Documentation</a>
+                <a target="_blank" rel="noopener"
+                   href="https://github.com/arkdevuk/testgator_client/issues">Issues</a>
                 <a href="#">License</a>
             </div>
         </div>

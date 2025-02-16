@@ -20,4 +20,16 @@
   .error-state-content {
     opacity: .45;
   }
+
+  &.no-fx {
+    .error-state-image-wrapper, .error-state-content {
+      opacity: 1;
+    }
+  }
+
+  &.error-state-lg {
+    img {
+      max-width: 380px;
+    }
+  }
 }

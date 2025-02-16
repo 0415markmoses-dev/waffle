@@ -57,7 +57,7 @@ let routes = [
                 element: <AboutPage/>,
             },
             {
-                path: "project/:id",
+                path: "project",
                 name: 'project',
                 children: [
                     {

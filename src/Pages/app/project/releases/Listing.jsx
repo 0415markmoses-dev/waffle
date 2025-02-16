@@ -14,6 +14,11 @@ import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 export const Listing = () => {
     let navigate = useNavigate();
     const {currentProject} = useProjectStore();
+
+    const handleNewReleaseClick = () => {
+        navigate('/app/project/releases/create');
+    }
+
     if (currentProject?.id === undefined) {
         // Redirect to dashboard
         navigate('/app/');
@@ -23,9 +28,8 @@ export const Listing = () => {
     return <>
         <PageContentWrapper>
             <PageTitle title={currentProject.name + " - All Release"}>
-                <Button icon="lni-plus"
+                <Button icon="lni-plus" onClick={handleNewReleaseClick}
                         type="light" size="sm">New release</Button>
-                <Button type="light" size="sm">Petit button</Button>
             </PageTitle>
             <PageElementWrapper>
                 <Row>

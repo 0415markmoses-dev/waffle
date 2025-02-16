@@ -134,6 +134,19 @@ body {
   min-height: 50vh;
 }
 
+.horizontal-flip-img {
+  transform: scaleX(-1);
+}
+
+.error-page-wrapper {
+  height: 80vh;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+}
+
 @import "./NavBar/navbar";
 @import "./Footer/footer";
 

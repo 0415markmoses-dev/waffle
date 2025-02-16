@@ -7,6 +7,9 @@ const ReleasesService = {
                 ...getParams,
             }
         });
+    },
+    getRelease(id) {
+        return Http.get('/api/releases/' + id);
     }
 }
 

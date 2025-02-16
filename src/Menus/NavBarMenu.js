@@ -7,14 +7,14 @@ const NavBarMenu = [
     },
     {
         title: 'Project',
-        url: '/app/project/{currentProjectId}',
+        url: '/app/project',
         routes: ['project_details'],
         icon: 'font-icon lni lni-box-closed',
     },
     {
         title: 'Testers list',
         routes: ['project_testers'],
-        url: '/app/project/{currentProjectId}/testers',
+        url: '/app/project/testers',
         icon: 'font-icon lni lni-user-multiple-4',
     },
     {
@@ -24,12 +24,12 @@ const NavBarMenu = [
             {
                 title: 'View Releases',
                 routes: ['project_releases', 'project_release_details'],
-                url: '/app/project/{currentProjectId}/releases',
+                url: '/app/project/releases',
             },
             {
                 title: 'Create Release',
                 routes: ['new_project_release'],
-                url: '/app/project/{currentProjectId}/releases/create',
+                url: '/app/project/releases/create',
             },
         ],
     },
@@ -41,12 +41,12 @@ const NavBarMenu = [
             {
                 title: 'View Testing Plans',
                 routes: ['project_testing_plans', 'project_testing_plan_details'],
-                url: '/app/project/{currentProjectId}/testing_plans',
+                url: '/app/project/testing_plans',
             },
             {
                 title: 'Create Testing Plans',
                 routes: ['new_project_testing_plan'],
-                url: '/app/project/{currentProjectId}/testing_plans/create',
+                url: '/app/project/testing_plans/create',
             },
         ],
     },

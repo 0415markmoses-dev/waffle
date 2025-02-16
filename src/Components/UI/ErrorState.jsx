@@ -3,10 +3,22 @@ import PropTypes from "prop-types";
 export const ErrorState = ({
                                message = "An error occurred",
                                submessage = "",
+                               image = "error_default.jpg",
+                               grayscale = true,
+                               size = "md",
                            }) => {
-    return <div className="error-state-wrapper w-100 d-flex flex-column p-1" role="alert">
-        <div className="w-100 error-state-image-wrapper grayscale-content">
-            <img src="/assets/error_default.jpg" alt="Error" className="error-state-image"/>
+    let fxClasses = '';
+    let wrapperClasses = 'no-fx';
+    if (grayscale) {
+        fxClasses = 'grayscale-content';
+        wrapperClasses = '';
+    }
+
+    wrapperClasses += ' error-state-' + size;
+
+    return <div className={"error-state-wrapper w-100 d-flex flex-column p-1 " + wrapperClasses} role="alert">
+        <div className={"w-100 error-state-image-wrapper " + fxClasses}>
+            <img src={"/assets/" + image} alt="Error" className="error-state-image"/>
         </div>
         <div className="w-100 error-state-content d-flex flex-column justify-content-center align-items-center gap-sm">
             <div className="heading">
@@ -24,4 +36,7 @@ export const ErrorState = ({
 ErrorState.propTypes = {
     message: PropTypes.string.isRequired,
     submessage: PropTypes.string,
+    image: PropTypes.string,
+    grayscale: PropTypes.bool,
+    size: PropTypes.oneOf(['sm', 'md', 'lg']),
 }

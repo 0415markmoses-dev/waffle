@@ -20,8 +20,7 @@ ModuleRegistry.registerModules([
 ]);
 
 const LinkCellRenderer = ({value, data}) => {
-    const {currentProject} = useProjectStore();
-    return <NavLink to={'/app/project/' + currentProject?.id + '/releases/' + data.id}>{value}</NavLink>
+    return <NavLink to={'/app/project/releases/' + data.id}>{value}</NavLink>
 }
 
 LinkCellRenderer.propTypes = {
