@@ -130,7 +130,8 @@ body {
 }
 
 .grid-wrapper {
-  height: 50vh;
+  height: 100%;
+  min-height: 50vh;
 }
 
 @import "./NavBar/navbar";

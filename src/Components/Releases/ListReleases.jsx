@@ -19,11 +19,9 @@ ModuleRegistry.registerModules([
     AllCommunityModule,
 ]);
 
-const LinkCellRenderer = ({value, data, ...rest}) => {
-    console.log('rest', rest)
-    return <>
-        <NavLink to={'/app/release/' + data.id}>{value}</NavLink>
-    </>
+const LinkCellRenderer = ({value, data}) => {
+    const {currentProject} = useProjectStore();
+    return <NavLink to={'/app/project/' + currentProject?.id + '/releases/' + data.id}>{value}</NavLink>
 }
 
 LinkCellRenderer.propTypes = {
@@ -121,7 +119,6 @@ export const ListReleases = () => {
                 paginationPageSize={PaginationSettings.paginationPageSize}
                 paginationPageSizeSelector={PaginationSettings.paginationPageSizeSelector}
                 pagination={true}
-                onPaginationChanged={(e) => console.log('pagination', e)}
                 columnDefs={colDefs}
                 onGridReady={onGridReady}
                 rowData={rowData}/>

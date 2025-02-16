@@ -9,6 +9,7 @@ import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
 import {ListReleases} from "../../../../Components/Releases/ListReleases.jsx";
 import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
 import {useNavigate} from "react-router";
+import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 
 export const Listing = () => {
     let navigate = useNavigate();
@@ -28,20 +29,38 @@ export const Listing = () => {
             </PageTitle>
             <PageElementWrapper>
                 <Row>
-                    <Col sm={12} xl={4}>
+                    <Col fullHeight sm={12} xl={4}>
                         <Row>
                             <Col>
                                 <Card>
+                                    <CardHeader title="What is a release?"/>
                                     <CardBody>
-                                        couocu
+                                        <div className="d-flex x">
+                                            <img className="w-75 mx-auto" src="/assets/releases.jpg" alt="notif"/>
+                                        </div>
+                                        <p>In <strong>TestGator</strong>, a <strong>release</strong> represents a
+                                            specific version or milestone of a project that requires testing before
+                                            deployment. Each release serves as a container for multiple <strong>testing
+                                                plans</strong>, which are assigned to selected testers.</p>
+
+                                        <p>These testing plans outline structured <strong>questions</strong>—feature
+                                            scenarios that testers must follow and evaluate. Within a release, different
+                                            testing plans can target various functionalities, user flows, or devices,
+                                            allowing teams to validate multiple aspects of the software simultaneously.
+                                        </p>
+
+                                        <p>By organizing testing efforts into releases, developers can systematically
+                                            track progress, collect structured feedback, and ensure that each iteration
+                                            of the project meets quality expectations before moving forward.</p>
+
                                     </CardBody>
                                 </Card>
                             </Col>
                         </Row>
                     </Col>
-                    <Col sm={12} xl={8}>
-                        <Row>
-                            <Col size={12}>
+                    <Col fullHeight sm={12} xl={8}>
+                        <Row className="h-100">
+                            <Col fullHeight size={12}>
                                 <ListReleases/>
                             </Col>
                         </Row>

@@ -14,7 +14,6 @@ export const Col = ({
         "col",
         `col-${size}`,
         {
-            "h-100": fullHeight,
             "h-fit": !fullHeight,
         }
     );
@@ -34,6 +33,7 @@ Col.propTypes = {
     sm: PropTypes.number,
     md: PropTypes.number,
     lg: PropTypes.number,
+    xl: PropTypes.number,
     fullHeight: PropTypes.bool,
     children: PropTypes.node.isRequired,
 }
