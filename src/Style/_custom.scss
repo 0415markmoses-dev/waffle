@@ -1,0 +1,55 @@
+// custom bootstrap 5 variables override - _custom.scss
+// NAVBAR
+$navbar-width: 270px;
+$navbar-padding-side: .875rem;
+// page content
+$border-radius: 14px;
+
+////// colors
+// black
+$tw-coal-100: #15171c;
+$tw-coal-200: #13141a;
+$tw-coal-300: #111217;
+$tw-coal-400: #0f1014;
+$tw-coal-500: #0d0e12;
+$tw-coal-600: #0b0c10;
+$tw-coal-black: #000;
+// gray
+$tw-gray-100: #1b1c22;
+$tw-gray-200: #26272f;
+$tw-gray-300: #363843;
+$tw-gray-400: #464852;
+$tw-gray-500: #636674;
+$tw-gray-600: #808290;
+$tw-gray-700: #9a9cae;
+$tw-gray-800: #b5b7c8;
+$tw-gray-900: #f5f5f5;
+$tw-gray-1000: #f9f9f9;
+// custom gray
+$tw-gray-border: rgba(241, 241, 244, 1);
+$tw-muted-text: #78829d;
+// white
+$tw-white: #fff;
+
+
+// body is #222
+$body-bg: $tw-white;
+$body-color: #0a1307;
+$primary: #69BC9E; // old #52b141
+$primary-darkest: #081106;
+$info: #1B84FF;
+$secondary: #E2E8BA;
+$navbar-color: $tw-coal-300;
+// BUTTONS
+$btn-border-radius: 4px;
+$btn-border-color: $tw-gray-border;
+$btn-dark-bg: #272a34;
+$btn-dark-bg-active: #2d2f39;
+$btn-with-icon-spacing: .25rem;
+$button-light-hover-shadow: 0px 4px 12px 0px rgba(0, 0, 0, .09);
+// CARD
+$card-box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, .03);
+$card-border-color: $tw-gray-border;
+$card-border: 1px solid $card-border-color;
+// BADGE
+$badge-border-radius: calc($border-radius / 4);

@@ -1,0 +1,10 @@
+.card.project-card {
+  border-radius: calc($border-radius / 2);
+  transition: all 280ms ease-in-out;
+
+  .card-body {
+    padding: .9rem;
+  }
+}
+
+

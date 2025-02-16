@@ -1,0 +1,31 @@
+.date-calendar-display {
+  border-radius: calc($card-border-radius / 2);
+  border: 1px solid $primary;
+  overflow: hidden;
+  padding: 0;
+  min-width: 55px;
+
+  .date-calendar-display-month {
+    background: rgba($primary, .3);
+    width: 100%;
+    padding: .5rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: .8rem;
+  }
+
+  .date-calendar-display-day {
+    background: transparent;
+    width: 100%;
+    padding: .2rem .5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+}
+
+.test-plan-illustration {
+  border-radius: calc($card-border-radius / 2);
+  max-width: 122px;
+  overflow: hidden;
+}

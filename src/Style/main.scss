@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap');
+
+@import "custom";
+@import "bootstrap/scss/bootstrap";
+@import "loader";
+@import "datep";
+@import "error-state";
+@import "grid";
+@import "Button/buttons";
+@import "Metrics/metrics";
+@import "TestPlans/test-plans";
+@import "Projects/projects";
+@import "./Card/card";
+@import "ReactModal/modals";
+
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+
+body {
+  overflow: hidden !important;
+  background: $navbar-color;
+
+  font-family: "Source Serif 4", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+
+  h1, h2, h3, h4, h5, h6, .heading, .btn, .navbar-app, input, textarea {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  h2 {
+    font-size: 1.375rem;
+    line-height: 1.8125rem;
+    font-weight: 500;
+  }
+
+  .app-wrapper {
+    display: flex;
+    position: relative;
+
+    .app-pages-content {
+      position: relative;
+      overflow: hidden;
+      overflow-y: auto;
+      margin-left: $navbar-width;
+      height: 100vh;
+      background: $body-bg;
+      border-top-left-radius: calc($border-radius / 4);
+      border-bottom-left-radius: calc($border-radius / 4);
+      padding-top: 1.25rem;
+      padding-bottom: 2.5rem;
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .text-muted, a.text-muted {
+    color: $tw-muted-text !important;
+  }
+}
+
+.page-content-wrapper {
+  padding: 0 !important;
+  width: 100%;
+}
+
+.h-fit {
+  height: fit-content !important;
+}
+
+.gap-sm {
+  gap: .375rem;
+}
+
+.gap-md {
+  gap: .625rem;
+}
+
+.gap-lg {
+  gap: 1rem;
+}
+
+.gap-xl {
+  gap: 1.95rem;
+}
+
+.super-small {
+  font-size: .725rem;
+}
+
+.grayscale-content {
+  filter: grayscale(100%);
+}
+
+.page-width {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-inline-start: 1.875rem;
+  padding-inline-end: 1.875rem;
+}
+
+.login-width {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.login-container {
+  min-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-max-width {
+  max-width: 642px;
+  margin: 0 auto;
+}
+
+.page-container {
+  min-height: 90vh;
+}
+
+.grid-wrapper {
+  height: 50vh;
+}
+
+@import "./NavBar/navbar";
+@import "./Footer/footer";
+
+@import "./Pages/pages_elements";

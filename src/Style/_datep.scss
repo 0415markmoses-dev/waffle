@@ -1,0 +1,31 @@
+@import 'react-date-range/dist/styles.css';
+// main style file
+@import 'react-date-range/dist/theme/default.css'; // theme css file
+
+.rdrMonths, .rdrMonth {
+  width: 100%;
+}
+
+.my-picker {
+  .rdrDateDisplayWrapper {
+    display: none;
+  }
+
+  .rdrDefinedRangesWrapper {
+    display: none;
+  }
+
+  .rdrCalendarWrapper {
+    width: 100%;
+    @include media-breakpoint-down(md) {
+      flex-grow: 1 !important;
+    }
+  }
+}
+
+.card-time-picker {
+  flex-direction: row;
+  @include media-breakpoint-down(md) {
+    flex-direction: column;
+  }
+}

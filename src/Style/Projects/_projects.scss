@@ -1,0 +1,34 @@
+@import "project-cards";
+
+.project-picture-wrapper {
+  width: 64px;
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  background: $secondary;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  &.size-sm {
+    width: 48px;
+  }
+
+  &.size-lg {
+    width: 92px;
+  }
+
+  &.size-xl {
+    width: 128px;
+  }
+
+  &.size-xxl {
+    width: 160px;
+  }
+
+}

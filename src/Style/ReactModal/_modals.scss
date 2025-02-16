@@ -1,0 +1,33 @@
+html body {
+  .ReactModal__Overlay {
+    background-color: rgba($primary-darkest, 0.8) !important;
+    backdrop-filter: blur(10px) saturate(180%);
+    z-index: 9999;
+
+    .ReactModal__Content {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+
+      .modal-header {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      .modal-body {
+        height: 100%;
+        overflow-y: auto;
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: .55rem;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+}

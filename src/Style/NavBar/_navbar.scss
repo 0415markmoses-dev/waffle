@@ -1,0 +1,100 @@
+nav.navbar-app {
+  padding: 0;
+  z-index: 200;
+  position: fixed;
+  width: $navbar-width;
+  font-size: .78rem;
+  background-color: $navbar-color;
+  color: $tw-gray-700;
+
+  .navbar-project {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 $navbar-padding-side;
+  }
+
+  .navbar-brand {
+    width: 100%;
+    height: 74px;
+    display: flex;
+    align-items: center;
+    padding: 0 $navbar-padding-side;
+
+    .navbar-brand-link {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      color: $white;
+      text-decoration: none !important;
+
+      img {
+        max-width: 56px;
+        width: 100%;
+        display: block;
+        flex-grow: 0;
+      }
+
+      .label-brand {
+        flex-grow: 1;
+        display: block;
+        font-size: 1.2rem;
+
+        i {
+          vertical-align: super;
+          font-size: .75rem;
+          opacity: .5;
+          font-weight: 200;
+        }
+      }
+    }
+  }
+
+  .navbar-menu {
+    width: 100%;
+    padding: 0 $navbar-padding-side;
+    @import "navbar_menu";
+  }
+
+  .navbar-profile {
+    padding: 0 $navbar-padding-side;
+    left: 0;
+    right: 0;
+    bottom: $navbar-padding-side;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+
+  }
+}
+
+.profile-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  background: #278aab;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  outline: 0 !important;
+
+  img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &[data-state="open"] {
+    background: red;
+  }
+}
+
+@import "./dropdown";

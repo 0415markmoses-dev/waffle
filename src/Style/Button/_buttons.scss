@@ -1,0 +1,82 @@
+button.btn {
+  outline: 0 !important;
+  font-weight: 200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &.btn-icon {
+    display: flex;
+    justify-content: center;
+    width: 2.5rem;
+  }
+
+  &.btn-dark {
+    background: $btn-dark-bg;
+    color: $white;
+
+    &:hover {
+      background: $btn-dark-bg-active;
+    }
+  }
+
+  &.btn-primary {
+    color: $white;
+  }
+
+  &.btn-light {
+    color: $tw-gray-600;
+    border-color: $btn-border-color;
+    background-color: $body-bg;
+    transition: box-shadow 0.3s ease, color 0.3s ease;
+
+    &:hover {
+      color: $tw-gray-500;
+      box-shadow: $button-light-hover-shadow;
+    }
+  }
+
+  &.btn-link {
+    border: none;
+    background: transparent;
+    color: $primary;
+    font-weight: 400;
+    text-decoration: none;
+  }
+
+  &.btn-with-icon {
+    &.btn-with-icon-left {
+      i.font-icon {
+        margin-right: $btn-with-icon-spacing;
+      }
+    }
+
+    &.btn-with-icon-right {
+      i.font-icon {
+        margin-left: $btn-with-icon-spacing;
+      }
+    }
+
+  }
+
+
+  &.btn-sm {
+    font-size: .8rem;
+
+    i.font-icon {
+      font-size: 1.3125rem;
+      line-height: 1.3125rem;
+    }
+
+
+  }
+
+  .btn-text-ellipsis {
+    width: 80%;
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+}

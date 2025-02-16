@@ -1,0 +1,30 @@
+.footer-container {
+  background: transparent;
+  position: fixed;
+  bottom: 0;
+  left: $navbar-width;
+  right: 0;
+  padding: 0 1rem;
+  padding-bottom: .5rem;
+  border: none !important;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 1) 25%, rgba(0, 0, 0, 0) 100%);
+
+  .footer-left, .footer-right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .75rem;
+
+    a {
+      pointer-events: all;
+      color: $tw-gray-800;
+      display: block;
+      text-decoration: none;
+
+      &:not(:first-child) {
+        margin-left: 1rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  box-shadow: $card-box-shadow;
+  background-color: $body-bg;
+  border-radius: .75rem;
+  border: $card-border;
+
+  .card-body {
+    flex-grow: 1;
+    padding-inline-start: 1.875rem;
+    padding-inline-end: 1.875rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .card-header {
+    display: flex;
+    min-height: 56px;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    border-bottom: $card-border;
+    padding-inline-start: 1.875rem;
+    padding-inline-end: 1.875rem;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+
+    .card-title {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      font-weight: 600;
+      color: $tw-coal-600;
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-top: $card-border;
+    padding-inline-start: 1.875rem;
+    padding-inline-end: 1.875rem;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+  }
+}
