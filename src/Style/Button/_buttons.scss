@@ -4,6 +4,10 @@ button.btn {
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: $btn-border-radius;
+  position: relative;
+  overflow: hidden;
+  transition: color 220ms ease;
 
   &.btn-icon {
     display: flex;
@@ -77,6 +81,39 @@ button.btn {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  i {
+    transition: opacity 220ms ease;
+    opacity: 1;
+  }
+
+  &.is-loading {
+    pointer-events: none;
+    color: transparent;
+
+    i {
+      opacity: 0;
+    }
+  }
+
+  .btn-loader {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: all 320ms ease;
+
+    &:not(.is-loading) {
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
 }

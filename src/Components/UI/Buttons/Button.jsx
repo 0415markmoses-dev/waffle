@@ -13,7 +13,9 @@ export const Button = ({
                            onClick = () => {
                            },
                            disabled = false,
+                           loading = false,
                            children = "-",
+                           ...props
                        }) => {
     const btnOutlineType = outline ? '-outline' : '';
 
@@ -27,12 +29,35 @@ export const Button = ({
             "btn-with-icon": icon,
             "btn-with-icon-left": iconPosition === "left",
             "btn-with-icon-right": iconPosition === "right",
+            "is-loading": loading,
         }
     );
 
+    const loaderClasses = classNames(
+        "btn-loader",
+        {
+            "is-loading": loading,
+        }
+    );
+
+    const handleClick = () => {
+        if (disabled || loading) {
+            return;
+        }
+        onClick();
+    }
+
 
     return (
-        <button disabled={disabled} onClick={onClick} className={buttonClasses}>
+        <button {...props} disabled={disabled} onClick={handleClick} className={buttonClasses}>
+            <div data-intent="loader" aria-hidden="true" className={loaderClasses}>
+                <div className="w-100">
+                    {loading && (
+                        <div className="spinner-border spinner-border-sm text-white" role="status">
+                        </div>
+                    )}
+                </div>
+            </div>
             {icon !== '' && iconPosition === "left" && (
                 <i className={`font-icon lni btn-with-icon-${iconPosition} ${icon}`}></i>
             )}
@@ -56,5 +81,6 @@ Button.propTypes = {
     size: PropTypes.oneOf(['sm', 'md', 'lg']),
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
+    loading: PropTypes.bool,
     children: PropTypes.node.isRequired,
 }

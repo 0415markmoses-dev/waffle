@@ -29,7 +29,7 @@ export const Listing = () => {
         <PageContentWrapper>
             <PageTitle title={currentProject.name + " - All Release"}>
                 <Button icon="lni-plus" onClick={handleNewReleaseClick}
-                        type="light" size="sm">New release</Button>
+                        type="primary" size="sm">New release</Button>
             </PageTitle>
             <PageElementWrapper>
                 <Row>

@@ -64,9 +64,9 @@ export const Home = () => {
     return <>
         <PageContentWrapper>
             <PageTitle title="TestGator Dashboard">
-                <Button icon="lni-sliders-horizontal-square-2"
-                        type="light" size="sm">Petit button</Button>
-                <Button type="light" size="sm">Petit button</Button>
+                <Button type="light" size="sm">Edit project</Button>
+                <Button icon="lni-plus"
+                        type="primary" size="sm">New release</Button>
             </PageTitle>
             <PageElementWrapper>
                 <Row>

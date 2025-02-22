@@ -11,11 +11,17 @@ import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
 import {CardFooter} from "../../../../Components/UI/Card/CardFooter.jsx";
 import {useEffect, useState} from "react";
 import ReleasesService from "../../../../Services/PrivateApi/ReleasesService.js";
-import {Loader} from "../../../../Components/UI/Loader.jsx";
 import {Error404} from "../../../../Components/UI/Error404.jsx";
 import {SingleMetricDisplay} from "../../../../Components/UI/Metrics/SingleMetricDisplay.jsx";
 import {MetricVerticalSeparator} from "../../../../Components/UI/Metrics/MetricVerticalSeparator.jsx";
 import {ProgressBar} from "../../../../Components/UI/Metrics/ProgressBar.jsx";
+import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
+import {CardGroup} from "../../../../Components/UI/Card/CardGroup.jsx";
+import {FormGroup} from "../../../../Components/UI/Form/FormGroup.jsx";
+import {TextInput} from "../../../../Components/UI/Form/Inputs/TextInput.jsx";
+import {FormGroupLabel} from "../../../../Components/UI/Form/FormGroupLabel.jsx";
+import {Textarea} from "../../../../Components/UI/Form/Inputs/Textarea.jsx";
+import {FormGroupWrapper} from "../../../../Components/UI/Form/FormGroupWrapper.jsx";
 
 export const Page = () => {
     let navigate = useNavigate();
@@ -25,6 +31,7 @@ export const Page = () => {
     const [releaseData, setReleaseData] = useState([]);
     const [releaseStats, setReleaseStats] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [editMode, setEditMode] = useState(false);
 
     const loadReleaseStats = () => {
         setReleaseStats([]);
@@ -78,8 +85,9 @@ export const Page = () => {
     return <>
         <PageContentWrapper>
             <PageTitle title={currentProject.name + " - Release " + (releaseData?.name ? releaseData?.name : '')}>
+                <Button type="light" size="sm">Edit release</Button>
                 <Button icon="lni-plus"
-                        type="light" size="sm">New release</Button>
+                        type="primary" size="sm">New testing plan</Button>
             </PageTitle>
             <PageElementWrapper>
                 <Row>
@@ -94,19 +102,19 @@ export const Page = () => {
                                                     <div
                                                         className="w-100 d-flex flex-row gap-lg align-items-center justify-content-around position-relative">
                                                         <SingleMetricDisplay
-                                                            label={releaseStats.plans > 1 ? 'Plans' : 'Plan'}
-                                                            value={releaseStats.plans}/>
+                                                            label={releaseStats.totalPlans > 1 ? 'Plans' : 'Plan'}
+                                                            value={releaseStats.totalPlans}/>
                                                         <MetricVerticalSeparator/>
                                                         <SingleMetricDisplay
-                                                            label={releaseStats.questions > 1 ? 'Scenarios' : 'Scenario'}
-                                                            value={releaseStats.questions}/>
+                                                            label={releaseStats.totalQuestions > 1 ? 'Scenarios' : 'Scenario'}
+                                                            value={releaseStats.totalQuestions}/>
                                                         <MetricVerticalSeparator/>
                                                         <SingleMetricDisplay
-                                                            label={releaseStats.responded > 1 ? 'Responses' : 'Response'}
-                                                            value={releaseStats.responded}/>
+                                                            label={releaseStats.totalResponded > 1 ? 'Responses' : 'Response'}
+                                                            value={releaseStats.totalResponded}/>
                                                     </div>
                                                     <div className="w-100">
-                                                        <ProgressBar value={releaseStats.percentage_done}/>
+                                                        <ProgressBar value={releaseStats.percentage}/>
                                                     </div>
                                                 </div>
                                             </>
@@ -116,9 +124,35 @@ export const Page = () => {
                             </Col>
                             <Col>
                                 <Card>
-                                    <CardBody>
-                                        :D
-                                    </CardBody>
+                                    <CardHeader title="Manage your release"/>
+                                    <CardGroup className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex flex-column">
+                                            <div className="heading">Edit</div>
+                                            <div className="text-muted small">
+                                                Edit the release details
+                                            </div>
+                                        </div>
+                                        <div className="d-flex flex-column">
+                                            <Button onClick={() => {
+                                                setEditMode(!editMode)
+                                            }} iconOnly type="light" size="sm">
+                                                <i className="font-icon lni lni-pencil-1"></i>
+                                            </Button>
+                                        </div>
+                                    </CardGroup>
+                                    <CardGroup className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex flex-column">
+                                            <div className="heading">Download</div>
+                                            <div className="text-muted small">
+                                                Get the testing details in CSV
+                                            </div>
+                                        </div>
+                                        <div className="d-flex flex-column">
+                                            <Button iconOnly type="light" size="sm">
+                                                <i className="font-icon lni lni-download-1"></i>
+                                            </Button>
+                                        </div>
+                                    </CardGroup>
                                 </Card>
                             </Col>
                         </Row>
@@ -154,6 +188,44 @@ export const Page = () => {
                                         <Button icon="lni-link-2-angular-right" type="link" size="sm">View
                                             Documentation</Button>
                                     </CardFooter>
+                                </Card>
+                            </Col>
+                            <Col>
+                                <Card>
+                                    <CardBody>
+                                        <FormGroupWrapper>
+                                            <FormGroup>
+                                                <FormGroupLabel>
+                                                    Release name
+                                                </FormGroupLabel>
+                                                <TextInput disabled={!editMode}
+                                                           onChange={value => setReleaseData({
+                                                               ...releaseData,
+                                                               name: value
+                                                           })}
+                                                           value={releaseData?.name}/>
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <FormGroupLabel>
+                                                    Release name
+                                                </FormGroupLabel>
+                                                <Textarea disabled={!editMode}
+                                                          onChange={value => setReleaseData({
+                                                              ...releaseData,
+                                                              description: value
+                                                          })}
+                                                          value={releaseData?.description}/>
+                                            </FormGroup>
+                                            <FormGroup className="d-flex justify-content-center">
+                                                <Button icon="lni-download-1"
+                                                        loading={!editMode}
+                                                        disabled={!editMode}
+                                                        type="primary">
+                                                    Save changes
+                                                </Button>
+                                            </FormGroup>
+                                        </FormGroupWrapper>
+                                    </CardBody>
                                 </Card>
                             </Col>
                         </Row>

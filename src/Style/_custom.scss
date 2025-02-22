@@ -31,7 +31,6 @@ $tw-muted-text: #78829d;
 // white
 $tw-white: #fff;
 
-
 // body is #222
 $body-bg: $tw-white;
 $body-color: #0a1307;
@@ -53,3 +52,5 @@ $card-border-color: $tw-gray-border;
 $card-border: 1px solid $card-border-color;
 // BADGE
 $badge-border-radius: calc($border-radius / 4);
+// inputs
+$input-border-radius: 5px;
