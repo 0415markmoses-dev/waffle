@@ -127,13 +127,14 @@ export const useCurrentPath = () => {
     const location = useLocation()
     let pathname = location.pathname;
     const routes_ = matchRoutes(routes, pathname);
-    console.log('routes_', routes_);
+    // todo debug auto breadcrumb
+    //console.log('routes_', routes_);
     if (!routes_) return null;
     // get the latest route
     let match = routes_[routes_.length - 1]?.route;
     if (!match) return null;
 
-    console.log('match.parents', location, match.parents);
+    //console.log('match.parents', location, match.parents);
 
     // remove in match.parent the element that has the same name as match.name
     match.parents = match.parents.filter(parent => parent.name !== match.name || parent.breadcrumb === false);

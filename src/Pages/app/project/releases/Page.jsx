@@ -52,6 +52,9 @@ export const Page = () => {
         ReleasesService.getRelease(params.rid)
             .then(response => {
                 if (response?.data?.id !== undefined) {
+                    if (currentProject.id !== response.data?.project?.id) {
+                        throw new Error('Project mismatch');
+                    }
                     setReleaseData(response.data);
                     loadReleaseStats();
                     return;
