@@ -88,7 +88,6 @@ export const Page = () => {
     return <>
         <PageContentWrapper>
             <PageTitle title={currentProject.name + " - Release " + (releaseData?.name ? releaseData?.name : '')}>
-                <Button type="light" size="sm">Edit release</Button>
                 <Button icon="lni-plus"
                         type="primary" size="sm">New testing plan</Button>
             </PageTitle>
