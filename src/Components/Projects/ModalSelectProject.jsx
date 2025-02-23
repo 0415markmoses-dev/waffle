@@ -62,7 +62,7 @@ export const ModalSelectProject = () => {
 
     //console.log('visible value', visible, selectionModalVisible);
     const handleSelectButton = e => {
-        e.preventDefault();
+        e?.preventDefault();
         if (targetProject !== null) {
             console.log('selected project', targetProject);
             setCurrentProject(targetProject);

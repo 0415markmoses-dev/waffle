@@ -12,6 +12,10 @@
 @import "Projects/projects";
 @import "./Card/card";
 @import "ReactModal/modals";
+@import "Form/form";
+
+$main-font: "Source Serif 4", serif;
+$heading-font: "Inter", sans-serif;
 
 
 .cursor-pointer {
@@ -23,16 +27,21 @@ body {
   overflow: hidden !important;
   background: $navbar-color;
 
-  font-family: "Source Serif 4", serif;
+
+  font-family: $main-font;
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
 
   h1, h2, h3, h4, h5, h6, .heading, .btn, .navbar-app, input, textarea {
-    font-family: "Inter", sans-serif;
+    font-family: $heading-font;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+  }
+
+  th {
+    font-family: $heading-font;
   }
 
   h2 {

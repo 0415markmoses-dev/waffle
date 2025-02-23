@@ -17,11 +17,8 @@ import {MetricVerticalSeparator} from "../../../../Components/UI/Metrics/MetricV
 import {ProgressBar} from "../../../../Components/UI/Metrics/ProgressBar.jsx";
 import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 import {CardGroup} from "../../../../Components/UI/Card/CardGroup.jsx";
-import {FormGroup} from "../../../../Components/UI/Form/FormGroup.jsx";
-import {TextInput} from "../../../../Components/UI/Form/Inputs/TextInput.jsx";
-import {FormGroupLabel} from "../../../../Components/UI/Form/FormGroupLabel.jsx";
-import {Textarea} from "../../../../Components/UI/Form/Inputs/Textarea.jsx";
-import {FormGroupWrapper} from "../../../../Components/UI/Form/FormGroupWrapper.jsx";
+import {EditReleaseForm} from "../../../../Components/Releases/EditReleaseForm.jsx";
+import {ReleaseDescription} from "../../../../Components/Releases/ReleaseDescription.jsx";
 
 export const Page = () => {
     let navigate = useNavigate();
@@ -50,7 +47,7 @@ export const Page = () => {
         ;
     }
 
-    useEffect(() => {
+    const loadReleaseData = () => {
         setLoading(true);
         ReleasesService.getRelease(params.rid)
             .then(response => {
@@ -67,7 +64,10 @@ export const Page = () => {
                 console.error(err);
             })
             .finally(() => setLoading(false))
+    }
 
+    useEffect(() => {
+        loadReleaseData();
     }, [params.rid])
 
 
@@ -155,14 +155,11 @@ export const Page = () => {
                                     </CardGroup>
                                 </Card>
                             </Col>
-                        </Row>
-                    </Col>
-                    <Col sm={12} xl={8}>
-                        <Row>
                             <Col>
                                 <Card>
                                     <CardBody>
-                                        <div className="w-100 d-flex justify-content-between gap-md align-items-center">
+                                        <div
+                                            className="w-100 d-flex flex-column justify-content-between gap-md align-items-center">
                                             <div className="d-flex flex-column">
                                                 <h2>
                                                     How to use Releases in
@@ -190,42 +187,35 @@ export const Page = () => {
                                     </CardFooter>
                                 </Card>
                             </Col>
+                        </Row>
+                    </Col>
+                    <Col sm={12} xl={8}>
+                        <Row>
                             <Col>
                                 <Card>
-                                    <CardBody>
-                                        <FormGroupWrapper>
-                                            <FormGroup>
-                                                <FormGroupLabel>
-                                                    Release name
-                                                </FormGroupLabel>
-                                                <TextInput disabled={!editMode}
-                                                           onChange={value => setReleaseData({
-                                                               ...releaseData,
-                                                               name: value
-                                                           })}
-                                                           value={releaseData?.name}/>
-                                            </FormGroup>
-                                            <FormGroup>
-                                                <FormGroupLabel>
-                                                    Release name
-                                                </FormGroupLabel>
-                                                <Textarea disabled={!editMode}
-                                                          onChange={value => setReleaseData({
-                                                              ...releaseData,
-                                                              description: value
-                                                          })}
-                                                          value={releaseData?.description}/>
-                                            </FormGroup>
-                                            <FormGroup className="d-flex justify-content-center">
-                                                <Button icon="lni-download-1"
-                                                        loading={!editMode}
-                                                        disabled={!editMode}
-                                                        type="primary">
-                                                    Save changes
-                                                </Button>
-                                            </FormGroup>
-                                        </FormGroupWrapper>
-                                    </CardBody>
+                                    {editMode && !loading && (
+                                        <CardBody>
+                                            <EditReleaseForm
+                                                onCancel={() => setEditMode(false)}
+                                                onUpdate={() => {
+                                                    setEditMode(false);
+                                                    loadReleaseData();
+                                                }}
+                                                release={releaseData}/>
+                                        </CardBody>
+                                    )}
+
+                                    {!editMode && (
+                                        <>
+                                            <CardHeader title={releaseData?.name}/>
+                                            <CardBody>
+                                                <div className="release-description">
+                                                    <ReleaseDescription description={releaseData?.description}/>
+                                                </div>
+                                            </CardBody>
+                                        </>
+                                    )}
+
                                 </Card>
                             </Col>
                         </Row>
