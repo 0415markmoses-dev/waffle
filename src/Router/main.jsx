@@ -6,6 +6,7 @@ import {matchRoutes, useLocation} from "react-router-dom"
 import {Page as ProjectPage} from "../Pages/app/project/Page.jsx";
 import {Page as ReleasesPage} from "../Pages/app/project/releases/Page.jsx";
 import {Listing as ReleasesListing} from "../Pages/app/project/releases/Listing.jsx";
+import {Create as ReleasesCreate} from "../Pages/app/project/releases/Create.jsx";
 import {Page as TestingPlansPage} from "../Pages/app/project/testing_plans/Page.jsx";
 import {Page as TestersPage} from "../Pages/app/project/testers/Page.jsx";
 import {Page as AboutPage} from "../Pages/app/about/Page.jsx";
@@ -83,7 +84,7 @@ let routes = [
                             {
                                 path: "create",
                                 name: 'new_project_release',
-                                element: <ReleasesPage/>,
+                                element: <ReleasesCreate/>,
                             },
                             {
                                 path: ":rid",

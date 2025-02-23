@@ -8,6 +8,9 @@ const ReleasesService = {
             }
         });
     },
+    createRelease(data) {
+        return Http.post('/api/releases', data);
+    },
     getRelease(id) {
         return Http.get('/api/releases/' + id);
     },

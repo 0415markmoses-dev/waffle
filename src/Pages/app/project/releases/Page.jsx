@@ -126,7 +126,7 @@ export const Page = () => {
                             </Col>
                             <Col>
                                 <Card>
-                                    <CardHeader title="Manage your release"/>
+                                    <CardHeader title="Manage this release"/>
                                     <CardGroup className="d-flex justify-content-between align-items-center">
                                         <div className="d-flex flex-column">
                                             <div className="heading">Edit</div>
@@ -152,6 +152,32 @@ export const Page = () => {
                                         <div className="d-flex flex-column">
                                             <Button iconOnly type="light" size="sm">
                                                 <i className="font-icon lni lni-download-1"></i>
+                                            </Button>
+                                        </div>
+                                    </CardGroup>
+                                    <CardGroup className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex flex-column">
+                                            <div className="heading">Archive</div>
+                                            <div className="text-muted small">
+                                                Close this release
+                                            </div>
+                                        </div>
+                                        <div className="d-flex flex-column">
+                                            <Button iconOnly type="light" size="sm">
+                                                <i className="font-icon lni lni-box-archive-1"></i>
+                                            </Button>
+                                        </div>
+                                    </CardGroup>
+                                    <CardGroup className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex flex-column">
+                                            <div className="heading text-danger">Danger zone</div>
+                                            <div className="text-muted small">
+                                                Delete this release and testings
+                                            </div>
+                                        </div>
+                                        <div className="d-flex flex-column">
+                                            <Button iconOnly type="danger" size="sm">
+                                                <i className="font-icon lni lni-trash-3"></i>
                                             </Button>
                                         </div>
                                     </CardGroup>

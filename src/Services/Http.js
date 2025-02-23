@@ -18,6 +18,16 @@ const Http = axios.create({
 
 // execute a function before each request
 Http.interceptors.request.use((config) => {
+    // if request is method PATCH, add Content-Type application/merge-patch+json
+    if (config.method === 'patch') {
+        config.headers['Content-Type'] = 'application/merge-patch+json';
+    }
+    // if there is a POST, add Content-Type application/ld+json
+    if (config.method === 'post') {
+        config.headers['Content-Type'] = 'application/ld+json';
+    }
+
+
     let jwt = getCurrentJWT();
     if (jwt !== null && jwt !== undefined && jwt !== '') {
         config.headers['Authorization'] = `Bearer ${jwt}`;

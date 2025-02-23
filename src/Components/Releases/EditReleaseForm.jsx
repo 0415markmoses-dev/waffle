@@ -7,14 +7,16 @@ import {useState} from "react";
 import PropTypes from "prop-types";
 import {MkEditorInstance} from "../UI/Form/Editor/MkEditorInstance.jsx";
 import ReleasesService from "../../Services/PrivateApi/ReleasesService.js";
+import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 
 export const EditReleaseForm = ({
                                     release,
                                     onUpdate = () => {
                                     },
                                     onCancel = () => {
-                                    }
+                                    },
                                 }) => {
+    const {currentProject} = useProjectStore();
     const [loading, setLoading] = useState(false);
     const [releaseName, setReleaseName] = useState(release.name);
     const [releaseDescription, setReleaseDescription] = useState(release.description);
@@ -25,14 +27,39 @@ export const EditReleaseForm = ({
 
     const handleUpdate = () => {
         setLoading(true);
-        ReleasesService.updateRelease(release.id, {
-            name: releaseName,
-            description: releaseDescription
-        }).then(() => {
-            onUpdate();
-        }).finally(() => {
-            setLoading(false);
-        })
+        if (release?.id !== undefined) {
+            ReleasesService.updateRelease(release.id, {
+                name: releaseName,
+                description: releaseDescription
+            })
+                .then(response => {
+                    onUpdate(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+                .finally(() => {
+                    setLoading(false);
+                })
+        } else {
+            // create release
+            ReleasesService.createRelease({
+                name: releaseName,
+                description: releaseDescription,
+                project: currentProject['@id'],
+            })
+                .then(response => {
+                    onUpdate(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+                .finally(() => {
+                    setLoading(false);
+                })
+        }
+
+
     }
 
 
