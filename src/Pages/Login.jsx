@@ -1,14 +1,35 @@
 import {useAuthStore} from "../store/auth.js";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
-import {NavBar} from "../Components/Navigation/NavBar.jsx";
+import {Button} from "../Components/UI/Buttons/Button.jsx";
+import {AuthCodeInput} from "../Components/UI/Form/Inputs/AuthCodeInput.jsx";
+import {Trans, useTranslation} from "react-i18next";
+import {Row} from "../Components/UI/Grid/Row.jsx";
+import {Col} from "../Components/UI/Grid/Col.jsx";
+import {Separator} from "../Components/UI/Separator/Separator.jsx";
+import {Alert} from "../Components/UI/Alert/Alert.jsx";
 
 
 export const Login = () => {
+    const {t} = useTranslation();
     let navigate = useNavigate();
-    const {user, requestLogin} = useAuthStore();
+    const {user, requestLogin, generateCode} = useAuthStore();
     const [error, setError] = useState(undefined);
     const [loading, setLoading] = useState(false);
+    const [mode, setMode] = useState('none'); // none(default), team or tester
+    const [hasCode, setHasCode] = useState(false);
+    const [code, setCode] = useState('');
+    const [username, setUsername] = useState('');
+
+    console.log('code', code)
+
+    useEffect(() => {
+        // if query string mode=tester, set mode to tester
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('mode') && urlParams.get('mode') === 'tester') {
+            setMode('tester');
+        }
+    }, [])
 
     useEffect(() => {
         if (user !== null) {
@@ -26,11 +47,22 @@ export const Login = () => {
 
         setLoading(true);
 
-        const email = e.target[0].value;
-        const password = e.target[1].value;
+        let email = e.target[0].value;
+        if (mode === 'tester' && hasCode) {
+            email = username;
+        }
+        let password = e.target[1].value;
+        if (mode === 'tester' && hasCode) {
+            password = code;
+        }
 
         try {
-            await requestLogin(email, password);
+            if (mode === 'team') {
+                await requestLogin(email, password);
+            } else if (mode === 'tester') {
+                console.log('tester request login');
+                await requestLogin(email, password, 'tester', 'app');
+            }
         } catch (error) {
             console.error(error)
             setError('An error occurred');
@@ -38,12 +70,59 @@ export const Login = () => {
         setLoading(false);
     }
 
+    const requestCode = async (e) => {
+        e.preventDefault();
+        setHasCode(false);
+
+        if (e.target[0].value === '' || e.target[0].value === undefined) {
+            setError('Email is required');
+            return;
+        }
+
+        setLoading(true);
+        setError(undefined);
+
+        const email = e.target[0].value;
+        setUsername(email);
+
+        try {
+            await generateCode(email);
+            setHasCode(true);
+        } catch (error) {
+            console.error(error)
+            setError('An error occurred');
+        }
+        setLoading(false);
+    }
+
+    const handleSendForm = (e) => {
+        if (mode === 'team') {
+            tryLogin(e);
+        } else {
+            if (hasCode) {
+                // do something with the code
+                tryLogin(e);
+            } else {
+                requestCode(e);
+            }
+        }
+    }
+
     return <>
-        <div className="container-fluid login-container">
-            <div className="row">
-                <div className="col-12 x">
-                    <div className="card login-width">
-                        <div className="card-body">
+        <div className="w-100 login-container position-relative">
+            <Row className="h-100">
+                <Col fullHeight className="bg-secondary login-col"
+                     size={12} minSizeDisplay="md"
+                     md={5} lg={6}>
+                    <div className="w-100 h-100">
+
+                    </div>
+                </Col>
+                <Col fullHeight className="d-flex justify-content-center align-items-center bg-white"
+                     size={12}
+                     sm={12} md={7} lg={6}>
+                    <div className="w-100 p-4 h-fit">
+                        <div className="login-width">
                             <div className="card-login-header mb-4">
                                 <div
                                     className="project-meta flex-grow-0 d-flex justify-content-center align-items-center mb-2">
@@ -52,44 +131,120 @@ export const Login = () => {
                                     </div>
                                 </div>
                                 <h1 className="text-center m-0 fs-4">
-                                    Login to TestGator
+                                    {t('Login to TestGator')}
                                 </h1>
                             </div>
-                            <form onSubmit={(e) => tryLogin(e)}>
-                                <div className="w-100 mb-2">
-                                    {error !== undefined && (
-                                        <div className="alert alert-danger">
-                                            {error}
+                            {mode === 'none' && (
+                                <>
+                                    <div
+                                        className="d-flex justify-content-center align-items-center flex-column gap-lg">
+                                        <Button type="primary"
+                                                icon="lni-bug-1"
+                                                onClick={() => setMode('tester')}>
+                                            {t('Login as Tester')}
+                                        </Button>
+                                        <Separator text={t('OR')}/>
+                                        <Button type="light"
+                                                icon="lni-user-multiple-4"
+                                                onClick={() => setMode('team')}>
+                                            {t('Login as Team Member')}
+                                        </Button>
+                                    </div>
+                                </>
+                            )}
+                            {mode !== 'none' && (
+                                <>
+                                    <form onSubmit={(e) => handleSendForm(e)}>
+                                        <div className="w-100 mb-2">
+                                            {error !== undefined && (
+                                                <div className="alert alert-danger">
+                                                    {error}
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
-                                <div className="form-group mb-2">
-                                    <label htmlFor="loginLogin">Username</label>
-                                    <input type="text" className="form-control" id="loginLogin"
-                                           disabled={loading}
-                                           aria-describedby="emailHelp" placeholder="john.doe"/>
-                                    <small id="emailHelp" className="form-text text-muted">
-                                        Use your AD login name <i>without the @domain.tld</i>
-                                    </small>
-                                </div>
-                                <div className="form-group mb-2">
-                                    <label htmlFor="passwordLogin">Password</label>
-                                    <input type="password" className="form-control" id="passwordLogin"
-                                           disabled={loading} placeholder="**********"/>
-                                </div>
-                                <div className="form-group mt-4">
-                                    <button type="submit"
-                                            disabled={loading}
-                                            className="btn btn-primary w-100">Login
-                                    </button>
-                                </div>
+                                        {mode === 'tester' && hasCode && (
+                                            <>
+                                                <Alert type='info'>
+                                                    {t('A code has been sent to your email.')}
+                                                </Alert>
+                                                <div className="form-group mt-3 mb-2">
+                                                    <label className="mb-2">
+                                                        {t('One time code')}
+                                                    </label>
+                                                    <AuthCodeInput codeLength={6}
+                                                                   onChange={(code) => {
+                                                                       console.log('me-code', code)
+                                                                       setCode(code)
+                                                                   }}/>
+                                                </div>
 
-                            </form>
+                                            </>
+                                        )}
+                                        {!hasCode && (
+                                            <div className="form-group mb-2">
+                                                <label htmlFor="loginLogin">
+                                                    {mode === 'team' ? t('Username') : t('Email')}
+                                                </label>
+                                                <input type="text" className="form-control" id="loginLogin"
+                                                       disabled={loading}
+                                                       aria-describedby="emailHelp"
+                                                       placeholder={mode === 'team' ? 'john.doe' : 'john.doe@domain.tld'}/>
+                                                {mode === 'team' && (
+                                                    <small id="emailHelp" className="form-text text-muted">
+                                                        <Trans i18nKey="Use your AD login name without the @domain.tld">
+                                                            Use your AD login name <i>without the @domain.tld</i>
+                                                        </Trans>
+                                                    </small>
+                                                )}
+                                                {mode !== 'team' && (
+                                                    <small id="emailHelp" className="form-text text-muted">
+                                                        {t('Use the email you received your invitation to')}
+                                                    </small>
+                                                )}
+                                            </div>
+                                        )}
+                                        {mode === 'team' && (
+                                            <div className="form-group mb-2">
+                                                <label htmlFor="passwordLogin">{t('Password')}</label>
+                                                <input type="password" className="form-control" id="passwordLogin"
+                                                       disabled={loading} placeholder="**********"/>
+                                            </div>
+                                        )}
+                                        <div className="form-group mt-4">
+                                            {mode === 'team' && (
+                                                <Button type="primary"
+                                                        loading={loading}
+                                                        fullWidth isSubmit
+                                                        size="md">
+                                                    {t('Login')}
+                                                </Button>
+                                            )}
+                                            {mode !== 'team' && !hasCode && (
+                                                <Button type="primary"
+                                                        loading={loading}
+                                                        fullWidth isSubmit
+                                                        size="md">
+                                                    {t('Request Code')}
+                                                </Button>
+                                            )}
+                                            {mode !== 'team' && hasCode && (
+                                                <Button type="primary"
+                                                        loading={loading}
+                                                        fullWidth isSubmit
+                                                        size="md">
+                                                    {t('Login')}
+                                                </Button>
+                                            )}
+                                        </div>
+
+                                    </form>
+                                </>
+                            )}
+
                         </div>
                     </div>
-
-                </div>
-            </div>
+                </Col>
+            </Row>
         </div>
     </>
 }

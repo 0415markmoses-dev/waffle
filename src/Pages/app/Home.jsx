@@ -17,6 +17,7 @@ import {MetricVerticalSeparator} from "../../Components/UI/Metrics/MetricVertica
 import {TestPlanDisplayCard} from "../../Components/TestPlans/TestPlanDisplayCard.jsx";
 import {ErrorState} from "../../Components/UI/ErrorState.jsx";
 import {Loader} from "../../Components/UI/Loader.jsx";
+import {NavLink} from "react-router-dom";
 
 export const Home = () => {
     const {currentProject} = useProjectStore();
@@ -107,7 +108,12 @@ export const Home = () => {
                                                     <ul className="list-unstyled m-0">
                                                         <li>
                                                             <b>Latest release
-                                                                : </b> {currentProject.latestRelease ? currentProject.latestRelease : 'No release yet'}
+                                                                : </b> {currentProject.latestRelease ? (
+                                                            <NavLink
+                                                                to={`/app/project/releases/${currentProject.latestRelease.id}`}>
+                                                                {currentProject.latestRelease.name}
+                                                            </NavLink>
+                                                        ) : 'No release yet'}
                                                         </li>
                                                     </ul>
                                                 </div>

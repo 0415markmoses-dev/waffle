@@ -14,7 +14,7 @@ export const NavBar = () => {
     const {user, clearUserData} = useAuthStore();
     const version_ = import.meta.env.VITE_APP_VERSION;
     const onLogout = (e) => {
-        e.preventDefault();
+        e?.preventDefault();
         clearUserData();
         navigate("/");
     }

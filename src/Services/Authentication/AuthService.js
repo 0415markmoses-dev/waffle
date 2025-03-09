@@ -1,11 +1,12 @@
 import Http from "../Http.js";
 
 const AuthService = {
-    getJWT: (email, password) => {
+    getJWT: (email, password, mode = 'team', authMode = 'ldap') => {
         return Http.post('/api/auth/login', {
             username: email,
             password: password,
-            authMode: 'ldap',
+            authMode: authMode,
+            mode: mode,
         });
     },
     getSelfData: () => {

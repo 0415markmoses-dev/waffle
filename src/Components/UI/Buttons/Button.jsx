@@ -15,6 +15,7 @@ export const Button = ({
                            disabled = false,
                            loading = false,
                            children = "-",
+                           isSubmit = false,
                            ...props
                        }) => {
     const btnOutlineType = outline ? '-outline' : '';
@@ -32,6 +33,10 @@ export const Button = ({
             "is-loading": loading,
         }
     );
+
+    if (isSubmit) {
+        props.type = 'submit';
+    }
 
     const loaderClasses = classNames(
         "btn-loader",
@@ -82,5 +87,6 @@ Button.propTypes = {
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
     loading: PropTypes.bool,
+    isSubmit: PropTypes.bool,
     children: PropTypes.node.isRequired,
 }

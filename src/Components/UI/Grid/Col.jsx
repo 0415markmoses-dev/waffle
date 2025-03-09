@@ -8,6 +8,8 @@ export const Col = ({
                         lg = 0,
                         xl = 0,
                         fullHeight = false,
+                        className = '',
+                        minSizeDisplay = '',
                         children,
                     }) => {
     const componentClasses = classNames(
@@ -18,12 +20,32 @@ export const Col = ({
         }
     );
     let otherClasses = '';
+
     if (sm > 0 && sm <= 12) otherClasses += ` col-sm-${sm}`;
     if (md > 0 && md <= 12) otherClasses += ` col-md-${md}`;
     if (lg > 0 && lg <= 12) otherClasses += ` col-lg-${lg}`;
     if (xl > 0 && xl <= 12) otherClasses += ` col-xl-${xl}`;
 
-    return <div className={componentClasses + otherClasses}>
+    if (minSizeDisplay !== '') {
+        otherClasses += ' d-none';
+        switch (minSizeDisplay) {
+            case 'sm':
+                otherClasses += ' d-sm-block';
+                break;
+            case 'md':
+                otherClasses += ' d-md-block';
+                break;
+            case 'lg':
+                otherClasses += ' d-lg-block';
+                break;
+            case 'xl':
+                otherClasses += ' d-xl-block';
+                break;
+        }
+    }
+
+
+    return <div className={componentClasses + otherClasses + ' ' + className}>
         {children}
     </div>
 }
@@ -35,5 +57,7 @@ Col.propTypes = {
     lg: PropTypes.number,
     xl: PropTypes.number,
     fullHeight: PropTypes.bool,
+    className: PropTypes.string,
+    minSizeDisplay: PropTypes.string,
     children: PropTypes.node.isRequired,
 }

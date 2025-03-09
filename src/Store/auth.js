@@ -26,10 +26,22 @@ export const useAuthStore = createSelector(create(persist((set) => ({
             throw error;
         }
     },
-    // first request a JWT then get user data
-    requestLogin: async (email, password) => {
+    generateCode: async (email) => {
         try {
-            let response = await AuthService.getJWT(email, password);
+            let response = await AuthService.getJWT(email, '', 'tester', 'code');
+            if (response?.data?.logged === false && response?.data?.otp === true) {
+                return;
+            }
+            throw new Error('Invalid response');
+        } catch (error) {
+            console.error(error)
+            throw error;
+        }
+    },
+    // first request a JWT then get user data
+    requestLogin: async (email, password, mode = 'team', authMode = 'ldap') => {
+        try {
+            let response = await AuthService.getJWT(email, password, mode, authMode);
             if (response?.data?.jwt !== undefined) {
                 set({jwt: response.data.jwt});
                 // load user data

@@ -118,15 +118,30 @@ body {
 }
 
 .login-width {
-  max-width: 420px;
+  width: 100vw;
+  max-width: 480px;
   margin: 0 auto;
 }
 
+.login-col {
+  background-image: url('/assets/login_preview.png');
+  background-size: cover;
+  border-right: 1px solid $card-border-color;
+}
+
 .login-container {
-  min-height: 90vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .row {
+    min-height: 100vh;
+    gap: 0;
+
+    .col {
+      margin: 0;
+    }
+  }
+}
+
+.border-default {
+  border-color: $card-border-color;
 }
 
 .form-max-width {
