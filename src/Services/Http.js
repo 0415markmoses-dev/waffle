@@ -30,7 +30,9 @@ Http.interceptors.request.use((config) => {
 
     let jwt = getCurrentJWT();
     if (jwt !== null && jwt !== undefined && jwt !== '') {
-        config.headers['Authorization'] = `Bearer ${jwt}`;
+        if (config.headers['Authorization'] === null || config.headers['Authorization'] === undefined) {
+            config.headers['Authorization'] = `Bearer ${jwt}`;
+        }
     }
     // do something before request is sent
     return config;

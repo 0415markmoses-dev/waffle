@@ -238,6 +238,11 @@ export const Login = () => {
                                         </div>
 
                                     </form>
+                                    <Separator className="mt-4 mb-4"/>
+                                    <Button type="light" fullWidth size="sm"
+                                            onClick={() => setMode('none')}>
+                                        {t('Back')}
+                                    </Button>
                                 </>
                             )}
 

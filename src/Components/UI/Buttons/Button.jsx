@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import classNames from "classnames";
+import {useNavigate} from "react-router";
 
 
 export const Button = ({
@@ -16,8 +17,12 @@ export const Button = ({
                            loading = false,
                            children = "-",
                            isSubmit = false,
+                           to = undefined,
+                           toParams = {},
                            ...props
                        }) => {
+    let navigate = useNavigate();
+
     const btnOutlineType = outline ? '-outline' : '';
 
     const buttonClasses = classNames(
@@ -47,6 +52,10 @@ export const Button = ({
 
     const handleClick = () => {
         if (disabled || loading) {
+            return;
+        }
+        if (to !== undefined) {
+            navigate(to, toParams);
             return;
         }
         onClick();
@@ -88,5 +97,7 @@ Button.propTypes = {
     disabled: PropTypes.bool,
     loading: PropTypes.bool,
     isSubmit: PropTypes.bool,
+    to: PropTypes.string,
+    toParams: PropTypes.object,
     children: PropTypes.node.isRequired,
 }

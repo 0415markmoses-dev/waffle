@@ -1,0 +1,28 @@
+$bottom-border-size: 3px;
+.nav-tabs {
+  border-bottom-color: $card-border-color !important;
+
+  .nav-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none !important;
+    font-weight: 400;
+    font-size: .905rem;
+    color: $tw-muted-text;
+    border-bottom: $bottom-border-size solid transparent !important;
+    transition: all 320ms ease-in-out;
+
+    i.lni {
+      position: relative;
+      font-size: 1rem;
+      opacity: .6;
+    }
+
+    &.active {
+      border: none;
+      color: $body-color;
+      border-bottom: $bottom-border-size solid $primary !important;
+    }
+  }
+}

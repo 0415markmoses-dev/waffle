@@ -27,6 +27,7 @@ import {
 import '@mdxeditor/editor/style.css'
 import PropTypes from "prop-types";
 import {useEffect, useState} from "react";
+import UploadService from "../../../../Services/Upload/UploadService.js";
 
 // code blocks @see https://mdxeditor.dev/editor/docs/code-blocks
 // bug with mal formatted code blocks, where language is not specified
@@ -38,6 +39,25 @@ export const MkEditorInstance = ({value, onChange, className = ''}) => {
             setOriginalValue(value);
         }
     }, [])
+
+    const handleUpload = async (image) => {
+        // get file size and name
+        const filesize = image.size;
+        const filename = image.name;
+        // get upload request
+        try {
+            const response = await UploadService.getUploadRequest(filename, filesize);
+            const {jwt} = response.data;
+            // upload file to s3
+            const response2 = await UploadService.uploadFile(image, jwt);
+            // return the url of the uploaded file
+            return response2?.data?.url ?? null;
+        } catch (e) {
+            console.error(e);
+            return null;
+        }
+    }
+
     return <>
         <MDXEditor markdown={value}
                    onError={console.error}
@@ -67,7 +87,9 @@ export const MkEditorInstance = ({value, onChange, className = ''}) => {
                        headingsPlugin(),
                        linkPlugin(),
                        linkDialogPlugin(),
-                       imagePlugin(),
+                       imagePlugin({
+                           imageUploadHandler: handleUpload,
+                       }),
                        tablePlugin(),
                        thematicBreakPlugin(),
                        frontmatterPlugin(),

@@ -13,6 +13,7 @@
 @import "./Card/card";
 @import "ReactModal/modals";
 @import "Form/form";
+@import "Tabs/tabs";
 
 $main-font: "Source Serif 4", serif;
 $heading-font: "Inter", sans-serif;
@@ -84,6 +85,10 @@ body {
 
 .h-fit {
   height: fit-content !important;
+}
+
+.gap-xsm {
+  gap: .275rem;
 }
 
 .gap-sm {
