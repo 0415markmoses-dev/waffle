@@ -49,4 +49,18 @@
     padding-top: .75rem;
     padding-bottom: .75rem;
   }
+
+
+  &.card-colored-purple {
+    background: #795CD1;
+    background: linear-gradient(321deg, rgba(121, 92, 209, 1) 0%, rgba(85, 71, 189, 1) 46%);
+    color: $white;
+    // from #795cd1 to #5547BD
+  }
+
+  &.card-color-green {
+    // from #6DBC9E to ##70B49E
+    background: #6DBC9E;
+    background: linear-gradient(321deg, rgba(109, 188, 158, 1) 0%, rgba(112, 180, 158, 1) 46%);
+  }
 }

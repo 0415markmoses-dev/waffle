@@ -1,5 +1,5 @@
 export const PaginationSettings = {
-    ApiItemsPerPage: 10,
+    ApiItemsPerPage: 50,
     paginationPageSize: 20,
     paginationPageSizeSelector: [20, 35, 50],
 }

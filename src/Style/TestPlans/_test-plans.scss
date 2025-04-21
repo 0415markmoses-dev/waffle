@@ -29,3 +29,18 @@
   max-width: 122px;
   overflow: hidden;
 }
+
+.test-pill {
+  border-radius: calc($card-border-radius / 2);
+  font-size: .9rem;
+  padding: .45rem;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.progress-custom-bar {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: calc($card-border-radius / 2);
+  overflow: hidden;
+  width: 100%;
+  height: 1rem;
+}

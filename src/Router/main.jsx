@@ -10,6 +10,7 @@ import {Create as ReleasesCreate} from "../Pages/app/project/releases/Create.jsx
 import {Page as TestingPlansPage} from "../Pages/app/project/testing_plans/Page.jsx";
 import {Page as TestersPage} from "../Pages/app/project/testers/Page.jsx";
 import {Page as AboutPage} from "../Pages/app/about/Page.jsx";
+import {Create as QuestionsCreate} from "../Pages/app/project/questions/Create.jsx";
 
 
 const formatRoutes = (routes, parents_ = []) => {
@@ -111,6 +112,18 @@ let routes = [
                                 path: ":tid",
                                 name: 'project_testing_plan_details',
                                 element: <TestingPlansPage/>,
+                            },
+                        ],
+                    },
+                    {
+                        path: "questions",
+                        name: 'questions',
+                        breadcrumb: false,
+                        children: [
+                            {
+                                path: "create",
+                                name: 'new_project_questions',
+                                element: <QuestionsCreate/>,
                             },
                         ],
                     },

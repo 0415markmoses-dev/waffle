@@ -14,7 +14,6 @@ import {RowDataUpdate} from "../../Configs/AgGrid/RowDataUpdate.js";
 import PropTypes from "prop-types";
 import {NavLink} from "react-router-dom";
 import TestersService from "../../Services/PrivateApi/TestersService.js";
-import {ModalCreateNewTester} from "./ModalCreateNewTester.jsx";
 
 ModuleRegistry.registerModules([
     AllCommunityModule,
@@ -29,7 +28,9 @@ LinkCellRenderer.propTypes = {
     data: PropTypes.object.isRequired,
 }
 
-export const ListTesters = () => {
+export const ListTesters = ({
+                                testPlan = undefined
+                            }) => {
     const {currentProject} = useProjectStore();
     const gridRef = useRef();
     const [loading, setLoading] = useState(false);
@@ -66,12 +67,18 @@ export const ListTesters = () => {
 
     const handleLoading = useCallback((page, previousData = [], callback = () => {
     }) => {
-        TestersService.getTesters({
+        let payload = {
             project: currentProject.id,
             'order[id]': 'desc',
             page: page,
             itemsPerPage: PaginationSettings.ApiItemsPerPage,
-        })
+        };
+
+        if (testPlan?.id !== undefined) {
+            payload['testPlan'] = '/api/test_plans/' + testPlan.id;
+        }
+
+        TestersService.getTesters(payload)
             .then(response => {
                 if (response.data['member'] !== undefined) {
                     const totalData = [...previousData, ...response.data['member']];
@@ -90,13 +97,13 @@ export const ListTesters = () => {
                 console.error(err);
                 callback();
             })
-    }, [currentProject?.id]);
+    }, [currentProject?.id, testPlan?.id]);
 
 
     useEffect(() => {
         setLoading(true);
         handleLoading(1, [], () => setLoading(false));
-    }, [currentProject?.id]);
+    }, [currentProject?.id, testPlan?.id]);
 
     const onGridReady = () => {
         gridRef.current.api.sizeColumnsToFit({
@@ -121,4 +128,9 @@ export const ListTesters = () => {
         </div>
 
     </>
+}
+
+
+ListTesters.propTypes = {
+    testPlan: PropTypes.object,
 }

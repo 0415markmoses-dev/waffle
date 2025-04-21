@@ -24,6 +24,7 @@ import {Tab} from "../../../../Components/UI/Tabs/Tab.jsx";
 import {Trans, useTranslation} from "react-i18next";
 import {ErrorState} from "../../../../Components/UI/ErrorState.jsx";
 import {ListTestPlans} from "../../../../Components/TestPlans/ListTestPlans.jsx";
+import {AgGridDisplay} from "../../../../Configs/AgGrid/AgGridDisplay.js";
 
 export const Page = () => {
     const {t} = useTranslation();
@@ -107,7 +108,7 @@ export const Page = () => {
             <PageElementWrapper>
                 <TabWrapper inUrlParams={false} onChange={(tab) => setCurrentTab(tab)} name="tabs">
                     <Tab icon="lni-book-1" active={true} name="overview" title={t('Overview')}>
-                        <Row>
+                        <Row className="flex-column-reverse flex-xl-row">
                             <Col sm={12} xl={4}>
                                 <Row>
                                     <Col>
@@ -272,7 +273,7 @@ export const Page = () => {
                     <Tab icon="lni-bug-1" name="testing_plans" title={t('Testing Plans')}>
                         <Row>
                             <Col>
-                                <div style={{height: '550px'}} className="w-100">
+                                <div style={AgGridDisplay.defaultWrapperStyle} className="w-100">
                                     {releaseData?.id !== undefined && currentTab?.name === 'testing_plans' && (
                                         <ListTestPlans release={releaseData}/>
                                     )}

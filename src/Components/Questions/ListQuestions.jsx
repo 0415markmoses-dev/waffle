@@ -13,10 +13,10 @@ import {ColumnSizing} from "../../Configs/AgGrid/ColumnSizing.js";
 import {RowDataUpdate} from "../../Configs/AgGrid/RowDataUpdate.js";
 import PropTypes from "prop-types";
 import {NavLink} from "react-router-dom";
-import TestPlansService from "../../Services/PrivateApi/TestPlansService.js";
 import classNames from "classnames";
 import {useTranslation} from "react-i18next";
 import {Button} from "../UI/Buttons/Button.jsx";
+import QuestionsService from "../../Services/PrivateApi/QuestionsService.js";
 
 ModuleRegistry.registerModules([
     AllCommunityModule,
@@ -57,8 +57,8 @@ ActionsCellRenderer.propTypes = StateCellRenderer.propTypes = LinkCellRenderer.p
     data: PropTypes.object.isRequired,
 }
 
-export const ListTestPlans = ({
-                                  release = undefined,
+export const ListQuestions = ({
+                                  testingPlan = undefined,
                               }) => {
     const {t} = useTranslation();
     const {currentProject} = useProjectStore();
@@ -131,12 +131,12 @@ export const ListTestPlans = ({
             itemsPerPage: PaginationSettings.ApiItemsPerPage,
         };
 
-        if (release?.id !== undefined) {
-            payload.release = '/api/releases/' + release.id;
+        if (testingPlan?.id !== undefined) {
+            //payload.questions = '/api/testing_plans/' + testingPlan.id;
         }
 
 
-        TestPlansService.getTestPlans(payload)
+        QuestionsService.getQuestions(payload)
             .then(response => {
                 if (response.data['member'] !== undefined) {
                     const totalData = [...previousData, ...response.data['member']];
@@ -155,7 +155,7 @@ export const ListTestPlans = ({
                 console.error(err);
                 callback();
             })
-    }, [release?.id]);
+    }, [testingPlan?.id]);
 
 
     useEffect(() => {
