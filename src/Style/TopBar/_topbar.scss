@@ -1,0 +1,193 @@
+.topbar {
+  position: fixed;
+  top: 0;
+  left: $navbar-width;
+  right: 0;
+  height: $topbar-height;
+  z-index: 100; // sidebar is 200 — it overlaps and casts its shadow over us
+  background: $white;
+  border-bottom: 1px solid $card-border-color;
+  display: flex;
+  align-items: center;
+  padding: 0 1.75rem;
+  gap: 1rem;
+}
+
+// ── Left: project selector ────────────────────────────────────────────────────
+
+.topbar-left {
+  flex-shrink: 0;
+}
+
+.topbar-project-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .625rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .8rem;
+  font-weight: 500;
+  color: $tw-gray-500;
+  border: 1px solid transparent;
+  transition: background 150ms ease, border-color 150ms ease;
+  max-width: 200px;
+
+  &:hover {
+    background: $body-bg;
+    border-color: $card-border-color;
+    color: $tw-gray-300;
+  }
+
+  i {
+    font-size: .85rem;
+    flex-shrink: 0;
+  }
+}
+
+.topbar-project-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-project-chevron {
+  font-size: .65rem !important;
+  opacity: .5;
+  flex-shrink: 0;
+}
+
+// ── Center: search ────────────────────────────────────────────────────────────
+
+.topbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.topbar-search {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  max-width: 460px;
+  background: $body-bg;
+  border: 1px solid $card-border-color;
+  border-radius: $input-border-radius;
+  padding: .4rem .75rem;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &:hover {
+    border-color: darken($card-border-color, 8%);
+  }
+}
+
+.topbar-search-icon {
+  font-size: .9rem;
+  color: $tw-muted-text;
+  opacity: .6;
+  flex-shrink: 0;
+}
+
+.topbar-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: .8rem;
+  color: $tw-muted-text;
+  cursor: pointer;
+  min-width: 0;
+
+  &::placeholder {
+    color: $tw-muted-text;
+    opacity: .7;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.topbar-search-kbd {
+  font-size: .72rem;
+  color: $tw-muted-text;
+  background: rgba(0, 0, 0, .05);
+  border: 1px solid $card-border-color;
+  border-radius: 4px;
+  padding: .1rem .4rem;
+  flex-shrink: 0;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+// ── Right: icon buttons ───────────────────────────────────────────────────────
+
+.topbar-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+}
+
+.topbar-icon-btn {
+  all: unset;
+  box-sizing: border-box;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  color: $tw-gray-500;
+  transition: background 150ms ease, color 150ms ease;
+
+  i {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background: $body-bg;
+    color: $tw-gray-300;
+  }
+
+  &[data-state="open"] {
+    background: $body-bg;
+    color: $primary;
+  }
+}
+
+// ── Notifications dropdown ────────────────────────────────────────────────────
+
+.topbar-notifications-dropdown {
+  width: 300px;
+}
+
+.topbar-notif-header {
+  padding: .5rem .75rem .35rem;
+  font-size: .8rem;
+  color: $tw-gray-400;
+  border-bottom: 1px solid $card-border-color;
+  margin-bottom: .25rem;
+}
+
+.topbar-notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 1.5rem .75rem;
+  color: $tw-gray-700;
+  font-size: .8rem;
+  opacity: .6;
+
+  i {
+    font-size: 1.4rem;
+  }
+}

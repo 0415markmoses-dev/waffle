@@ -9,7 +9,7 @@ import {FormGroup} from "../UI/Form/FormGroup.jsx";
 import {FormGroupLabel} from "../UI/Form/FormGroupLabel.jsx";
 import {TextInput} from "../UI/Form/Inputs/TextInput.jsx";
 import {useState} from "react";
-import TestersService from "../../Services/PrivateApi/TestersService.js";
+import {useCreateTester} from "../../Hooks/queries/useTestersQuery.js";
 
 Modal.setAppElement('#root');
 
@@ -26,7 +26,6 @@ const customStyles = {
     },
 };
 
-
 export const ModalCreateNewTester = ({
                                          isVisible = false,
                                          onCancel = () => {
@@ -38,25 +37,17 @@ export const ModalCreateNewTester = ({
                                      }) => {
     const {t} = useTranslation();
     const [testerEmail, setTesterEmail] = useState('');
-    const [loading, setLoading] = useState(false);
+    const createTester = useCreateTester();
 
     const handleCreateTester = () => {
-        setLoading(true);
         onProgress();
-        TestersService.createTester({
-            email: testerEmail,
-        })
-            .then(response => {
-                onConfirm(response.data);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
-        ;
+        createTester.mutate(
+            {email: testerEmail},
+            {onSuccess: (data) => onConfirm(data)}
+        );
+    };
 
-    }
-
-    return <>
+    return (
         <Modal style={customStyles} isOpen={isVisible}>
             <ModalHeader
                 title={t('Create tester')}
@@ -64,35 +55,37 @@ export const ModalCreateNewTester = ({
             />
             <ModalBody>
                 <FormGroup>
-                    <FormGroupLabel>
-                        {t('Tester\'s email')}
-                    </FormGroupLabel>
-                    <TextInput onChange={value => setTesterEmail(value)}
-                               disabled={loading}
-                               type="email" placeholder="email.name@myemail.tld"
-                               value={testerEmail}/>
+                    <FormGroupLabel>{t("Tester's email")}</FormGroupLabel>
+                    <TextInput
+                        onChange={value => setTesterEmail(value)}
+                        disabled={createTester.isPending}
+                        type="email"
+                        placeholder="email.name@myemail.tld"
+                        value={testerEmail}
+                    />
                 </FormGroup>
             </ModalBody>
             <ModalFooter>
-                <Button loading={loading}
-                        onClick={() => onCancel()}
-                        type="light">
+                <Button loading={createTester.isPending} onClick={onCancel} type="light">
                     {t('Cancel')}
                 </Button>
-                <Button disabled={(testerEmail === null || testerEmail === undefined || testerEmail === '')}
-                        loading={loading}
-                        onClick={handleCreateTester}
-                        icon="lni-check" type="primary">
+                <Button
+                    disabled={!testerEmail}
+                    loading={createTester.isPending}
+                    onClick={handleCreateTester}
+                    icon="lni-check"
+                    type="primary"
+                >
                     {t('Create')}
                 </Button>
             </ModalFooter>
         </Modal>
-    </>
-}
+    );
+};
 
 ModalCreateNewTester.propTypes = {
     isVisible: PropTypes.bool,
     onProgress: PropTypes.func,
     onCancel: PropTypes.func,
     onConfirm: PropTypes.func,
-}
+};

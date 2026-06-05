@@ -1,7 +1,9 @@
 // custom bootstrap 5 variables override - _custom.scss
 // NAVBAR
-$navbar-width: 270px;
+$navbar-width: 210px;
 $navbar-padding-side: .875rem;
+// TOPBAR
+$topbar-height: 52px;
 // page content
 $border-radius: 14px;
 
@@ -32,7 +34,8 @@ $tw-muted-text: #78829d;
 $tw-white: #fff;
 
 // body is #222
-$body-bg: $tw-white;
+$body-bg: #F3F8F7;
+$body-bg-alt: #EEF7F4;
 $body-color: #0a1307;
 $primary: #69BC9E; // old #52b141
 $primary-darkest: #081106;

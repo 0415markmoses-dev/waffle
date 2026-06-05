@@ -21,12 +21,18 @@
     margin-left: .05rem;
 
     &:before {
-      content: "/";
+      content: "›";
       margin-right: .35rem;
+      font-weight: 300;
+      opacity: .5;
     }
   }
 
   &.active-item {
     color: $tw-gray-300 !important;
   }
+}
+
+a.breadcrumb-item:not(.active-item) {
+  color: $primary !important;
 }

@@ -4,38 +4,35 @@ nav.navbar-app {
   position: fixed;
   width: $navbar-width;
   font-size: .78rem;
-  background-color: $navbar-color;
-  color: $tw-gray-700;
-
-  .navbar-project {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 $navbar-padding-side;
-  }
+  background-color: $white;
+  color: $tw-gray-800;
 
   .navbar-brand {
     width: 100%;
-    height: 74px;
     display: flex;
     align-items: center;
-    padding: 0 $navbar-padding-side;
+    padding: $navbar-padding-side;
 
     .navbar-brand-link {
       width: 100%;
       display: flex;
       justify-content: flex-start;
       align-items: center;
+      flex-direction: column;
       color: $white;
       text-decoration: none !important;
 
-      img {
-        max-width: 56px;
-        width: 100%;
-        display: block;
-        flex-grow: 0;
+      .project-picture-wrapper {
+        width: 90px;
+        border: 2px solid $primary;
+
+        img {
+          width: 100%;
+          display: block;
+          flex-grow: 0;
+        }
       }
+
 
       .label-brand {
         flex-grow: 1;
@@ -64,16 +61,12 @@ nav.navbar-app {
     right: 0;
     bottom: $navbar-padding-side;
     position: absolute;
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-
   }
 }
 
 .profile-avatar {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   position: relative;
   overflow: hidden;
@@ -81,7 +74,7 @@ nav.navbar-app {
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+  flex-shrink: 0;
   border: none;
   outline: 0 !important;
 
@@ -91,9 +84,46 @@ nav.navbar-app {
     height: 100%;
     object-fit: cover;
   }
+}
 
-  &[data-state="open"] {
-    background: red;
+.profile-trigger {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, .05);
+  transition: background 150ms ease;
+
+  &:hover, &[data-state="open"] {
+    background: rgba(0, 0, 0, .1);
+  }
+
+  .profile-trigger-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: .8rem;
+    font-weight: 500;
+    color: $tw-gray-800;
+  }
+
+  .profile-trigger-chevron {
+    font-size: .65rem;
+    opacity: .5;
+    flex-shrink: 0;
+    transition: transform 200ms ease;
+  }
+
+  &[data-state="open"] .profile-trigger-chevron {
+    transform: rotate(180deg);
   }
 }
 

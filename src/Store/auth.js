@@ -1,7 +1,7 @@
 import {create} from 'zustand'
 import {persist} from 'zustand/middleware'
 //import {produce} from 'immer';
-import createSelector from "../utils/store.createSelector.js";
+import createSelector from "../Utils/store.createSelector.js";
 import AuthService from "../Services/Authentication/AuthService.js";
 
 

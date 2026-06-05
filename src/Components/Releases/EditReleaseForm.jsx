@@ -6,8 +6,8 @@ import {FormGroupWrapper} from "../UI/Form/FormGroupWrapper.jsx";
 import {useState} from "react";
 import PropTypes from "prop-types";
 import {MkEditorInstance} from "../UI/Form/Editor/MkEditorInstance.jsx";
-import ReleasesService from "../../Services/PrivateApi/ReleasesService.js";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
+import {useCreateRelease, useUpdateRelease} from "../../Hooks/queries/useReleasesQuery.js";
 
 export const EditReleaseForm = ({
                                     release,
@@ -17,89 +17,54 @@ export const EditReleaseForm = ({
                                     },
                                 }) => {
     const {currentProject} = useProjectStore();
-    const [loading, setLoading] = useState(false);
-    const [releaseName, setReleaseName] = useState(release.name);
-    const [releaseDescription, setReleaseDescription] = useState(release.description);
+    const [releaseName, setReleaseName] = useState(release.name ?? '');
+    const [releaseDescription, setReleaseDescription] = useState(release.description ?? '');
 
-    const handleCancel = () => {
-        onCancel();
-    }
+    const updateRelease = useUpdateRelease();
+    const createRelease = useCreateRelease();
+
+    const isLoading = updateRelease.isPending || createRelease.isPending;
 
     const handleUpdate = () => {
-        setLoading(true);
         if (release?.id !== undefined) {
-            ReleasesService.updateRelease(release.id, {
-                name: releaseName,
-                description: releaseDescription
-            })
-                .then(response => {
-                    onUpdate(response.data);
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-                .finally(() => {
-                    setLoading(false);
-                })
+            updateRelease.mutate(
+                {id: release.id, data: {name: releaseName, description: releaseDescription}},
+                {onSuccess: (data) => onUpdate(data)}
+            );
         } else {
-            // create release
-            ReleasesService.createRelease({
-                name: releaseName,
-                description: releaseDescription,
-                project: currentProject['@id'],
-            })
-                .then(response => {
-                    onUpdate(response.data);
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-                .finally(() => {
-                    setLoading(false);
-                })
+            createRelease.mutate(
+                {name: releaseName, description: releaseDescription, project: currentProject['@id']},
+                {onSuccess: (data) => onUpdate(data)}
+            );
         }
+    };
 
-
-    }
-
-
-    return <FormGroupWrapper>
-        <FormGroup>
-            <FormGroupLabel>
-                Release name
-            </FormGroupLabel>
-            <TextInput onChange={value => setReleaseName(value)}
-                       value={releaseName}/>
-        </FormGroup>
-        <FormGroup>
-            <FormGroupLabel>
-                Release Description
-            </FormGroupLabel>
-            <MkEditorInstance
-                onChange={value => setReleaseDescription(value)}
-                value={releaseDescription}/>
-        </FormGroup>
-        <FormGroup className="d-flex justify-content-center gap-md">
-            {!loading && (
-                <Button loading={loading}
-                        onClick={handleCancel}
-                        type="light">
-                    Cancel
+    return (
+        <FormGroupWrapper>
+            <FormGroup>
+                <FormGroupLabel>Release name</FormGroupLabel>
+                <TextInput onChange={value => setReleaseName(value)} value={releaseName}/>
+            </FormGroup>
+            <FormGroup>
+                <FormGroupLabel>Release Description</FormGroupLabel>
+                <MkEditorInstance onChange={value => setReleaseDescription(value)} value={releaseDescription}/>
+            </FormGroup>
+            <FormGroup className="d-flex justify-content-center gap-md">
+                {!isLoading && (
+                    <Button loading={isLoading} onClick={onCancel} type="light">
+                        Cancel
+                    </Button>
+                )}
+                <Button icon="lni-download-1" onClick={handleUpdate} loading={isLoading} type="primary">
+                    Save changes
                 </Button>
-            )}
-            <Button icon="lni-download-1"
-                    onClick={handleUpdate}
-                    loading={loading}
-                    type="primary">
-                Save changes
-            </Button>
-        </FormGroup>
-    </FormGroupWrapper>
-
-}
+            </FormGroup>
+        </FormGroupWrapper>
+    );
+};
 
 EditReleaseForm.propTypes = {
     release: PropTypes.object.isRequired,
     onUpdate: PropTypes.func,
-    onCancel: PropTypes.func
-}
+    onCancel: PropTypes.func,
+};

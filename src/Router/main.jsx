@@ -1,8 +1,7 @@
-import {createBrowserRouter} from "react-router-dom";
+import {createBrowserRouter, matchRoutes, useLocation} from "react-router-dom";
 import {Login} from "../Pages/Login.jsx";
 import {Layout as AppLayout} from "../Pages/app/layout.jsx";
 import {Home} from "../Pages/app/Home.jsx";
-import {matchRoutes, useLocation} from "react-router-dom"
 import {Page as ProjectPage} from "../Pages/app/project/Page.jsx";
 import {Page as ReleasesPage} from "../Pages/app/project/releases/Page.jsx";
 import {Listing as ReleasesListing} from "../Pages/app/project/releases/Listing.jsx";
@@ -13,26 +12,10 @@ import {Page as AboutPage} from "../Pages/app/about/Page.jsx";
 import {Create as QuestionsCreate} from "../Pages/app/project/questions/Create.jsx";
 
 
-const formatRoutes = (routes, parents_ = []) => {
-    routes.map(route => {
-        let parents = [...parents_];
-        if (route.children) {
-            if (route.name !== undefined) {
-                parents.push({
-                    name: route.name,
-                    path: route.path,
-                });
-            }
-            route.children = formatRoutes(route.children, parents);
-        }
-        route.parents = parents_;
-        return route;
-    })
-    return routes;
-}
-
-
-let routes = [
+// Routes that have a `label` appear in the breadcrumb trail.
+// Routes with `breadcrumb: false` are skipped entirely (but their children still appear).
+// Layout-only routes (AppLayout) get no label and are therefore invisible to breadcrumbs.
+export const routes = [
     {
         path: "/login",
         name: 'login',
@@ -43,53 +26,63 @@ let routes = [
         name: 'login',
         element: <Login/>,
     },
+    // we will have a separate set of page for testers under /testing...
+    // everything under /app... is protected and only accessible for dev team
     {
         path: "/app",
         element: <AppLayout/>,
-        name: 'app_dashboard',
+        // no label — layout wrapper, not a real page
         children: [
             {
                 path: "",
                 name: 'app_dashboard',
+                label: 'Dashboard',
                 element: <Home/>,
             },
             {
                 path: "about",
                 name: 'app_about',
+                label: 'About',
                 element: <AboutPage/>,
             },
             {
                 path: "project",
                 name: 'project',
+                label: 'Project',
                 children: [
                     {
                         path: "",
                         name: 'project_details',
+                        label: 'Overview',
                         element: <ProjectPage/>,
                     },
                     {
                         path: "testers",
                         name: 'project_testers',
+                        label: 'Testers',
                         element: <TestersPage/>,
                     },
                     {
                         path: "releases",
                         name: 'releases',
-                        breadcrumb: false,
+                        label: 'Releases',  // appears as parent crumb for /releases/:rid
                         children: [
                             {
                                 path: "",
                                 name: 'project_releases',
+                                // no label — this IS the Releases page, no need to double-up
                                 element: <ReleasesListing/>,
                             },
                             {
                                 path: "create",
                                 name: 'new_project_release',
+                                label: 'New Release',
                                 element: <ReleasesCreate/>,
                             },
                             {
                                 path: ":rid",
                                 name: 'project_release_details',
+                                label: 'Release',  // static fallback; overridden by breadcrumbLabel on the page
                                 element: <ReleasesPage/>,
                             },
                         ],
@@ -97,20 +90,24 @@ let routes = [
                     {
                         path: "testing_plans",
                         name: 'testing_plans',
+                        label: 'Test Plans',
                         children: [
                             {
                                 path: "",
                                 name: 'project_testing_plans',
+                                // no label — this IS the Test Plans page
                                 element: <TestingPlansPage/>,
                             },
                             {
                                 path: "create",
                                 name: 'new_project_testing_plan',
+                                label: 'New Plan',
                                 element: <TestingPlansPage/>,
                             },
                             {
                                 path: ":tid",
                                 name: 'project_testing_plan_details',
+                                label: 'Plan',  // static fallback; overridden by breadcrumbLabel on the page
                                 element: <TestingPlansPage/>,
                             },
                         ],
@@ -118,39 +115,51 @@ let routes = [
                     {
                         path: "questions",
                         name: 'questions',
-                        breadcrumb: false,
+                        label: 'Questions',
                         children: [
                             {
                                 path: "create",
                                 name: 'new_project_questions',
+                                label: 'New Question',
                                 element: <QuestionsCreate/>,
                             },
                         ],
                     },
-                ]
-            }
-        ]
+                ],
+            },
+        ],
     },
 ];
 
-routes = formatRoutes(routes);
-
 export const router = createBrowserRouter(routes);
 
+/**
+ * Returns the current route's label + an ordered list of parent breadcrumb entries.
+ * Uses matchRoutes so absolute paths come for free — no manual path building needed.
+ */
 export const useCurrentPath = () => {
-    const location = useLocation()
-    let pathname = location.pathname;
-    const routes_ = matchRoutes(routes, pathname);
-    // todo debug auto breadcrumb
-    //console.log('routes_', routes_);
-    if (!routes_) return null;
-    // get the latest route
-    let match = routes_[routes_.length - 1]?.route;
-    if (!match) return null;
+    const location = useLocation();
+    const matches = matchRoutes(routes, location.pathname);
+    if (!matches) return null;
 
-    //console.log('match.parents', location, match.parents);
+    // Keep only segments that have a label AND are not explicitly excluded
+    const visible = matches.filter(
+        m => m.route.label !== undefined && m.route.breadcrumb !== false
+    );
 
-    // remove in match.parent the element that has the same name as match.name
-    match.parents = match.parents.filter(parent => parent.name !== match.name || parent.breadcrumb === false);
-    return match;
-}
+    if (visible.length === 0) return null;
+
+    const current = visible[visible.length - 1];
+    const parents = visible.slice(0, -1).map(m => ({
+        name: m.route.name,
+        label: m.route.label,
+        path: m.pathname,  // absolute path — correct for NavLink
+    }));
+
+    return {
+        name: current.route.name,
+        label: current.route.label,
+        path: current.pathname,
+        parents,
+    };
+};

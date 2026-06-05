@@ -64,7 +64,7 @@ export const MenuBuilder = ({
 
 
     return <>
-        <div className="menu-builder-wrapper gap-sm">
+        <div className="menu-builder-wrapper gap-md">
             {data.map((item, index) => {
                 return <MenuBuilderGroup key={'menubuildergroup__' + item.url} data={item} index={index}/>
             })}

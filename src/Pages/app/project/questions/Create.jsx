@@ -12,6 +12,7 @@ import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 import {useNavigate} from "react-router";
 import {EditQuestionForm} from "../../../../Components/Questions/EditQuestionForm.jsx";
 import {useTranslation} from "react-i18next";
+import {Alert} from "../../../../Components/UI/Alert/Alert.jsx";
 
 export const Create = () => {
     const {t} = useTranslation();
@@ -48,6 +49,11 @@ export const Create = () => {
                                 <EditQuestionForm question={newQuestion}
                                                   onCancel={handleCancel}
                                                   onUpdate={handleCreated}/>
+                                <div className="w-100 mt-2">
+                                    <Alert type="info">
+                                        {t('You will be able to add files once the question is created.')}
+                                    </Alert>
+                                </div>
                             </CardBody>
                         </Card>
                     </Col>

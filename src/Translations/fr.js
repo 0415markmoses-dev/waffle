@@ -75,6 +75,7 @@ const fr = {
         'Question Content': 'Contenu du test',
         'Question name is required': 'Le titre du test est requis',
         'Question\'s parent is required': 'Le testing plan parent est requis',
+        'You will be able to add files once the question is created.': 'Vous pourrez ajouter des fichiers une fois le test créé.',
         // listing
         'Actions': 'Actions',
     }

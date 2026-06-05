@@ -21,7 +21,7 @@
     border: none;
     background: transparent;
     transition: 220ms all ease-in-out;
-    padding: .5rem .625rem;
+    padding: .75rem .925rem;
     border-radius: .375rem;
     text-decoration: none !important;
 
@@ -30,29 +30,29 @@
       align-items: flex-start;
       font-size: 1.325rem;
       line-height: 1.75rem;
-      color: $tw-gray-800;
+      color: $tw-gray-600;
       transition: 220ms all ease-in-out;
     }
 
     .navbar-item-text {
       font-size: .875rem;
       line-height: 1.25rem;
-      font-weight: 300;
-      color: $tw-gray-800;
+      font-weight: 500;
+      color: $tw-gray-600;
       transition: 220ms all ease-in-out;
     }
 
     &:hover {
-      background: $tw-gray-100;
+      background: $body-bg-alt;
     }
 
     &:hover, &.active {
       .navbar-item-icon-wrapper {
-        color: $tw-gray-900;
+        color: $primary;
       }
 
       .navbar-item-text {
-        color: $tw-gray-900;
+        color: $primary;
       }
     }
 

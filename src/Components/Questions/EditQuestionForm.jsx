@@ -3,15 +3,14 @@ import {FormGroupLabel} from "../UI/Form/FormGroupLabel.jsx";
 import {TextInput} from "../UI/Form/Inputs/TextInput.jsx";
 import {Button} from "../UI/Buttons/Button.jsx";
 import {FormGroupWrapper} from "../UI/Form/FormGroupWrapper.jsx";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import PropTypes from "prop-types";
 import {MkEditorInstance} from "../UI/Form/Editor/MkEditorInstance.jsx";
-import QuestionsService from "../../Services/PrivateApi/QuestionsService.js";
-import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 import {useTranslation} from "react-i18next";
 import {TestPlanSelector} from "../TestPlans/TestPlanSelector.jsx";
 import {Alert} from "../UI/Alert/Alert.jsx";
-import TestPlansService from "../../Services/PrivateApi/TestPlansService.js";
+import {useCreateQuestion, useUpdateQuestion} from "../../Hooks/queries/useQuestionsQuery.js";
+import {useTestPlan} from "../../Hooks/queries/useTestPlansQuery.js";
 
 export const EditQuestionForm = ({
                                      question,
@@ -20,129 +19,88 @@ export const EditQuestionForm = ({
                                      onCancel = () => {
                                      },
                                  }) => {
-    const {currentProject} = useProjectStore();
     const {t} = useTranslation();
-    const [loading, setLoading] = useState(false);
-    const [questionName, setQuestionName] = useState(question.name);
-    const [questionContent, setQuestionContent] = useState(question.description);
-    const [parentTestPlan, setParentTestPlan] = useState(question.test_plan);
+    const [questionName, setQuestionName] = useState(question.name ?? '');
+    const [questionContent, setQuestionContent] = useState(question.description ?? '');
 
-    useEffect(() => {
-        if (question?.test_plan === undefined) {
-            // check if there is a "t" in query string
-            const urlParams = new URLSearchParams(window.location.search);
-            const testPlanId = urlParams.get('t');
-            if (testPlanId !== null && testPlanId !== undefined) {
-                TestPlansService.getOne(testPlanId)
-                    .then(response => {
-                        setParentTestPlan(response?.data);
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    })
-            }
-        }
-    }, []);
+    // Pre-fill from ?t= query param if no test_plan on question
+    const urlTestPlanId = !question.test_plan
+        ? new URLSearchParams(window.location.search).get('t')
+        : null;
 
-    const handleCancel = () => {
-        onCancel();
-    }
+    const {data: prefillTestPlan} = useTestPlan(urlTestPlanId);
+    const [parentTestPlan, setParentTestPlan] = useState(question.test_plan ?? null);
+
+    // Use prefilled plan if no parentTestPlan set yet
+    const effectiveTestPlan = parentTestPlan ?? prefillTestPlan ?? null;
+
+    const updateQuestion = useUpdateQuestion();
+    const createQuestion = useCreateQuestion();
+    const isLoading = updateQuestion.isPending || createQuestion.isPending;
 
     const handleUpdate = () => {
-        setLoading(true);
+        const payload = {
+            name: questionName,
+            description: questionContent,
+            ...(effectiveTestPlan?.['@id'] ? {plan: effectiveTestPlan['@id']} : {}),
+        };
+
         if (question?.id !== undefined) {
-            QuestionsService.updateQuestion(question.id, {
-                name: questionName,
-                description: questionContent
-            })
-                .then(response => {
-                    onUpdate(response.data);
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-                .finally(() => {
-                    setLoading(false);
-                })
+            updateQuestion.mutate(
+                {id: question.id, data: payload},
+                {onSuccess: (data) => onUpdate(data)}
+            );
         } else {
-            // create question
-            QuestionsService.createQuestion({
-                name: questionName,
-                description: questionContent,
-            })
-                .then(response => {
-                    onUpdate(response.data);
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-                .finally(() => {
-                    setLoading(false);
-                })
+            createQuestion.mutate(payload, {onSuccess: (data) => onUpdate(data)});
         }
+    };
 
-
-    }
-
-
-    return <FormGroupWrapper>
-        <FormGroup>
-            <FormGroupLabel>
-                {t('Question name')}
-            </FormGroupLabel>
-            <TextInput onChange={value => setQuestionName(value)}
-                       value={questionName}/>
-            {questionName === '' && (
-                <div className="mt-2">
-                    <Alert type="info">
-                        {t('Question name is required')}
-                    </Alert>
-                </div>
-            )}
-        </FormGroup>
-        <FormGroup>
-            <FormGroupLabel>
-                {t('Testing Plan')}
-            </FormGroupLabel>
-            <TestPlanSelector value={parentTestPlan} onChange={testPlan => setParentTestPlan(testPlan)}/>
-            {(parentTestPlan === undefined || parentTestPlan === null) && (
-                <div className="mt-2">
-                    <Alert type="info">
-                        {t('Question\'s parent is required')}
-                    </Alert>
-                </div>
-            )}
-        </FormGroup>
-        <FormGroup>
-            <FormGroupLabel>
-                {t('Question Content')}
-            </FormGroupLabel>
-            <MkEditorInstance
-                onChange={value => setQuestionContent(value)}
-                value={questionContent}/>
-        </FormGroup>
-        <FormGroup className="d-flex justify-content-center gap-md">
-            {!loading && (
-                <Button loading={loading}
-                        onClick={handleCancel}
-                        type="light">
-                    {t('Cancel')}
-                </Button>
-            )}
-            <Button icon="lni-download-1"
+    return (
+        <FormGroupWrapper>
+            <FormGroup>
+                <FormGroupLabel>{t('Question name')}</FormGroupLabel>
+                <TextInput onChange={value => setQuestionName(value)} value={questionName}/>
+                {questionName === '' && (
+                    <div className="mt-2">
+                        <Alert type="info">{t('Question name is required')}</Alert>
+                    </div>
+                )}
+            </FormGroup>
+            <FormGroup>
+                <FormGroupLabel>{t('Testing Plan')}</FormGroupLabel>
+                <TestPlanSelector value={effectiveTestPlan} onChange={testPlan => setParentTestPlan(testPlan)}/>
+                {!effectiveTestPlan && (
+                    <div className="mt-2">
+                        <Alert type="info">{t("Question's parent is required")}</Alert>
+                    </div>
+                )}
+            </FormGroup>
+            <FormGroup>
+                <FormGroupLabel>{t('Question Content')}</FormGroupLabel>
+                <MkEditorInstance onChange={value => setQuestionContent(value)} value={questionContent}/>
+            </FormGroup>
+            <FormGroup className="d-flex justify-content-center gap-md">
+                {!isLoading && (
+                    <Button loading={isLoading} onClick={onCancel} type="light">
+                        {t('Cancel')}
+                    </Button>
+                )}
+                <Button
+                    icon="lni-download-1"
                     onClick={handleUpdate}
-                    disabled={parentTestPlan === undefined || questionName === ''}
-                    loading={loading}
-                    type="primary">
-                {t('Save changes')}
-            </Button>
-        </FormGroup>
-    </FormGroupWrapper>
-
-}
+                    disabled={!effectiveTestPlan || questionName === ''}
+                    loading={isLoading}
+                    type="primary"
+                >
+                    {t('Save changes')}
+                </Button>
+            </FormGroup>
+        </FormGroupWrapper>
+    );
+};
 
 EditQuestionForm.propTypes = {
     question: PropTypes.object.isRequired,
     onUpdate: PropTypes.func,
-    onCancel: PropTypes.func
-}
+    onCancel: PropTypes.func,
+};

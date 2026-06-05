@@ -9,6 +9,17 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import {initReactI18next} from "react-i18next";
 import en from "./Translations/en.js";
 import fr from "./Translations/fr.js";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 0,
+            retry: 1,
+        },
+    },
+});
 
 getCurrentUserData();
 
@@ -31,8 +42,11 @@ i18n
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <div className="main-content">
-            <RouterProvider router={router}/>
-        </div>
+        <QueryClientProvider client={queryClient}>
+            <div className="main-content">
+                <RouterProvider router={router}/>
+            </div>
+            <ReactQueryDevtools initialIsOpen={false}/>
+        </QueryClientProvider>
     </StrictMode>,
 )

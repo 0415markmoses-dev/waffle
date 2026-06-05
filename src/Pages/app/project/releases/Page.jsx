@@ -9,8 +9,7 @@ import {Col} from "../../../../Components/UI/Grid/Col.jsx";
 import {Card} from "../../../../Components/UI/Card/Card.jsx";
 import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
 import {CardFooter} from "../../../../Components/UI/Card/CardFooter.jsx";
-import {useEffect, useState} from "react";
-import ReleasesService from "../../../../Services/PrivateApi/ReleasesService.js";
+import {useState} from "react";
 import {Error404} from "../../../../Components/UI/Error404.jsx";
 import {SingleMetricDisplay} from "../../../../Components/UI/Metrics/SingleMetricDisplay.jsx";
 import {MetricVerticalSeparator} from "../../../../Components/UI/Metrics/MetricVerticalSeparator.jsx";
@@ -25,85 +24,34 @@ import {Trans, useTranslation} from "react-i18next";
 import {ErrorState} from "../../../../Components/UI/ErrorState.jsx";
 import {ListTestPlans} from "../../../../Components/TestPlans/ListTestPlans.jsx";
 import {AgGridDisplay} from "../../../../Configs/AgGrid/AgGridDisplay.js";
+import {useRelease, useReleaseStats} from "../../../../Hooks/queries/useReleasesQuery.js";
 
 export const Page = () => {
     const {t} = useTranslation();
-    let navigate = useNavigate();
-    let params = useParams()
+    const navigate = useNavigate();
+    const params = useParams();
     const {currentProject} = useProjectStore();
-    const [pageStatus, setPageStatus] = useState(200);
-    const [releaseData, setReleaseData] = useState([]);
-    const [releaseStats, setReleaseStats] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [currentTab, setCurrentTab] = useState(undefined);
 
-    useEffect(() => {
-        console.log('currentTab', currentTab)
+    const {data: releaseData, isError, isLoading} = useRelease(params.rid);
+    const {data: releaseStats = {}} = useReleaseStats(params.rid);
 
-    }, [currentTab]);
-
-
-    const loadReleaseStats = () => {
-        setReleaseStats([]);
-        ReleasesService.getReleaseStats(params.rid)
-            .then(response => {
-                if (response?.data?.id !== undefined) {
-                    setReleaseStats(response.data);
-                    return;
-                }
-                throw new Error('No data found');
-            })
-            .catch(err => {
-                setReleaseStats([]);
-                console.error(err);
-            })
-        ;
-    }
-
-    const loadReleaseData = () => {
-        setLoading(true);
-        ReleasesService.getRelease(params.rid)
-            .then(response => {
-                if (response?.data?.id !== undefined) {
-                    if (currentProject.id !== response.data?.project?.id) {
-                        throw new Error('Project mismatch');
-                    }
-                    setReleaseData(response.data);
-                    loadReleaseStats();
-                    return;
-                }
-                throw new Error('No data found');
-            })
-            .catch(err => {
-                setReleaseData([]);
-                setPageStatus(404);
-                console.error(err);
-            })
-            .finally(() => setLoading(false))
-    }
-
-    useEffect(() => {
-        loadReleaseData();
-    }, [params.rid])
-
-
-    if (currentProject?.id === undefined) {
-        // Redirect to dashboard
+    if (!currentProject?.id) {
         navigate('/app/');
         return null;
     }
 
-    if (pageStatus !== 200) {
+    if (isError) {
         return <Error404 goBackUrl="/app/project/releases"
-                         message={'Gator could not find this Release... Maybe try to look elsewhere.'}/>
+                         message="Gator could not find this Release... Maybe try to look elsewhere."/>;
     }
 
-    return <>
+    return (
         <PageContentWrapper>
-            <PageTitle title={currentProject.name + " - Release " + (releaseData?.name ? releaseData?.name : '')}>
-                <Button icon="lni-plus"
-                        type="primary" size="sm">New testing plan</Button>
+            <PageTitle title={currentProject.name + " - Release " + (releaseData?.name ?? '')}
+                       breadcrumbLabel={releaseData?.name}>
+                <Button icon="lni-plus" type="primary" size="sm">New testing plan</Button>
             </PageTitle>
             <PageElementWrapper>
                 <TabWrapper inUrlParams={false} onChange={(tab) => setCurrentTab(tab)} name="tabs">
@@ -114,28 +62,26 @@ export const Page = () => {
                                     <Col>
                                         <Card>
                                             <CardBody>
-                                                {!loading && (
-                                                    <>
-                                                        <div className="w-100 d-flex flex-column gap-lg">
-                                                            <div
-                                                                className="w-100 d-flex flex-row gap-lg align-items-center justify-content-around position-relative">
-                                                                <SingleMetricDisplay
-                                                                    label={releaseStats.totalPlans > 1 ? 'Plans' : 'Plan'}
-                                                                    value={releaseStats.totalPlans}/>
-                                                                <MetricVerticalSeparator/>
-                                                                <SingleMetricDisplay
-                                                                    label={releaseStats.totalQuestions > 1 ? 'Scenarios' : 'Scenario'}
-                                                                    value={releaseStats.totalQuestions}/>
-                                                                <MetricVerticalSeparator/>
-                                                                <SingleMetricDisplay
-                                                                    label={releaseStats.totalResponded > 1 ? 'Responses' : 'Response'}
-                                                                    value={releaseStats.totalResponded}/>
-                                                            </div>
-                                                            <div className="w-100">
-                                                                <ProgressBar value={releaseStats.percentage}/>
-                                                            </div>
+                                                {!isLoading && (
+                                                    <div className="w-100 d-flex flex-column gap-lg">
+                                                        <div
+                                                            className="w-100 d-flex flex-row gap-lg align-items-center justify-content-around position-relative">
+                                                            <SingleMetricDisplay
+                                                                label={releaseStats.totalPlans > 1 ? 'Plans' : 'Plan'}
+                                                                value={releaseStats.totalPlans}/>
+                                                            <MetricVerticalSeparator/>
+                                                            <SingleMetricDisplay
+                                                                label={releaseStats.totalQuestions > 1 ? 'Scenarios' : 'Scenario'}
+                                                                value={releaseStats.totalQuestions}/>
+                                                            <MetricVerticalSeparator/>
+                                                            <SingleMetricDisplay
+                                                                label={releaseStats.totalResponded > 1 ? 'Responses' : 'Response'}
+                                                                value={releaseStats.totalResponded}/>
                                                         </div>
-                                                    </>
+                                                        <div className="w-100">
+                                                            <ProgressBar value={releaseStats.percentage}/>
+                                                        </div>
+                                                    </div>
                                                 )}
                                             </CardBody>
                                         </Card>
@@ -146,56 +92,41 @@ export const Page = () => {
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column">
                                                     <div className="heading">Edit</div>
-                                                    <div className="text-muted small">
-                                                        Edit the release details
-                                                    </div>
+                                                    <div className="text-muted small">Edit the release details</div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <Button onClick={() => {
-                                                        setEditMode(!editMode)
-                                                    }} iconOnly type="light" size="sm">
-                                                        <i className="font-icon lni lni-pencil-1"></i>
-                                                    </Button>
-                                                </div>
+                                                <Button onClick={() => setEditMode(!editMode)} iconOnly type="light"
+                                                        size="sm">
+                                                    <i className="font-icon lni lni-pencil-1"></i>
+                                                </Button>
                                             </CardGroup>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column">
                                                     <div className="heading">Download</div>
-                                                    <div className="text-muted small">
-                                                        Get the testing details in CSV
+                                                    <div className="text-muted small">Get the testing details in CSV
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <Button iconOnly type="light" size="sm">
-                                                        <i className="font-icon lni lni-download-1"></i>
-                                                    </Button>
-                                                </div>
+                                                <Button iconOnly type="light" size="sm">
+                                                    <i className="font-icon lni lni-download-1"></i>
+                                                </Button>
                                             </CardGroup>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column">
                                                     <div className="heading">Archive</div>
-                                                    <div className="text-muted small">
-                                                        Close this release
-                                                    </div>
+                                                    <div className="text-muted small">Close this release</div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <Button iconOnly type="light" size="sm">
-                                                        <i className="font-icon lni lni-box-archive-1"></i>
-                                                    </Button>
-                                                </div>
+                                                <Button iconOnly type="light" size="sm">
+                                                    <i className="font-icon lni lni-box-archive-1"></i>
+                                                </Button>
                                             </CardGroup>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column">
                                                     <div className="heading text-danger">Danger zone</div>
-                                                    <div className="text-muted small">
-                                                        Delete this release and testings
+                                                    <div className="text-muted small">Delete this release and testings
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <Button iconOnly type="danger" size="sm">
-                                                        <i className="font-icon lni lni-trash-3"></i>
-                                                    </Button>
-                                                </div>
+                                                <Button iconOnly type="danger" size="sm">
+                                                    <i className="font-icon lni lni-trash-3"></i>
+                                                </Button>
                                             </CardGroup>
                                         </Card>
                                     </Col>
@@ -207,27 +138,20 @@ export const Page = () => {
                                                     className="w-100 d-flex flex-column justify-content-between gap-md align-items-center">
                                                     <div className="d-block">
                                                         <Trans i18nKey='What is a release description'>
-                                                            <p>
-                                                                In <strong>TestGator</strong>,
-                                                                a <strong>release</strong> is a
-                                                                milestone containing multiple <strong>testing
-                                                                plans</strong>.
-                                                                Testers follow structured <strong>questions</strong>,
-                                                                give feedback,
-                                                                and ensure quality before deployment.
-                                                                Track progress, collect insights, and refine each
-                                                                version
-                                                                efficiently.
+                                                            <p>In <strong>TestGator</strong>,
+                                                                a <strong>release</strong> is a milestone containing
+                                                                multiple <strong>testing plans</strong>. Testers follow
+                                                                structured <strong>questions</strong>, give feedback,
+                                                                and ensure quality before deployment. Track progress,
+                                                                collect insights, and refine each version efficiently.
                                                             </p>
                                                         </Trans>
                                                     </div>
                                                     <div className="d-flex x">
                                                         <img className="w-100 horizontal-flip-img"
-                                                             src="/assets/releases.jpg"
-                                                             alt="notif"/>
+                                                             src="/assets/releases.jpg" alt="notif"/>
                                                     </div>
                                                 </div>
-
                                             </CardBody>
                                             <CardFooter>
                                                 <Button icon="lni-link-2-angular-right" type="link" size="sm">View
@@ -241,18 +165,15 @@ export const Page = () => {
                                 <Row>
                                     <Col>
                                         <Card>
-                                            {editMode && !loading && (
+                                            {editMode && !isLoading && releaseData && (
                                                 <CardBody>
                                                     <EditReleaseForm
                                                         onCancel={() => setEditMode(false)}
-                                                        onUpdate={() => {
-                                                            setEditMode(false);
-                                                            loadReleaseData();
-                                                        }}
-                                                        release={releaseData}/>
+                                                        onUpdate={() => setEditMode(false)}
+                                                        release={releaseData}
+                                                    />
                                                 </CardBody>
                                             )}
-
                                             {!editMode && (
                                                 <>
                                                     <CardHeader title={releaseData?.name}/>
@@ -263,7 +184,6 @@ export const Page = () => {
                                                     </CardBody>
                                                 </>
                                             )}
-
                                         </Card>
                                     </Col>
                                 </Row>
@@ -274,11 +194,10 @@ export const Page = () => {
                         <Row>
                             <Col>
                                 <div style={AgGridDisplay.defaultWrapperStyle} className="w-100">
-                                    {releaseData?.id !== undefined && currentTab?.name === 'testing_plans' && (
+                                    {releaseData?.id && currentTab?.name === 'testing_plans' && (
                                         <ListTestPlans release={releaseData}/>
                                     )}
                                 </div>
-
                             </Col>
                         </Row>
                     </Tab>
@@ -288,5 +207,5 @@ export const Page = () => {
                 </TabWrapper>
             </PageElementWrapper>
         </PageContentWrapper>
-    </>
-}
+    );
+};

@@ -74,6 +74,7 @@ const en = {
         'Question Content': 'Test content',
         'Question name is required': 'Test name is required',
         'Question\'s parent is required': 'Question\'s parent testing plan is required',
+        'You will be able to add files once the question is created.': 'You will be able to add files once the question is created.',
         // listing
         'Actions': 'Actions',
     }
