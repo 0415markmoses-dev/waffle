@@ -55,3 +55,14 @@ export const useUpdateTestPlan = () => {
         onSuccess: () => queryClient.invalidateQueries({queryKey: testPlanKeys.all}),
     });
 };
+
+export const useAddDemoAnswers = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({
+                         testingPlanIri,
+                         number
+                     }) => TestPlansService.addDemoAnswers(testingPlanIri, number).then(r => r.data),
+        onSuccess: () => queryClient.invalidateQueries({queryKey: testPlanKeys.all}),
+    });
+};

@@ -21,6 +21,9 @@ const QuestionsService = {
     createQuestion(data) {
         return Http.post('/api/questions', data);
     },
+    getQuestionStats(id) {
+        return Http.get('/api/questions/' + id + '/stats');
+    },
 }
 
 export default QuestionsService;

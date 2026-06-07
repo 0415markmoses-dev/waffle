@@ -27,7 +27,7 @@ $alt-font: "Source Serif 4", serif;
 
 body {
   overflow: hidden !important;
-  background: $navbar-color;
+  background: $body-bg;
 
 
   font-family: $main-font;
@@ -173,6 +173,10 @@ body {
     font-size: 1.8rem;
     font-weight: 500;
   }
+}
+
+.shadow-none {
+  box-shadow: none !important;
 }
 
 @import "./NavBar/navbar";

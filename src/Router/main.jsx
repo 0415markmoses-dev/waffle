@@ -2,14 +2,16 @@ import {createBrowserRouter, matchRoutes, useLocation} from "react-router-dom";
 import {Login} from "../Pages/Login.jsx";
 import {Layout as AppLayout} from "../Pages/app/layout.jsx";
 import {Home} from "../Pages/app/Home.jsx";
-import {Page as ProjectPage} from "../Pages/app/project/Page.jsx";
 import {Page as ReleasesPage} from "../Pages/app/project/releases/Page.jsx";
 import {Listing as ReleasesListing} from "../Pages/app/project/releases/Listing.jsx";
 import {Create as ReleasesCreate} from "../Pages/app/project/releases/Create.jsx";
 import {Page as TestingPlansPage} from "../Pages/app/project/testing_plans/Page.jsx";
+import {Listing as TestingPlansListing} from "../Pages/app/project/testing_plans/Listing.jsx";
 import {Page as TestersPage} from "../Pages/app/project/testers/Page.jsx";
 import {Page as AboutPage} from "../Pages/app/about/Page.jsx";
 import {Create as QuestionsCreate} from "../Pages/app/project/questions/Create.jsx";
+import {Page as QuestionPage} from "../Pages/app/project/questions/Page.jsx";
+import {Page as AnswerPage} from "../Pages/app/project/answers/Page.jsx";
 
 
 // Routes that have a `label` appear in the breadcrumb trail.
@@ -48,14 +50,8 @@ export const routes = [
             {
                 path: "project",
                 name: 'project',
-                label: 'Project',
+                breadcrumb: false,
                 children: [
-                    {
-                        path: "",
-                        name: 'project_details',
-                        label: 'Overview',
-                        element: <ProjectPage/>,
-                    },
                     {
                         path: "testers",
                         name: 'project_testers',
@@ -95,8 +91,8 @@ export const routes = [
                             {
                                 path: "",
                                 name: 'project_testing_plans',
-                                // no label — this IS the Test Plans page
-                                element: <TestingPlansPage/>,
+                                // no label — this IS the Test Plans listing
+                                element: <TestingPlansListing/>,
                             },
                             {
                                 path: "create",
@@ -122,6 +118,25 @@ export const routes = [
                                 name: 'new_project_questions',
                                 label: 'New Question',
                                 element: <QuestionsCreate/>,
+                            },
+                            {
+                                path: ":qid",
+                                name: 'project_question_details',
+                                label: 'Question',
+                                element: <QuestionPage/>,
+                            },
+                        ],
+                    },
+                    {
+                        path: "answers",
+                        name: 'answers',
+                        breadcrumb: false,
+                        children: [
+                            {
+                                path: ":id",
+                                name: 'project_answer_details',
+                                label: 'Answer',
+                                element: <AnswerPage/>,
                             },
                         ],
                     },

@@ -26,9 +26,13 @@ import {EditTestPlanForm} from "../../../../Components/TestPlans/EditTestPlanFor
 import {Separator} from "../../../../Components/UI/Separator/Separator.jsx";
 import {AgGridDisplay} from "../../../../Configs/AgGrid/AgGridDisplay.js";
 import {ModalChangeTestPlanState} from "../../../../Components/TestPlans/ModalChangeTestPlanState.jsx";
-import {ListQuestions} from "../../../../Components/Questions/ListQuestions.jsx";
+import {ListQuestionsOrdered} from "../../../../Components/Questions/ListQuestionsOrdered.jsx";
 import {CardTestPlanDeadline} from "../../../../Components/TestPlans/CardTestPlanDeadline.jsx";
-import {useTestPlan, useUpdateTestPlan} from "../../../../Hooks/queries/useTestPlansQuery.js";
+import {useTestPlan, useUpdateTestPlan, useAddDemoAnswers} from "../../../../Hooks/queries/useTestPlansQuery.js";
+import {useRelease} from "../../../../Hooks/queries/useReleasesQuery.js";
+import {usePlanHealth} from "../../../../Hooks/queries/useQuestionsQuery.js";
+import {HealthDisplay} from "../../../../Components/Health/HealthDisplay.jsx";
+import {HealthOverTimeLineChart} from "../../../../Components/Health/HealthOverTimeLineChart.jsx";
 
 const capitalizeFirstLetter = (val) => String(val).charAt(0).toUpperCase() + String(val).slice(1);
 
@@ -49,6 +53,31 @@ export const Page = () => {
 
     const {data: testPlanData, isError, isLoading} = useTestPlan(params.tid);
     const updateTestPlan = useUpdateTestPlan();
+    const addDemoAnswers = useAddDemoAnswers();
+    const {
+        isLoading: healthLoading,
+        pass,
+        passWithBugs,
+        failed,
+        blocked,
+        pending,
+        allAnswers
+    } = usePlanHealth(testPlanData);
+
+    const releaseIri = testPlanData?.release;
+    const releaseId = typeof releaseIri === 'string'
+        ? releaseIri.split('/').pop()
+        : releaseIri?.id ?? undefined;
+    const {data: parentRelease} = useRelease(releaseId);
+
+    const truncatedName = (testPlanData?.name ?? '').length > 120
+        ? testPlanData.name.slice(0, 120) + '…'
+        : testPlanData?.name;
+
+    const breadcrumbParents = [
+        {label: currentProject?.name ?? 'Project', path: '/app/'},
+        ...(parentRelease ? [{label: parentRelease.name, path: '/app/project/releases/' + parentRelease.id}] : []),
+    ];
 
     if (!currentProject?.id) {
         navigate('/app/');
@@ -67,8 +96,11 @@ export const Page = () => {
     return (
         <>
             <PageContentWrapper>
-                <PageTitle title={currentProject.name + " - Testing Plan " + (testPlanData?.name ?? '')}
-                           breadcrumbLabel={testPlanData?.name}>
+                <PageTitle
+                    title={currentProject.name + " - Testing Plan " + (testPlanData?.name ?? '')}
+                    breadcrumbParents={breadcrumbParents}
+                    breadcrumbLabel={truncatedName}
+                >
                     <Button
                         icon="lni-plus"
                         disabled={testPlanData?.state !== 'draft'}
@@ -80,12 +112,12 @@ export const Page = () => {
                     </Button>
                 </PageTitle>
                 <PageElementWrapper>
-                    <TabWrapper inUrlParams={false} onChange={(tab) => setCurrentTab(tab)} name="tabs">
+                    <TabWrapper inUrlParams={true} onChange={(tab) => setCurrentTab(tab)} name="tab">
                         <Tab icon="lni-book-1" active={true} name="overview" title={t('Overview')}>
                             <Row className="flex-column-reverse flex-xl-row">
-                                <Col sm={12} xl={4}>
+                                <Col sm={12} xl={8}>
                                     <Row>
-                                        <Col>
+                                        <Col fullHeight={true} sm={12} md={6}>
                                             <Card>
                                                 <CardBody>
                                                     {!isLoading && testPlanData && (
@@ -112,6 +144,117 @@ export const Page = () => {
                                                 </CardBody>
                                             </Card>
                                         </Col>
+                                        <Col fullHeight={true} sm={12} md={6}>
+                                            <Card>
+                                                <CardHeader
+                                                    title={t('Plan Health')}/>
+                                                <CardBody>
+                                                    <HealthDisplay
+                                                        pass={pass}
+                                                        passWithBugs={passWithBugs}
+                                                        failed={failed}
+                                                        blocked={blocked}
+                                                        pending={pending}
+                                                        isLoading={healthLoading}
+                                                    />
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                        <Col fullHeight={true} sm={12}>
+                                            <Card>
+                                                <CardBody>
+                                                    <HealthOverTimeLineChart answersStatItems={allAnswers}/>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                        {testPlanData?.state && (
+                                            <Col fullHeight={true} sm={12} md={7}>
+                                                <Card>
+                                                    <CardHeader
+                                                        title={t('Status') + ' "' + t(capitalizeFirstLetter(testPlanData.state)) + '"'}/>
+                                                    <CardBody>
+                                                        <div
+                                                            className="w-100 d-flex flex-column justify-content-center align-items-center">
+                                                            <div style={{width: '200px', height: 'auto'}}
+                                                                 className="d-flex justify-content-center align-items-center">
+                                                                <img className="w-100"
+                                                                     src={stateToImg(testPlanData.state)} alt="notif"/>
+                                                            </div>
+                                                            <div className="w-100">
+                                                                <p>
+                                                                    {t('This testing plan status is')}&nbsp;
+                                                                    <strong>{t(capitalizeFirstLetter(testPlanData.state))}</strong>.
+                                                                    <br/>
+                                                                    {t(capitalizeFirstLetter(testPlanData.state) + ' description')}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        {testPlanData.state === 'draft' && (
+                                                            <div className="w-100 mt-2">
+                                                                <Button loading={updateTestPlan.isPending} size="sm"
+                                                                        fullWidth
+                                                                        onClick={() => changeState('published')}
+                                                                        icon="lni-rocket-5" type="primary">
+                                                                    {t('Set as Published')}
+                                                                </Button>
+                                                            </div>
+                                                        )}
+                                                        {testPlanData.state === 'published' && (
+                                                            <div className="w-100 mt-2">
+                                                                <Button loading={updateTestPlan.isPending} size="sm"
+                                                                        fullWidth
+                                                                        onClick={() => changeState('archived')}
+                                                                        icon="lni-box-closed" type="light">
+                                                                    {t('Set as Archived')}
+                                                                </Button>
+                                                            </div>
+                                                        )}
+                                                    </CardBody>
+                                                </Card>
+                                            </Col>
+                                        )}
+
+                                        <Col>
+                                            <Card>
+                                                {editMode && !isLoading && testPlanData && (
+                                                    <CardBody>
+                                                        <EditTestPlanForm
+                                                            testPlan={testPlanData}
+                                                            onCancel={() => setEditMode(false)}
+                                                            onUpdate={() => setEditMode(false)}
+                                                        />
+                                                    </CardBody>
+                                                )}
+                                                {!editMode && (
+                                                    <>
+                                                        <CardHeader title={testPlanData?.name}/>
+                                                        <CardBody>
+                                                            <div className="testing-plan-summary mb-3">
+                                                                {testPlanData?.description}
+                                                            </div>
+                                                            {testPlanData?.content && (
+                                                                <>
+                                                                    <Separator text={t("Test Plan Introduction")}/>
+                                                                    <div className="release-description">
+                                                                        <ReleaseDescription
+                                                                            description={testPlanData.content}/>
+                                                                    </div>
+                                                                </>
+                                                            )}
+                                                        </CardBody>
+                                                    </>
+                                                )}
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col sm={12} xl={4}>
+                                    <Row>
+                                        {testPlanData?.state && (testPlanData.state === 'published' || testPlanData.state === 'draft') && (
+                                            <Col fullHeight={true} sm={12}>
+                                                {testPlanData?.id && <CardTestPlanDeadline testPlan={testPlanData}/>}
+                                            </Col>
+                                        )}
                                         <Col>
                                             <Card>
                                                 <CardHeader title={t("Manage this testing plan")}/>
@@ -137,6 +280,26 @@ export const Page = () => {
                                                     <Button disabled={editMode} onClick={() => setModalState(true)}
                                                             iconOnly type="light" size="sm">
                                                         <i className="font-icon lni lni-flag-1"></i>
+                                                    </Button>
+                                                </CardGroup>
+                                                <CardGroup
+                                                    className="d-flex justify-content-between align-items-center">
+                                                    <div className="d-flex flex-column">
+                                                        <div className="heading">Add sample</div>
+                                                        <div className="text-muted small">Add sample answer to preview
+                                                        </div>
+                                                    </div>
+                                                    <Button
+                                                        iconOnly
+                                                        type="light"
+                                                        size="sm"
+                                                        loading={addDemoAnswers.isPending}
+                                                        onClick={() => addDemoAnswers.mutate({
+                                                            testingPlanIri: `/api/test_plans/${testPlanData?.id}`,
+                                                            number: 10,
+                                                        })}
+                                                    >
+                                                        <i className="font-icon lni lni-bolt-2"></i>
                                                     </Button>
                                                 </CardGroup>
                                                 <CardGroup
@@ -196,101 +359,15 @@ export const Page = () => {
                                         </Col>
                                     </Row>
                                 </Col>
-                                <Col sm={12} xl={8}>
-                                    <Row>
-                                        {testPlanData?.state && (
-                                            <Col fullHeight={true} sm={12} md={6}>
-                                                <Card>
-                                                    <CardHeader
-                                                        title={t('Status') + ' "' + t(capitalizeFirstLetter(testPlanData.state)) + '"'}/>
-                                                    <CardBody>
-                                                        <div
-                                                            className="w-100 d-flex flex-column justify-content-center align-items-center">
-                                                            <div style={{width: '200px', height: 'auto'}}
-                                                                 className="d-flex justify-content-center align-items-center">
-                                                                <img className="w-100"
-                                                                     src={stateToImg(testPlanData.state)} alt="notif"/>
-                                                            </div>
-                                                            <div className="w-100">
-                                                                <p>
-                                                                    {t('This testing plan status is')}&nbsp;
-                                                                    <strong>{t(capitalizeFirstLetter(testPlanData.state))}</strong>.
-                                                                    <br/>
-                                                                    {t(capitalizeFirstLetter(testPlanData.state) + ' description')}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        {testPlanData.state === 'draft' && (
-                                                            <div className="w-100 mt-2">
-                                                                <Button loading={updateTestPlan.isPending} size="sm"
-                                                                        fullWidth
-                                                                        onClick={() => changeState('published')}
-                                                                        icon="lni-rocket-5" type="primary">
-                                                                    {t('Set as Published')}
-                                                                </Button>
-                                                            </div>
-                                                        )}
-                                                        {testPlanData.state === 'published' && (
-                                                            <div className="w-100 mt-2">
-                                                                <Button loading={updateTestPlan.isPending} size="sm"
-                                                                        fullWidth
-                                                                        onClick={() => changeState('archived')}
-                                                                        icon="lni-box-closed" type="light">
-                                                                    {t('Set as Archived')}
-                                                                </Button>
-                                                            </div>
-                                                        )}
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        )}
-                                        {testPlanData?.state && (testPlanData.state === 'published' || testPlanData.state === 'draft') && (
-                                            <Col fullHeight={true} sm={12} md={6}>
-                                                {testPlanData?.id && <CardTestPlanDeadline testPlan={testPlanData}/>}
-                                            </Col>
-                                        )}
-                                        <Col>
-                                            <Card>
-                                                {editMode && !isLoading && testPlanData && (
-                                                    <CardBody>
-                                                        <EditTestPlanForm
-                                                            testPlan={testPlanData}
-                                                            onCancel={() => setEditMode(false)}
-                                                            onUpdate={() => setEditMode(false)}
-                                                        />
-                                                    </CardBody>
-                                                )}
-                                                {!editMode && (
-                                                    <>
-                                                        <CardHeader title={testPlanData?.name}/>
-                                                        <CardBody>
-                                                            <div className="testing-plan-summary mb-3">
-                                                                {testPlanData?.description}
-                                                            </div>
-                                                            {testPlanData?.content && (
-                                                                <>
-                                                                    <Separator text={t("Test Plan Introduction")}/>
-                                                                    <div className="release-description">
-                                                                        <ReleaseDescription
-                                                                            description={testPlanData.content}/>
-                                                                    </div>
-                                                                </>
-                                                            )}
-                                                        </CardBody>
-                                                    </>
-                                                )}
-                                            </Card>
-                                        </Col>
-                                    </Row>
-                                </Col>
                             </Row>
                         </Tab>
-                        <Tab icon="lni-check-square-2" name="testing_plans" title={t('Questions')}>
+                        <Tab icon="lni-check-square-2" name="testing_plans" title={t('Questions')}
+                             badge={testPlanData?.totalQuestions}>
                             <Row>
                                 <Col>
-                                    <div style={AgGridDisplay.defaultWrapperStyle} className="w-100">
-                                        {testPlanData?.id && currentTab?.name === 'testing_plans' && (
-                                            <ListQuestions testingPlan={testPlanData}/>
+                                    <div className="w-100">
+                                        {testPlanData?.id && (
+                                            <ListQuestionsOrdered testPlan={testPlanData}/>
                                         )}
                                     </div>
                                 </Col>

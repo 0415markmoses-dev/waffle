@@ -97,11 +97,13 @@ nav.navbar-app {
   padding: .45rem .6rem;
   border-radius: 8px;
   cursor: pointer;
-  background: rgba(0, 0, 0, .05);
+  background: rgba($primary, 0);
   transition: background 150ms ease;
+  color: $tw-gray-700;
 
   &:hover, &[data-state="open"] {
-    background: rgba(0, 0, 0, .1);
+    background: rgba($primary, 0.5);
+    color: $primary;
   }
 
   .profile-trigger-name {
@@ -112,7 +114,7 @@ nav.navbar-app {
     white-space: nowrap;
     font-size: .8rem;
     font-weight: 500;
-    color: $tw-gray-800;
+
   }
 
   .profile-trigger-chevron {

@@ -4,6 +4,7 @@ export const Tab = ({
                         title = '',
                         name = '',
                         icon = '',
+                        badge = undefined,
                         active = false,
                         children,
                     }) => {
@@ -17,6 +18,7 @@ Tab.propTypes = {
     title: PropTypes.string,
     name: PropTypes.string,
     icon: PropTypes.string,
+    badge: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     active: PropTypes.bool,
     children: PropTypes.node
 }

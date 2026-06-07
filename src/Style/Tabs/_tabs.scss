@@ -1,4 +1,10 @@
 $bottom-border-size: 3px;
+
+.tab-badge {
+  background-color: rgba($tw-gray-800, .25);
+  color: $tw-gray-600;
+  border-radius: calc($border-radius / 1.75);
+}
 .nav-tabs {
   border-bottom-color: $card-border-color !important;
 

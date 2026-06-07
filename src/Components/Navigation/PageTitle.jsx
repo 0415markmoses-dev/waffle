@@ -6,20 +6,22 @@ import {useCurrentPath} from "../../Router/main.jsx";
 export const PageTitle = ({
                               title,
                               noBreadcrumb = false,
-                              breadcrumbLabel,   // overrides the active crumb label (e.g. the release name)
+                              breadcrumbLabel,    // overrides the active crumb label
+                              breadcrumbParents,  // [{label, path}] — fully overrides auto parents when provided
                               children,
                           }) => {
     const currentRoute = useCurrentPath();
     const activeLabel = breadcrumbLabel ?? currentRoute?.label;
+    const parents = breadcrumbParents ?? currentRoute?.parents ?? [];
 
     return (
         <PageElementWrapper>
             <div className="page-title w-100 pb-3 d-flex justify-content-between align-items-center gap-md">
                 <div className="top-page-left d-flex flex-column gap-sm">
                     <h1>{title}</h1>
-                    {!noBreadcrumb && currentRoute && (
+                    {!noBreadcrumb && (breadcrumbParents || currentRoute) && (
                         <div className="d-flex flex-row gap-sm align-items-center">
-                            {currentRoute.parents.map((crumb, index) => (
+                            {parents.map((crumb, index) => (
                                 <NavLink
                                     key={'bcr_' + index}
                                     to={crumb.path}
@@ -44,5 +46,6 @@ PageTitle.propTypes = {
     title: PropTypes.string.isRequired,
     noBreadcrumb: PropTypes.bool,
     breadcrumbLabel: PropTypes.string,
+    breadcrumbParents: PropTypes.arrayOf(PropTypes.shape({label: PropTypes.string, path: PropTypes.string})),
     children: PropTypes.node,
 };

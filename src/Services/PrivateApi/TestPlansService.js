@@ -21,6 +21,9 @@ const TestPlansService = {
     createTestPlan(data) {
         return Http.post('/api/test_plans', data);
     },
+    addDemoAnswers(testingPlanIri, number = 10) {
+        return Http.post('/api/demo/add_demo_answer', {testingPlanIri, number});
+    },
 }
 
 export default TestPlansService;

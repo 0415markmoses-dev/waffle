@@ -3,18 +3,19 @@
   display: flex;
   align-items: stretch;
   flex-direction: column;
-  background-color: $tw-coal-600;
+  background-color: $white;
   color: $tw-gray-800;
   width: 250px;
   z-index: 1000;
   inset: auto auto 0px 0px;
   margin: 0px;
-  border: 1px solid $tw-gray-300;
+  border: $card-border;
+  box-shadow: $card-box-shadow;
   padding-top: .625rem;
   padding-bottom: .625rem;
   gap: .125rem;
   border-radius: 12px;
-  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, .05);
+
   animation-duration: 600ms;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
@@ -79,24 +80,11 @@
   }
 
   &:hover {
-    background: rgba(255, 255, 255, .07);
-    color: $tw-gray-900;
+    background: rgba($primary, .25);
+    color: $primary;
 
     i {
       opacity: 1;
-    }
-  }
-
-  &--admin {
-    color: $warning;
-
-    i {
-      opacity: .8;
-    }
-
-    &:hover {
-      background: rgba(255, 193, 7, .1);
-      color: $warning;
     }
   }
 

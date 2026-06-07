@@ -6,23 +6,13 @@ export const LocalDatetimeInput = ({
                                        },
                                        ...props
                                    }) => {
-    // Convert UTC string to Date object
-    const utcDate = new Date(value);
-
-    // Convert to local datetime string in the format "YYYY-MM-DDTHH:MM"
     const toLocalDatetimeString = (date) => {
         const pad = (n) => n.toString().padStart(2, '0');
-
-        const year = date.getFullYear();
-        const month = pad(date.getMonth() + 1);
-        const day = pad(date.getDate());
-        const hours = pad(date.getHours());
-        const minutes = pad(date.getMinutes());
-
-        return `${year}-${month}-${day}T${hours}:${minutes}`;
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
     };
 
-    const localValue = value ? toLocalDatetimeString(utcDate) : '';
+    const utcDate = value ? new Date(value) : null;
+    const localValue = utcDate && !isNaN(utcDate) ? toLocalDatetimeString(utcDate) : '';
 
     return (
         <input
@@ -39,6 +29,6 @@ export const LocalDatetimeInput = ({
 };
 
 LocalDatetimeInput.propTypes = {
-    value: PropTypes.string.isRequired,
+    value: PropTypes.string,
     onChange: PropTypes.func,
 };

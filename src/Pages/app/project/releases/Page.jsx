@@ -25,6 +25,7 @@ import {ErrorState} from "../../../../Components/UI/ErrorState.jsx";
 import {ListTestPlans} from "../../../../Components/TestPlans/ListTestPlans.jsx";
 import {AgGridDisplay} from "../../../../Configs/AgGrid/AgGridDisplay.js";
 import {useRelease, useReleaseStats} from "../../../../Hooks/queries/useReleasesQuery.js";
+import {CreateTestPlanButton} from "../../../../Components/TestPlans/ModalCreateTestPlan.jsx";
 
 export const Page = () => {
     const {t} = useTranslation();
@@ -36,6 +37,14 @@ export const Page = () => {
 
     const {data: releaseData, isError, isLoading} = useRelease(params.rid);
     const {data: releaseStats = {}} = useReleaseStats(params.rid);
+
+    const truncatedName = (releaseData?.name ?? '').length > 120
+        ? releaseData.name.slice(0, 120) + '…'
+        : releaseData?.name;
+
+    const breadcrumbParents = [
+        {label: currentProject?.name ?? 'Project', path: '/app/'},
+    ];
 
     if (!currentProject?.id) {
         navigate('/app/');
@@ -49,12 +58,15 @@ export const Page = () => {
 
     return (
         <PageContentWrapper>
-            <PageTitle title={currentProject.name + " - Release " + (releaseData?.name ?? '')}
-                       breadcrumbLabel={releaseData?.name}>
-                <Button icon="lni-plus" type="primary" size="sm">New testing plan</Button>
+            <PageTitle
+                title={currentProject.name + " - Release " + (releaseData?.name ?? '')}
+                breadcrumbParents={breadcrumbParents}
+                breadcrumbLabel={truncatedName}
+            >
+                <CreateTestPlanButton release={releaseData}/>
             </PageTitle>
             <PageElementWrapper>
-                <TabWrapper inUrlParams={false} onChange={(tab) => setCurrentTab(tab)} name="tabs">
+                <TabWrapper inUrlParams={true} onChange={(tab) => setCurrentTab(tab)} name="tab">
                     <Tab icon="lni-book-1" active={true} name="overview" title={t('Overview')}>
                         <Row className="flex-column-reverse flex-xl-row">
                             <Col sm={12} xl={4}>

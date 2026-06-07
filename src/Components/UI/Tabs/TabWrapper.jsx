@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import {TabsContext} from "./TabsContext.jsx";
-import {useEffect, useState} from "react";
+import {useEffect, useId, useState} from "react";
+import {useSearchParams} from "react-router";
 
 export const TabWrapper = ({
                                name = undefined,
@@ -9,103 +10,102 @@ export const TabWrapper = ({
                                inUrlParams = false,
                                children
                            }) => {
-    const [id, setId] = useState('');
-    const [activeTab, setActiveTab] = useState(undefined);
-    // get all Tab components in children
+    const uid = useId();
     const tabs = children.filter(child => child.type.name === 'Tab');
 
+    // ── URL-backed mode ───────────────────────────────────────────────────────
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const defaultIndex = (() => {
+        if (inUrlParams && name) {
+            const paramValue = searchParams.get(name);
+            if (paramValue) {
+                const idx = tabs.findIndex(t => t.props.name === paramValue);
+                if (idx !== -1) return idx;
+            }
+        }
+        const activeIdx = tabs.findIndex(t => t.props.active === true);
+        return activeIdx !== -1 ? activeIdx : 0;
+    })();
+
+    // ── Local mode ────────────────────────────────────────────────────────────
+    const [localTab, setLocalTab] = useState(defaultIndex);
+
+    // When inUrlParams, derive active index from URL; otherwise use local state
+    const activeTab = inUrlParams && name
+        ? (() => {
+            const paramValue = searchParams.get(name);
+            if (paramValue) {
+                const idx = tabs.findIndex(t => t.props.name === paramValue);
+                if (idx !== -1) return idx;
+            }
+            return defaultIndex;
+        })()
+        : localTab;
+
+    const handleSelect = (index) => {
+        if (inUrlParams && name) {
+            setSearchParams(prev => {
+                const next = new URLSearchParams(prev);
+                next.set(name, tabs[index].props.name);
+                return next;
+            }, {replace: false});
+        } else {
+            setLocalTab(index);
+        }
+    };
+
+    // Fire onChange when active tab changes
     useEffect(() => {
-        // get tab name, title and icon with index of active tab
-        let myTab = tabs[activeTab];
-        if (myTab === undefined) {
+        const myTab = tabs[activeTab];
+        if (!myTab) {
             onChange(undefined);
             return;
         }
-        let payload = {
-            name: myTab.props.name,
-            title: myTab.props.title,
-            icon: myTab.props.icon,
-            index: activeTab,
-        }
-        onChange(payload);
-        // if inUrlParams is true, add the tab name to the query string in form of name=${myTab.props.name}
-        // if the param already exists, replace it
-        // do not change other params
-        // todo : do not use at the moment there is a bug that causes the tab to be set to the first tab independently of the query string
-        if (inUrlParams) {
-            let urlParams = new URLSearchParams(window.location.search);
-            urlParams.set(name, myTab.props.name);
-            let newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + urlParams.toString();
-            window.history.pushState({path: newUrl}, '', newUrl);
-        }
+        onChange({name: myTab.props.name, title: myTab.props.title, icon: myTab.props.icon, index: activeTab});
+    }, [activeTab]);
 
-    }, [activeTab])
-
-    useEffect(() => {
-        if (id === '') {
-            setId('tab_wrapper_' + Math.random().toString(36).substring(2));
-        }
-    }, [id]);
-
-    useEffect(() => {
-        if (name === undefined) {
-            return;
-        }
-        // get query string and search if there is a param with the name of the wrapper
-        let urlParams = new URLSearchParams(window.location.search);
-        let tabName = urlParams.get(name);
-        if (tabName === null) {
-            return;
-        }
-        let tab = tabs.find(tab => tab.props.name === tabName);
-        if (tab !== undefined) {
-            setActiveTab(tabs.indexOf(tab));
-        }
-    }, [name]);
-
-    if (activeTab === undefined) {
-        // get the first tab with props.active set to true
-        let defaultActive = tabs.find(tab => tab.props.active === true);
-        if (defaultActive !== undefined) {
-            setActiveTab(tabs.indexOf(defaultActive));
-        }
-    }
-
-    return <>
-        <TabsContext value={{id: id, setId: setId, activeTab: activeTab, setActiveTab: setActiveTab}}>
+    return (
+        <TabsContext value={{id: uid, activeTab, setActiveTab: handleSelect}}>
             <div className="tab-spacer d-flex flex-column gap-lg">
-                <ul id={id} className="nav nav-tabs">
-                    {tabs.map((tab, index) => {
-                        return <li key={id + '_' + index} className="nav-item heading">
-                            <a className={`nav-link gap-sm ${(activeTab === index || (index === 0 && activeTab === undefined)) ? 'active' : ''}`}
-                               href="#"
-                               onClick={(e) => {
-                                   e.preventDefault();
-                                   setActiveTab(index);
-                               }}>
+                <ul id={uid} className="nav nav-tabs">
+                    {tabs.map((tab, index) => (
+                        <li key={uid + '_' + index} className="nav-item">
+                            <a
+                                className={`nav-link gap-sm ${activeTab === index ? 'active' : ''}`}
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleSelect(index);
+                                }}
+                            >
                                 {tab.props.icon !== '' && (
-                                    <i className={`font-icon lni ${tab.props.icon}`}></i>
+                                    <i className={`font-icon lni ${tab.props.icon}`}/>
                                 )}
                                 <span className="tab-label">{tab.props.title}</span>
+                                {tab.props.badge !== undefined && (
+                                    <span className="badge tab-badge ms-1">{tab.props.badge}</span>
+                                )}
                             </a>
                         </li>
-                    })}
+                    ))}
                 </ul>
-                {tabs.map((tab, index) => {
-                    return <div key={id + '_' + index}
-                                className={`tab-pane ${activeTab === index || (index === 0 && activeTab === undefined) ? 'd-block' : 'd-none'}`}>
+                {tabs.map((tab, index) => (
+                    <div
+                        key={uid + '_' + index}
+                        className={`tab-pane ${activeTab === index ? 'd-block' : 'd-none'}`}
+                    >
                         {tab}
                     </div>
-                })}
+                ))}
             </div>
-
         </TabsContext>
-    </>
-}
+    );
+};
 
 TabWrapper.propTypes = {
     name: PropTypes.string,
     onChange: PropTypes.func,
     inUrlParams: PropTypes.bool,
-    children: PropTypes.node
-}
+    children: PropTypes.node,
+};

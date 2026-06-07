@@ -57,8 +57,8 @@ export const NavBar = () => {
                                         </div>
                                         <div
                                             className="flex-grow-1 d-flex flex-column justify-content-start overflow-hidden">
-                                            <small className="heading opacity-50">Connected as</small>
-                                            <div className="heading text-truncate">{user.email}</div>
+                                            <small className="opacity-50">Connected as</small>
+                                            <div className="text-truncate">{user.email}</div>
                                         </div>
                                     </div>
 
@@ -80,7 +80,6 @@ export const NavBar = () => {
 
                                     {isAdmin && (
                                         <>
-                                            <DropdownMenu.Separator className="dropdown-separator"/>
                                             <DropdownMenu.Item asChild>
                                                 <button className="dropdown-action-item dropdown-action-item--admin">
                                                     <i className="font-icon lni lni-shield-1"></i>
