@@ -116,6 +116,8 @@ const fr = {
         'State (A-Z)': 'État (A-Z)',
         'State (Z-A)': 'État (Z-A)',
         'Clear filters': 'Réinitialiser les filtres',
+        'Not enough data to display this chart.': 'Pas assez de données pour afficher ce graphique.',
+        'Health over time': 'Santé au fil du temps',
     }
 }
 export default fr;

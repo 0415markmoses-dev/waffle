@@ -36,3 +36,74 @@
 a.breadcrumb-item:not(.active-item) {
   color: $primary !important;
 }
+
+// ── Latest testing plans row (dashboard) ──────────────────────────────────────
+.ltp-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .65rem 0;
+  border-bottom: 1px solid $card-border-color;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 120ms ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    opacity: .75;
+  }
+}
+
+.ltp-heart {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: color 300ms ease;
+}
+
+.ltp-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+  min-width: 0;
+}
+
+.ltp-name {
+  font-size: .87rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: $body-color;
+}
+
+.ltp-release {
+  font-size: .75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ltp-meta {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  flex-shrink: 0;
+}
+
+.ltp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  font-size: .75rem;
+  color: $tw-gray-600;
+  white-space: nowrap;
+
+  .font-icon {
+    font-size: .8rem;
+  }
+}

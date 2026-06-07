@@ -32,6 +32,15 @@ export const useTestPlans = (params = {}) => {
     });
 };
 
+/** Single-page fetch — use when you need a fixed number of results (e.g. dashboard). */
+export const useTestPlansPage = (params = {}) => {
+    return useQuery({
+        queryKey: testPlanKeys.list(params),
+        queryFn: () => TestPlansService.getTestPlans(params).then(r => r.data['member'] ?? []),
+        enabled: !!params['release.project'] || !!params.release,
+    });
+};
+
 export const useTestPlan = (id) => {
     return useQuery({
         queryKey: testPlanKeys.detail(id),

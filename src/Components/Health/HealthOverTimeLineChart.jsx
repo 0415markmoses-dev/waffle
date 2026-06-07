@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import {useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Line} from 'react-chartjs-2';
 import {
     CategoryScale,
@@ -11,6 +12,7 @@ import {
     Tooltip,
 } from 'chart.js';
 import {HEALTH_COLORS} from './HealthDisplay.jsx';
+import {ErrorState} from '../UI/ErrorState.jsx';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Filler, Tooltip);
 
@@ -98,11 +100,19 @@ const formatBucketLabel = (key, groupBy) => {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const HealthOverTimeLineChart = ({
-                                            title = 'Health over time',
+                                            title,
                                             answersStatItems = [],
                                         }) => {
+    const {t} = useTranslation();
+    const resolvedTitle = title ?? t('Health over time');
     const chartRef = useRef(null);
     const [groupBy, setGroupBy] = useState('day');
+
+    useEffect(() => {
+        return () => {
+            chartRef.current?.destroy();
+        };
+    }, []);
 
     const {labels, datasets, visibleDatasets} = useMemo(() => {
         if (!answersStatItems.length) return {labels: [], datasets: [], visibleDatasets: []};
@@ -146,7 +156,12 @@ export const HealthOverTimeLineChart = ({
         return {labels: lbls, datasets: dsets, visibleDatasets: vis};
     }, [answersStatItems, groupBy]);
 
-    if (!answersStatItems.length) return null;
+    if (!answersStatItems.length) return (
+        <div className="w-100">
+            <span className="heading small fw-semibold">{resolvedTitle}</span>
+            <ErrorState message={t('Not enough data to display this chart.')} size="sm"/>
+        </div>
+    );
 
     const options = {
         responsive: true,
@@ -191,7 +206,7 @@ export const HealthOverTimeLineChart = ({
     return (
         <div className="health-over-time-chart-wrapper w-100">
             <div className="d-flex justify-content-between align-items-center mb-2">
-                <span className="heading small fw-semibold">{title}</span>
+                <span className="heading small fw-semibold">{resolvedTitle}</span>
                 <select
                     className="form-select form-select-sm w-auto"
                     value={groupBy}

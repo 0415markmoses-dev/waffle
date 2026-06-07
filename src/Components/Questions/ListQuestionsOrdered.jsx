@@ -10,7 +10,8 @@ import {useTranslation} from "react-i18next";
 import {Button} from "../UI/Buttons/Button.jsx";
 import {Alert} from "../UI/Alert/Alert.jsx";
 import {useUpdateTestPlan} from "../../Hooks/queries/useTestPlansQuery.js";
-import {useQuestions} from "../../Hooks/queries/useQuestionsQuery.js";
+import {useQuestions, useQuestionStats} from "../../Hooks/queries/useQuestionsQuery.js";
+import {HEALTH_COLORS} from "../Health/HealthDisplay.jsx";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -39,10 +40,41 @@ const ActionsCellRenderer = ({data}) => {
     );
 };
 
+const dominantColor = (d) => {
+    if (!d) return HEALTH_COLORS.pending;
+    const pool = {
+        pass: d.test_pass ?? 0,
+        passWithBugs: d.test_pass_with_bugs ?? 0,
+        failed: d.test_failed ?? 0,
+        blocked: d.test_blocked ?? 0
+    };
+    const hasNonPending = Object.values(pool).some(v => v > 0);
+    const source = hasNonPending ? pool : {pending: d.test_pending ?? 0};
+    const top = Object.entries(source).reduce((a, b) => b[1] > a[1] ? b : a, ['pending', -1]);
+    return HEALTH_COLORS[top[0]] ?? HEALTH_COLORS.pending;
+};
+
+const HealthCellRenderer = ({data}) => {
+    const id = data?.id;
+    const {data: stats, isLoading} = useQuestionStats(id);
+    if (isLoading) return <span style={{opacity: .3}}>♥</span>;
+    const color = dominantColor(stats);
+    const total = (stats?.test_pass ?? 0) + (stats?.test_pass_with_bugs ?? 0) + (stats?.test_failed ?? 0) + (stats?.test_blocked ?? 0) + (stats?.test_pending ?? 0);
+    return (
+        <span style={{color, fontWeight: 600, fontSize: '.95rem'}} title={`${total} answers`}>♥</span>
+    );
+};
+
+const AnswerCountCellRenderer = ({data}) => {
+    const answers = data?.answers ?? [];
+    return <span>{answers.length}</span>;
+};
+
 QuestionLinkRenderer.propTypes = StateCellRenderer.propTypes = ActionsCellRenderer.propTypes = {
     value: PropTypes.string,
     data: PropTypes.object.isRequired,
 };
+HealthCellRenderer.propTypes = AnswerCountCellRenderer.propTypes = {data: PropTypes.object};
 
 /**
  * Sort fetched question objects according to the questionsOrder IRI array.
@@ -107,10 +139,18 @@ export const ListQuestionsOrdered = ({testPlan}) => {
             cellRenderer: QuestionLinkRenderer,
         },
         {
-            field: "state",
-            headerName: t('State'),
-            width: 100,
-            cellRenderer: StateCellRenderer,
+            headerName: t('Answers'),
+            width: 90,
+            resizable: false,
+            suppressSizeToFit: true,
+            cellRenderer: AnswerCountCellRenderer,
+        },
+        {
+            headerName: t('Health'),
+            width: 80,
+            resizable: false,
+            suppressSizeToFit: true,
+            cellRenderer: HealthCellRenderer,
         },
         {
             headerName: t('Actions'),

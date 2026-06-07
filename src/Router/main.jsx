@@ -1,6 +1,13 @@
-import {createBrowserRouter, matchRoutes, useLocation} from "react-router-dom";
+import {createBrowserRouter, matchRoutes, Navigate, useLocation} from "react-router-dom";
 import {Login} from "../Pages/Login.jsx";
 import {Layout as AppLayout} from "../Pages/app/layout.jsx";
+import {useAuthStore} from "../Store/auth.js";
+
+const ProtectedRoute = () => {
+    const {user} = useAuthStore();
+    if (!user?.id) return <Navigate to="/login" replace/>;
+    return <AppLayout/>;
+};
 import {Home} from "../Pages/app/Home.jsx";
 import {Page as ReleasesPage} from "../Pages/app/project/releases/Page.jsx";
 import {Listing as ReleasesListing} from "../Pages/app/project/releases/Listing.jsx";
@@ -32,7 +39,7 @@ export const routes = [
     // everything under /app... is protected and only accessible for dev team
     {
         path: "/app",
-        element: <AppLayout/>,
+        element: <ProtectedRoute/>,
         // no label — layout wrapper, not a real page
         children: [
             {

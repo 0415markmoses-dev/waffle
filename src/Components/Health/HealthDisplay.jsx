@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Doughnut} from "react-chartjs-2";
 import {ArcElement, Chart as ChartJS, Tooltip} from "chart.js";
@@ -53,6 +53,12 @@ export const HealthDisplay = ({
     const chartRef = useRef(null);
     const [hidden, setHidden] = useState({});
     const total = pass + passWithBugs + failed + blocked + pending;
+
+    useEffect(() => {
+        return () => {
+            chartRef.current?.destroy();
+        };
+    }, []);
 
     const toggleSegment = (index) => {
         const chart = chartRef.current;

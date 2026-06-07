@@ -1,3 +1,4 @@
+import {Link, NavLink} from "react-router-dom";
 import {PageContentWrapper} from "../../Components/Navigation/PageContentWrapper.jsx";
 import {PageTitle} from "../../Components/Navigation/PageTitle.jsx";
 import {PageElementWrapper} from "../../Components/Navigation/PageElementWrapper.jsx";
@@ -11,12 +12,68 @@ import {CardFooter} from "../../Components/UI/Card/CardFooter.jsx";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 import {SingleMetricDisplay} from "../../Components/UI/Metrics/SingleMetricDisplay.jsx";
 import {MetricVerticalSeparator} from "../../Components/UI/Metrics/MetricVerticalSeparator.jsx";
-import {TestPlanDisplayCard} from "../../Components/TestPlans/TestPlanDisplayCard.jsx";
 import {ErrorState} from "../../Components/UI/ErrorState.jsx";
 import {Loader} from "../../Components/UI/Loader.jsx";
-import {NavLink} from "react-router-dom";
 import {useProjects} from "../../Hooks/queries/useProjectsQuery.js";
-import {useTestPlans} from "../../Hooks/queries/useTestPlansQuery.js";
+import {useTestPlansPage} from "../../Hooks/queries/useTestPlansQuery.js";
+import {usePlanHealth} from "../../Hooks/queries/useQuestionsQuery.js";
+import {HEALTH_COLORS} from "../../Components/Health/HealthDisplay.jsx";
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+const dominantColor = ({pass, passWithBugs, failed, blocked, pending}) => {
+    const nonPending = {pass, passWithBugs, failed, blocked};
+    const hasNonPending = Object.values(nonPending).some(v => v > 0);
+    const pool = hasNonPending ? nonPending : {pending};
+    const top = Object.entries(pool).reduce((a, b) => b[1] > a[1] ? b : a, ['pending', -1]);
+    return HEALTH_COLORS[top[0]] ?? HEALTH_COLORS.pending;
+};
+
+const formatDate = (iso) => {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString(undefined, {day: 'numeric', month: 'short', year: 'numeric'});
+};
+
+// ── LatestPlanRow ─────────────────────────────────────────────────────────────
+
+const LatestPlanRow = ({testPlan}) => {
+    const health = usePlanHealth(testPlan);
+    const color = dominantColor(health);
+    const planId = typeof testPlan.id === 'string'
+        ? testPlan.id.split('/').pop()
+        : testPlan.id;
+
+    return (
+        <Link to={`/app/project/testing_plans/${planId}`} className="ltp-row">
+            {/* Heart / health color indicator */}
+            <div className="ltp-heart" style={{color}}>♥</div>
+
+            {/* Name + release */}
+            <div className="ltp-info">
+                <span className="ltp-name">{testPlan.name}</span>
+                {testPlan.release?.name && (
+                    <span className="ltp-release text-muted">{testPlan.release.name}</span>
+                )}
+            </div>
+
+            {/* Badges */}
+            <div className="ltp-meta">
+                <span className="ltp-badge">
+                    <i className="font-icon lni lni-check-square-2"/>
+                    {testPlan.totalQuestions ?? 0}
+                </span>
+                {testPlan.dueDate && (
+                    <span className="ltp-badge">
+                        <i className="font-icon lni lni-calendar-days"/>
+                        {formatDate(testPlan.dueDate)}
+                    </span>
+                )}
+            </div>
+        </Link>
+    );
+};
+
+// ── Home ──────────────────────────────────────────────────────────────────────
 
 export const Home = () => {
     const {currentProject} = useProjectStore();
@@ -24,15 +81,15 @@ export const Home = () => {
     const {data: projectsData} = useProjects();
     const projects = projectsData?.member ?? [];
 
-    const {data: testPlans = [], isLoading: loadingTestPlans} = useTestPlans({
-        'order[dueDate]': 'asc',
-        state: ['published'],
+    const {data: testPlans = [], isLoading: loadingTestPlans} = useTestPlansPage({
+        'order[created]': 'desc',
         'release.project': currentProject?.id,
-        limit: 5,
+        itemsPerPage: 5,
+        page: 1,
     });
 
     const otherProjects = currentProject?.id
-        ? projects.filter(project => project.id !== currentProject.id)
+        ? projects.filter(p => p.id !== currentProject.id)
         : projects;
 
     return (
@@ -163,20 +220,13 @@ export const Home = () => {
                                         <Button type="link" size="sm">View All</Button>
                                     </CardHeader>
                                     <CardBody>
-                                        <div className="w-100 d-flex flex-column gap-lg">
-                                            {loadingTestPlans && <Loader/>}
-                                            {testPlans.length === 0 && !loadingTestPlans && (
-                                                <ErrorState message="No testing plans found for this project"/>
-                                            )}
-                                            {testPlans.map((testPlan, index) => (
-                                                <TestPlanDisplayCard
-                                                    key={index}
-                                                    isCard={false}
-                                                    disabled={testPlan.state === 'archived'}
-                                                    testPlan={testPlan}
-                                                />
-                                            ))}
-                                        </div>
+                                        {loadingTestPlans && <Loader/>}
+                                        {!loadingTestPlans && testPlans.length === 0 && (
+                                            <ErrorState message="No testing plans found for this project"/>
+                                        )}
+                                        {testPlans.map(plan => (
+                                            <LatestPlanRow key={plan.id} testPlan={plan}/>
+                                        ))}
                                     </CardBody>
                                 </Card>
                             </Col>
