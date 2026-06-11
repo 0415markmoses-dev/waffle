@@ -1,4 +1,4 @@
-import {useAuthStore} from "../store/auth.js";
+import {useAuthStore, isTester} from "../Store/auth.js";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {Button} from "../Components/UI/Buttons/Button.jsx";
@@ -13,7 +13,7 @@ import {Alert} from "../Components/UI/Alert/Alert.jsx";
 export const Login = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
-    const {user, requestLogin, generateCode} = useAuthStore();
+    const {user, isLoadingUser, requestLogin, generateCode} = useAuthStore();
     const [error, setError] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState('none'); // none(default), team or tester
@@ -32,10 +32,10 @@ export const Login = () => {
     }, [])
 
     useEffect(() => {
-        if (user !== null) {
-            navigate("/app/");
+        if (user !== null && !isLoadingUser) {
+            navigate(isTester(user) ? "/testing/" : "/app/");
         }
-    }, [user]);
+    }, [user, isLoadingUser]);
 
     const tryLogin = async (e) => {
         e.preventDefault();
@@ -106,6 +106,20 @@ export const Login = () => {
                 requestCode(e);
             }
         }
+    }
+
+    if (isLoadingUser) {
+        return (
+            <div className="w-100 h-100 d-flex justify-content-center align-items-center"
+                 style={{minHeight: '100vh'}}>
+                <div className="d-flex flex-column align-items-center gap-md">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading…</span>
+                    </div>
+                    <p className="text-muted small m-0">Signing you in…</p>
+                </div>
+            </div>
+        );
     }
 
     return <>

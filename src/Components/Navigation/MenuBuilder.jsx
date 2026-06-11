@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import NavBarMenu from "../../Menus/NavBarMenu";
+import TestingNavBarMenu from "../../Menus/TestingNavBarMenu";
 import {MenuBuilderGroup} from "./MenuBuilderGroup.jsx";
 import {useCurrentPath} from "../../Router/main.jsx";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
@@ -14,6 +15,9 @@ export const MenuBuilder = ({
     switch (name) {
         case 'navbar':
             data = NavBarMenu;
+            break;
+        case 'testing-navbar':
+            data = TestingNavBarMenu;
             break;
         default:
             return '';

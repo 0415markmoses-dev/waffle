@@ -22,6 +22,7 @@ import {Error404} from "../../../../Components/UI/Error404.jsx";
 import {TextInput} from "../../../../Components/UI/Form/Inputs/TextInput.jsx";
 import {FormGroup} from "../../../../Components/UI/Form/FormGroup.jsx";
 import {FormGroupLabel} from "../../../../Components/UI/Form/FormGroupLabel.jsx";
+import {FormGroupWrapper} from "../../../../Components/UI/Form/FormGroupWrapper.jsx";
 import {MkEditorInstance} from "../../../../Components/UI/Form/Editor/MkEditorInstance.jsx";
 import {ReleaseDescription} from "../../../../Components/Releases/ReleaseDescription.jsx";
 import {HealthDisplay, HEALTH_COLORS} from "../../../../Components/Health/HealthDisplay.jsx";
@@ -242,34 +243,36 @@ export const Page = () => {
                                         <Card>
                                             {editMode && !isLoading && question && (
                                                 <CardBody>
-                                                    <FormGroup>
-                                                        <FormGroupLabel>{t('Question name')}</FormGroupLabel>
-                                                        <TextInput
-                                                            value={currentName}
-                                                            onChange={v => setName(v)}
-                                                        />
-                                                    </FormGroup>
-                                                    <FormGroup>
-                                                        <FormGroupLabel>{t('Question Content')}</FormGroupLabel>
-                                                        <MkEditorInstance
-                                                            value={currentContent}
-                                                            onChange={v => setContent(v)}
-                                                        />
-                                                    </FormGroup>
-                                                    <div className="d-flex gap-sm justify-content-end mt-2">
-                                                        <Button type="light" size="sm" onClick={handleCancelEdit}>
-                                                            {t('Cancel')}
-                                                        </Button>
-                                                        <Button
-                                                            type="primary"
-                                                            size="sm"
-                                                            icon="lni-download-1"
-                                                            loading={updateQuestion.isPending}
-                                                            onClick={handleSave}
-                                                        >
-                                                            {t('Save changes')}
-                                                        </Button>
-                                                    </div>
+                                                    <FormGroupWrapper>
+                                                        <FormGroup>
+                                                            <FormGroupLabel>{t('Question name')}</FormGroupLabel>
+                                                            <TextInput
+                                                                value={currentName}
+                                                                onChange={v => setName(v)}
+                                                            />
+                                                        </FormGroup>
+                                                        <FormGroup>
+                                                            <FormGroupLabel>{t('Question Content')}</FormGroupLabel>
+                                                            <MkEditorInstance
+                                                                value={currentContent}
+                                                                onChange={v => setContent(v)}
+                                                            />
+                                                        </FormGroup>
+                                                        <div className="d-flex gap-sm justify-content-end mt-2">
+                                                            <Button type="light" size="sm" onClick={handleCancelEdit}>
+                                                                {t('Cancel')}
+                                                            </Button>
+                                                            <Button
+                                                                type="primary"
+                                                                size="sm"
+                                                                icon="lni-download-1"
+                                                                loading={updateQuestion.isPending}
+                                                                onClick={handleSave}
+                                                            >
+                                                                {t('Save changes')}
+                                                            </Button>
+                                                        </div>
+                                                    </FormGroupWrapper>
                                                 </CardBody>
                                             )}
                                             {!editMode && (

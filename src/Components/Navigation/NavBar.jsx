@@ -5,7 +5,7 @@ import {MenuBuilder} from "./MenuBuilder.jsx";
 import {DropdownMenu} from "radix-ui";
 
 
-export const NavBar = () => {
+export const NavBar = ({menuName = 'navbar'}) => {
     let navigate = useNavigate();
     const {user, clearUserData} = useAuthStore();
 
@@ -30,7 +30,7 @@ export const NavBar = () => {
                 </div>
 
                 <div className="navbar-menu">
-                    <MenuBuilder name="navbar"/>
+                    <MenuBuilder name={menuName}/>
                 </div>
 
                 {user !== null && (

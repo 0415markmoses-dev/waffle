@@ -65,6 +65,15 @@ export const useUpdateTestPlan = () => {
     });
 };
 
+/** Fetch test plans assigned to the current tester (filtered by testersEnrolled IRI). */
+export const useAssignedTestPlans = (testerIri, extraParams = {}) => {
+    return useQuery({
+        queryKey: testPlanKeys.list({testersEnrolled: testerIri, ...extraParams}),
+        queryFn: () => fetchAllTestPlans({testersEnrolled: testerIri, ...extraParams}),
+        enabled: !!testerIri,
+    });
+};
+
 export const useAddDemoAnswers = () => {
     const queryClient = useQueryClient();
     return useMutation({

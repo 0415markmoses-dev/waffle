@@ -77,6 +77,31 @@ const en = {
         'You will be able to add files once the question is created.': 'You will be able to add files once the question is created.',
         // listing
         'Actions': 'Actions',
+        // ── Tester dashboard ──────────────────────────────────────────────────
+        'My Dashboard': 'My Dashboard',
+        'Archived Plans': 'Archived Plans',
+        'About': 'About',
+        'Here are the testing plans assigned to you.': 'Here are the testing plans assigned to you.',
+        'Hey there! 👋': 'Hey there! 👋',
+        'Ready to test some awesome features?': 'Ready to test some awesome features?',
+        'Pick a plan and start answering scenarios.': 'Pick a plan and start answering scenarios.',
+        'Assigned plans': 'Assigned plans',
+        'Due soon': 'Due soon',
+        'In progress': 'In progress',
+        'My Testing Plans': 'My Testing Plans',
+        'All status': 'All status',
+        'Not started': 'Not started',
+        'Progress': 'Progress',
+        'Due date': 'Due date',
+        'No due date': 'No due date',
+        'Today': 'Today',
+        'in {{count}} days': 'in {{count}} days',
+        '{{count}} days ago': '{{count}} days ago',
+        'No testing plans found.': 'No testing plans found.',
+        'scenario': 'scenario',
+        'scenarios': 'scenarios',
+        'Have a question or need help?': 'Have a question or need help?',
+        'Reach out to your QA team.': 'Reach out to your QA team.',
     }
 }
 export default en;

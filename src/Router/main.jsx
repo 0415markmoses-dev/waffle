@@ -1,14 +1,35 @@
 import {createBrowserRouter, matchRoutes, Navigate, useLocation} from "react-router-dom";
 import {Login} from "../Pages/Login.jsx";
 import {Layout as AppLayout} from "../Pages/app/layout.jsx";
-import {useAuthStore} from "../Store/auth.js";
+import {Layout as TestingLayout} from "../Pages/testing/layout.jsx";
+import {useAuthStore, isTester} from "../Store/auth.js";
+import {Loader} from "../Components/UI/Loader.jsx";
 
+const AuthLoader = () => (
+    <div className="w-100 h-100 d-flex justify-content-center align-items-center" style={{minHeight: '100vh'}}>
+        <Loader/>
+    </div>
+);
+
+/** /app — team members only */
 const ProtectedRoute = () => {
-    const {user} = useAuthStore();
+    const {user, isLoadingUser} = useAuthStore();
+    if (isLoadingUser) return <AuthLoader/>;
     if (!user?.id) return <Navigate to="/login" replace/>;
+    if (isTester(user)) return <Navigate to="/testing/" replace/>;
     return <AppLayout/>;
 };
+
+/** /testing — testers only */
+const TestingRoute = () => {
+    const {user, isLoadingUser} = useAuthStore();
+    if (isLoadingUser) return <AuthLoader/>;
+    if (!user?.id) return <Navigate to="/login" replace/>;
+    if (!isTester(user)) return <Navigate to="/app/" replace/>;
+    return <TestingLayout/>;
+};
 import {Home} from "../Pages/app/Home.jsx";
+import {Home as TestingHome} from "../Pages/testing/Home.jsx";
 import {Page as ReleasesPage} from "../Pages/app/project/releases/Page.jsx";
 import {Listing as ReleasesListing} from "../Pages/app/project/releases/Listing.jsx";
 import {Create as ReleasesCreate} from "../Pages/app/project/releases/Create.jsx";
@@ -34,6 +55,24 @@ export const routes = [
         path: "/",
         name: 'login',
         element: <Login/>,
+    },
+    {
+        path: "/testing",
+        element: <TestingRoute/>,
+        children: [
+            {
+                path: "",
+                name: 'testing_dashboard',
+                label: 'Dashboard',
+                element: <TestingHome/>,
+            },
+            {
+                path: "plans",
+                name: 'testing_plans',
+                label: 'My Plans',
+                element: <TestingHome/>,
+            },
+        ],
     },
     // we will have a separate set of page for testers under /testing...
     // everything under /app... is protected and only accessible for dev team

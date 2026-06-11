@@ -1390,13 +1390,14 @@
         {
           "@type": "SupportedProperty",
           "property": {
-            "@id": "#Answer/author",
-            "@type": "rdf:Property",
-            "rdfs:label": "author",
+            "@id": "#Answer/tester",
+            "@type": "Link",
+            "rdfs:label": "tester",
             "domain": "#Answer",
-            "range": "xmls:string"
+            "owl:maxCardinality": 1,
+            "range": "#Tester"
           },
-          "title": "author",
+          "title": "tester",
           "required": false,
           "readable": true,
           "writeable": true
@@ -2337,6 +2338,19 @@
         {
           "@type": "SupportedProperty",
           "property": {
+            "@id": "#Tester/type",
+            "@type": "rdf:Property",
+            "rdfs:label": "type",
+            "domain": "#Tester"
+          },
+          "title": "type",
+          "required": false,
+          "readable": true,
+          "writeable": false
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
             "@id": "#Tester/active",
             "@type": "rdf:Property",
             "rdfs:label": "active",
@@ -2420,7 +2434,8 @@
           "returns": "owl:Nothing",
           "title": "Deletes the Tester resource."
         }
-      ]
+      ],
+      "description": "Single account entity. Team members and testers are differentiated\nby the $type field (UserType::USER | UserType::TESTER).\n\nThe ApiResource is exposed under the \"Tester\" short name so the\nexisting /api/testers endpoints keep working for the React client.\nThe TesterTypeExtension automatically restricts API queries to\ntype = TESTER, and TesterStateProcessor forces type = TESTER on write."
     },
     {
       "@id": "#Entrypoint",
