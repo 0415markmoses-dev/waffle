@@ -1,0 +1,415 @@
+// ── Image Lightbox ─────────────────────────────────────────────────────────────
+
+.img-lb-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .72);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 5vw;
+}
+
+.img-lb {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: max-content;
+  min-width: min(640px, 90vw);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, .45);
+
+  // ── Header ────────────────────────────────────────────────────────────────
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    min-height: 58px;
+  }
+
+  &-file-info {
+    display: flex;
+    flex-direction: column;
+    gap: .125rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &-filename {
+    font-size: .875rem;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &-meta {
+    font-size: .75rem;
+    color: #6b7280;
+  }
+
+  // ── Center nav ────────────────────────────────────────────────────────────
+  &-nav {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-shrink: 0;
+  }
+
+  &-nav-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #374151;
+    font-size: 1rem;
+    transition: background .12s, border-color .12s;
+
+    &:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    &:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+  }
+
+  &-counter {
+    font-size: .875rem;
+    font-weight: 500;
+    color: #374151;
+    min-width: 3.25rem;
+    text-align: center;
+  }
+
+  // ── Header actions ────────────────────────────────────────────────────────
+  &-actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-shrink: 0;
+  }
+
+  &-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    padding: .375rem .875rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: .8125rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: background .12s, border-color .12s;
+
+    &:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    .font-icon {
+      font-size: .9375rem;
+      color: #059669;
+    }
+  }
+
+  &-close-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 1rem;
+    transition: background .12s, border-color .12s, color .12s;
+
+    &:hover {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #ef4444;
+    }
+  }
+
+  // ── Image body ────────────────────────────────────────────────────────────
+  &-body {
+    flex: 1;
+    background: #f3f4f6;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &-img-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    padding: 1.5rem;
+    min-height: 0;
+
+    img {
+      display: block;
+      border-radius: 4px;
+    }
+  }
+
+  // ── Side arrows (large, on image area) ───────────────────────────────────
+  &-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, .9);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #374151;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+    transition: background .12s, box-shadow .12s;
+
+    &:hover {
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .18);
+    }
+
+    &--prev {
+      left: .75rem;
+    }
+
+    &--next {
+      right: .75rem;
+    }
+  }
+
+}
+
+// ── Video Lightbox ─────────────────────────────────────────────────────────────
+
+.vid-lb {
+  // Override img-lb's max-content width — video modal should use all available space
+  width: 90vw;
+  max-width: 90vw;
+  min-width: unset;
+
+  // ── Video body ────────────────────────────────────────────────────────────
+  &-body {
+    background: #000;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // fills remaining height between header and viewport edge
+    height: calc(90vh - 58px);
+    min-height: 0;
+    overflow: hidden;
+    cursor: none; // hide cursor when controls hidden
+
+    &.controls-visible {
+      cursor: default;
+
+      .vid-lb-controls {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    // native fullscreen — take full screen
+    &:fullscreen {
+      height: 100vh;
+      width: 100vw;
+
+      .vid-lb-video {
+        max-height: 100vh;
+        max-width: 100vw;
+      }
+    }
+  }
+
+  &-video {
+    // fill the body container while preserving aspect ratio
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    cursor: pointer;
+    background: #000;
+  }
+
+  // ── Controls bar — overlaid at bottom ─────────────────────────────────────
+  &-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    // gradient so controls are readable without obscuring the video
+    background: linear-gradient(to top, rgba(0, 0, 0, .85) 0%, rgba(0, 0, 0, .4) 60%, transparent 100%);
+    padding: 2rem .75rem .75rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    // hidden by default, revealed via .controls-visible on parent
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .2s ease, transform .2s ease;
+    pointer-events: none; // pass clicks through when hidden
+
+    // re-enable interaction when visible
+    .vid-lb-body.controls-visible & {
+      pointer-events: auto;
+    }
+  }
+
+  // ── Progress bar ──────────────────────────────────────────────────────────
+  &-progress {
+    padding: .125rem 0;
+  }
+
+  &-progress-track,
+  &-volume-track {
+    position: relative;
+    height: 4px;
+    background: rgba(255, 255, 255, .2);
+    border-radius: 99px;
+    overflow: visible;
+  }
+
+  &-progress-fill,
+  &-volume-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: $primary;
+    border-radius: 99px;
+    pointer-events: none;
+    transition: width .05s linear;
+  }
+
+  // Transparent range input overlaid on custom track
+  &-scrubber {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+
+    // Enlarge hit area without affecting layout
+    &::-webkit-slider-thumb {
+      width: 20px;
+      height: 20px;
+    }
+
+    &::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  // ── Control row ───────────────────────────────────────────────────────────
+  &-ctrl-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+
+  &-ctrl-left,
+  &-ctrl-right {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+  }
+
+  // ── Control buttons ───────────────────────────────────────────────────────
+  &-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255, 255, 255, .8);
+    font-size: 1rem;
+    transition: color .12s, background .12s;
+    flex-shrink: 0;
+
+    svg {
+      display: block;
+    }
+
+    &:hover {
+      color: $primary;
+      background: rgba($primary, .12);
+    }
+
+    &--play {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 1.0625rem;
+
+      &:hover {
+        color: $primary;
+        background: rgba($primary, .2);
+      }
+    }
+  }
+
+  // ── Time display ──────────────────────────────────────────────────────────
+  &-time {
+    font-size: .75rem;
+    color: rgba(255, 255, 255, .7);
+    white-space: nowrap;
+    padding: 0 .25rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // ── Volume ────────────────────────────────────────────────────────────────
+  &-volume-wrap {
+    width: 72px;
+    display: flex;
+    align-items: center;
+  }
+
+  &-volume-track {
+    width: 100%;
+  }
+}

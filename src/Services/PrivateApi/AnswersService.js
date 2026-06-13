@@ -7,6 +7,9 @@ const AnswersService = {
     getAnswer(id) {
         return Http.get(`/api/answers/${id}`);
     },
+    createAnswer(data) {
+        return Http.post('/api/answers', data);
+    },
     patchAnswer(id, data) {
         return Http.patch(`/api/answers/${id}`, data, {
             headers: {'Content-Type': 'application/merge-patch+json'},

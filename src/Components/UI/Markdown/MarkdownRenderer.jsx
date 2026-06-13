@@ -1,5 +1,6 @@
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import PropTypes from "prop-types";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import {nightOwl} from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -72,7 +73,8 @@ export const MarkdownRenderer = ({markdown}) => {
                     )
                 }
             }}
-            remarkPlugins={[[remarkGfm, {}]]}>{markdown}</Markdown>
+            remarkPlugins={[[remarkGfm, {}]]}
+            rehypePlugins={[rehypeRaw]}>{markdown}</Markdown>
     </div>
 }
 

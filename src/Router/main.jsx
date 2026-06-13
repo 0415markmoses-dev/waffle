@@ -30,6 +30,7 @@ const TestingRoute = () => {
 };
 import {Home} from "../Pages/app/Home.jsx";
 import {Home as TestingHome} from "../Pages/testing/Home.jsx";
+import {PlanDetail as TestingPlanDetail} from "../Pages/testing/PlanDetail.jsx";
 import {Page as ReleasesPage} from "../Pages/app/project/releases/Page.jsx";
 import {Listing as ReleasesListing} from "../Pages/app/project/releases/Listing.jsx";
 import {Create as ReleasesCreate} from "../Pages/app/project/releases/Create.jsx";
@@ -71,6 +72,12 @@ export const routes = [
                 name: 'testing_plans',
                 label: 'My Plans',
                 element: <TestingHome/>,
+            },
+            {
+                path: "plans/:id",
+                name: 'testing_plan_detail',
+                label: 'Plan',
+                element: <TestingPlanDetail/>,
             },
         ],
     },

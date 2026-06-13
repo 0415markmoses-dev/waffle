@@ -23,15 +23,31 @@ export const useAnswer = (id) => {
     });
 };
 
+const invalidateTesterAnswer = (queryClient, questionField) => {
+    if (!questionField) return;
+    const iri = typeof questionField === 'string' ? questionField : questionField?.['@id'];
+    if (iri) queryClient.invalidateQueries({queryKey: ['tester-answer', iri]});
+};
+
+export const useCreateAnswer = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data) => AnswersService.createAnswer(data).then(r => r.data),
+        onSuccess: (created) => {
+            queryClient.invalidateQueries({queryKey: answerKeys.all});
+            invalidateTesterAnswer(queryClient, created?.question);
+        },
+    });
+};
+
 export const useUpdateAnswer = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({id, data}) => AnswersService.patchAnswer(id, data).then(r => r.data),
         onSuccess: (updated) => {
-            // Update the detail cache directly with the API response
             queryClient.setQueryData(answerKeys.detail(String(updated.id)), updated);
-            // Invalidate lists so counts/states refresh
             queryClient.invalidateQueries({queryKey: answerKeys.list});
+            invalidateTesterAnswer(queryClient, updated?.question);
         },
     });
 };

@@ -1,7 +1,15 @@
 import {useNavigate, useParams} from 'react-router';
 import {useTranslation} from 'react-i18next';
 import {useRef, useState} from 'react';
+import Modal from 'react-modal';
 import {useAnswer, useAnswers, useUpdateAnswer} from '../../../../Hooks/queries/useAnswersQuery.js';
+import {useFiles} from '../../../../Hooks/queries/useFilesQuery.js';
+import FilesService from '../../../../Services/PrivateApi/FilesService.js';
+import AttachmentItem, {IMAGE_EXTS, VIDEO_EXTS} from '../../../../Components/UI/Uploader/AttachmentItem.jsx';
+import ImageLightbox from '../../../../Components/UI/Lightbox/ImageLightbox.jsx';
+import VideoLightbox from '../../../../Components/UI/Lightbox/VideoLightbox.jsx';
+
+Modal.setAppElement('#root');
 import {useQuestion} from '../../../../Hooks/queries/useQuestionsQuery.js';
 import {useTestPlan} from '../../../../Hooks/queries/useTestPlansQuery.js';
 import {useRelease} from '../../../../Hooks/queries/useReleasesQuery.js';
@@ -100,6 +108,14 @@ const relativeTime = (iso) => {
 const initials = (str) =>
     (str ?? '').trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('') || '?';
 
+const CONFIRM_MODAL_STYLES = {
+    content: {
+        top: '50%', left: '50%', right: 'auto', bottom: 'auto',
+        marginRight: '-50%', transform: 'translate(-50%, -50%)',
+        minWidth: '360px', maxWidth: '480px',
+    },
+};
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const StateBadge = ({state}) => {
@@ -168,7 +184,47 @@ export const Page = () => {
 
     // Core answer
     const {data: answer, isLoading, isError} = useAnswer(id);
-    const {mutate: updateAnswer, isPending: isUpdating} = useUpdateAnswer();
+    const {mutate: updateAnswer, mutateAsync: updateAnswerAsync, isPending: isUpdating} = useUpdateAnswer();
+
+    // Attachments
+    const fileIris = answer?.files ?? [];
+    const fileQueries = useFiles(fileIris);
+    const resolvedFiles = fileQueries.map((q, i) => ({iri: fileIris[i], ...(q.data ?? {})}));
+
+    const handleDownloadAll = () => {
+        resolvedFiles.forEach((f) => {
+            const url = f.url ?? (f.bucketUrl ? `${f.bucketUrl}/${f.key}.${f.extension}` : null);
+            const name = f.filename ?? f.key ?? 'download';
+            if (!url) return;
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = name;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        });
+    };
+
+    // Confirm-delete dialog
+    const [confirmIri, setConfirmIri] = useState(null);
+    const [deleteInProgress, setDeleteInProgress] = useState(false);
+    const [lightboxIndex, setLightboxIndex] = useState(null);
+    const [videoLightbox, setVideoLightbox] = useState(null);
+
+    const handleDeleteFile = async (fileIri) => {
+        const updatedIris = fileIris.filter(iri => iri !== fileIri);
+        await updateAnswerAsync({id, data: {files: updatedIris}});
+        try {
+            await FilesService.deleteFile(fileIri);
+        } catch {
+            // Storage deletion failed — restore IRI on the answer
+            await updateAnswerAsync({id, data: {files: fileIris}});
+        }
+        setConfirmIri(null);
+        setDeleteInProgress(false);
+    };
 
     // Resolve parents
     const questionIri = answer?.question;
@@ -321,12 +377,66 @@ export const Page = () => {
                             {/* Attachments */}
                             <Col>
                                 <Card>
-                                    <CardHeader title={t('Attachments')}/>
+                                    <CardHeader
+                                        title={`${t('Attachments')}${resolvedFiles.length ? ` (${resolvedFiles.length})` : ''}`}/>
                                     <CardBody>
-                                        <div className="ap-empty-state text-muted">
-                                            <i className="font-icon lni lni-image-1 ap-empty-icon"/>
-                                            <span>{t('No attachments on this answer.')}</span>
-                                        </div>
+                                        {resolvedFiles.length === 0 ? (
+                                            <div className="ap-empty-state text-muted">
+                                                <i className="font-icon lni lni-paperclip-2 ap-empty-icon"/>
+                                                <span>{t('No attachments on this answer.')}</span>
+                                            </div>
+                                        ) : (() => {
+                                            const imageFiles = resolvedFiles.filter(f => {
+                                                const ext = (f.extension ?? '').toLowerCase();
+                                                const url = f.url ?? (f.bucketUrl ? `${f.bucketUrl}/${f.key}.${f.extension}` : null);
+                                                return IMAGE_EXTS.has(ext) && url;
+                                            }).map(f => ({
+                                                url: f.url ?? `${f.bucketUrl}/${f.key}.${f.extension}`,
+                                                name: f.filename ?? f.key ?? '—',
+                                                size: f.size ?? null,
+                                            }));
+                                            return (
+                                                <>
+                                                    <div className="tpd-attach-grid">
+                                                        {resolvedFiles.map((f, i) => {
+                                                            const ext = (f.extension ?? '').toLowerCase();
+                                                            const url = f.url ?? (f.bucketUrl ? `${f.bucketUrl}/${f.key}.${f.extension}` : null);
+                                                            const isImg = IMAGE_EXTS.has(ext) && url;
+                                                            const isVideo = VIDEO_EXTS.has(ext) && url;
+                                                            const imgIdx = isImg ? imageFiles.findIndex(img => img.url === url) : -1;
+                                                            return (
+                                                                <AttachmentItem
+                                                                    key={f.iri ?? i}
+                                                                    file={f}
+                                                                    onDelete={(iri) => setConfirmIri(iri)}
+                                                                    onImageClick={isImg ? () => setLightboxIndex(imgIdx) : undefined}
+                                                                    onVideoClick={isVideo ? () => setVideoLightbox({
+                                                                        url,
+                                                                        name: f.filename ?? f.key ?? '—',
+                                                                        size: f.size ?? null
+                                                                    }) : undefined}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </div>
+                                                    {lightboxIndex !== null && imageFiles.length > 0 && (
+                                                        <ImageLightbox
+                                                            images={imageFiles}
+                                                            initialIndex={lightboxIndex}
+                                                            onClose={() => setLightboxIndex(null)}
+                                                        />
+                                                    )}
+                                                    {videoLightbox && (
+                                                        <VideoLightbox
+                                                            url={videoLightbox.url}
+                                                            name={videoLightbox.name}
+                                                            size={videoLightbox.size}
+                                                            onClose={() => setVideoLightbox(null)}
+                                                        />
+                                                    )}
+                                                </>
+                                            );
+                                        })()}
                                     </CardBody>
                                 </Card>
                             </Col>
@@ -413,7 +523,8 @@ export const Page = () => {
                                             <div
                                                 className="text-muted small">{t('Download all files from this answer')}</div>
                                         </div>
-                                        <Button iconOnly type="light" size="sm">
+                                        <Button iconOnly type="light" size="sm" onClick={handleDownloadAll}
+                                                disabled={resolvedFiles.length === 0}>
                                             <i className="font-icon lni lni-download-1"/>
                                         </Button>
                                     </CardGroup>
@@ -432,6 +543,35 @@ export const Page = () => {
                     </Col>
                 </Row>
             </PageElementWrapper>
+            {/* Confirm file delete */}
+            <Modal
+                isOpen={!!confirmIri}
+                onRequestClose={() => !deleteInProgress && setConfirmIri(null)}
+                style={CONFIRM_MODAL_STYLES}
+            >
+                <div className="modal-header">
+                    <h5 className="modal-title">{t('Delete attachment')}</h5>
+                </div>
+                <div className="modal-body">
+                    <p>{t('Are you sure you want to permanently delete this file? This action cannot be undone.')}</p>
+                </div>
+                <div className="modal-footer gap-2">
+                    <Button type="light" size="sm" onClick={() => setConfirmIri(null)} disabled={deleteInProgress}>
+                        {t('Cancel')}
+                    </Button>
+                    <Button
+                        type="danger"
+                        size="sm"
+                        loading={deleteInProgress}
+                        onClick={async () => {
+                            setDeleteInProgress(true);
+                            await handleDeleteFile(confirmIri);
+                        }}
+                    >
+                        {t('Delete')}
+                    </Button>
+                </div>
+            </Modal>
         </PageContentWrapper>
     );
 };
