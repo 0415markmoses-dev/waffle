@@ -7,7 +7,7 @@ import {PageTitle} from "../../Components/Navigation/PageTitle.jsx";
 import {PageElementWrapper} from "../../Components/Navigation/PageElementWrapper.jsx";
 import {Loader} from "../../Components/UI/Loader.jsx";
 import {useAuthStore} from "../../Store/auth.js";
-import {useAssignedTestPlans} from "../../Hooks/queries/useTestPlansQuery.js";
+import {useAssignedTestPlans, useTestPlanProgression} from "../../Hooks/queries/useTestPlansQuery.js";
 import ReleasesService from "../../Services/PrivateApi/ReleasesService.js";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -68,7 +68,8 @@ const PlanRow = ({plan, t, projectName}) => {
     const navigate = useNavigate();
     const days = daysUntil(plan.dueDate);
     const planId = typeof plan.id === 'string' ? plan.id.split('/').pop() : plan.id;
-    const progress = 0; // will be derived from per-tester answers once available
+    const {data: progression} = useTestPlanProgression(planId);
+    const progress = Math.round(progression?.progression ?? 0);
 
     const relativeLabel = () => {
         if (days < 0) return t('{{count}} days ago', {count: Math.abs(days)});
@@ -164,7 +165,7 @@ export const Home = () => {
     const {user} = useAuthStore();
     const testerIri = user?.['@id'] ?? null;
 
-    const {data: plans = [], isLoading} = useAssignedTestPlans(testerIri);
+    const {data: plans = [], isLoading} = useAssignedTestPlans(testerIri, {}, {refetchOnMount: 'always', staleTime: 0});
 
     // Fetch full release objects to get project.name (not included in testPlan:read group)
     const releaseIds = useMemo(() => {
@@ -268,7 +269,7 @@ export const Home = () => {
                                 <button className="td-plans-control-btn" onClick={() => setSortAsc(a => !a)}>
                                     <i className="font-icon lni lni-calendar-days"/>
                                     {t('Due date')}
-                                    <i className={`font-icon lni lni-arrow-${sortAsc ? 'up' : 'down'}`}/>
+                                    <i className={`font-icon lni lni-arrow-${sortAsc ? 'upward' : 'downward'}`}/>
                                 </button>
                             </div>
                         </div>

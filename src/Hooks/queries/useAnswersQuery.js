@@ -40,6 +40,19 @@ export const useCreateAnswer = () => {
     });
 };
 
+export const useRecentProjectAnswers = (projectId) => {
+    return useQuery({
+        queryKey: answerKeys.list({project: projectId, recent: true}),
+        queryFn: () => AnswersService.getAnswers({
+            'question.testPlan.release.project': projectId,
+            'order[created]': 'desc',
+            itemsPerPage: 10,
+            page: 1,
+        }).then(r => r.data),
+        enabled: !!projectId,
+    });
+};
+
 export const useUpdateAnswer = () => {
     const queryClient = useQueryClient();
     return useMutation({

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import {HEALTH_COLORS} from '../Health/HealthDisplay.jsx';
 import {useTester} from '../../Hooks/queries/useTestersQuery.js';
+import {useFiles} from '../../Hooks/queries/useFilesQuery.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -45,6 +46,25 @@ const DEVICE_ICONS = {
     tablet: 'lni-laptop-phone',
 };
 
+const EXT_ICONS = {
+    jpeg: 'lni-gallery',
+    jpg: 'lni-gallery',
+    png: 'lni-gallery',
+    gif: 'lni-gallery',
+    pdf: 'lni-file-multiple',
+    txt: 'lni-text-format-remove',
+    mov: 'lni-play',
+    mp4: 'lni-play',
+    avi: 'lni-play',
+    doc: 'lni-file-pencil',
+    docx: 'lni-file-pencil',
+    xls: 'lni-bar-chart-4',
+    xlsx: 'lni-bar-chart-4',
+    csv: 'lni-bar-chart-4',
+};
+
+const iconForExt = (ext) => EXT_ICONS[(ext ?? '').toLowerCase()] ?? 'lni-paperclip-1';
+
 const initials = (str) =>
     (str ?? '').trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('') || '?';
 
@@ -68,6 +88,32 @@ const relativeTime = (iso) => {
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs}h ago`;
     return `${Math.floor(hrs / 24)}d ago`;
+};
+
+const COMMENT_MAX_CHARS = 160;
+
+const stripMarkdown = (md) => {
+    if (!md) return '';
+    return md
+        .replace(/```[\s\S]*?```/g, '')          // fenced code blocks
+        .replace(/`[^`]+`/g, '')                  // inline code
+        .replace(/!\[.*?\]\(.*?\)/g, '')          // images
+        .replace(/\[([^\]]+)\]\(.*?\)/g, '$1')   // links → keep label
+        .replace(/^#{1,6}\s+/gm, '')              // headings
+        .replace(/(\*\*|__)(.*?)\1/g, '$2')      // bold
+        .replace(/(\*|_)(.*?)\1/g, '$2')         // italic
+        .replace(/^[-*+]\s+/gm, '')              // unordered list markers
+        .replace(/^\d+\.\s+/gm, '')              // ordered list markers
+        .replace(/^>\s+/gm, '')                  // blockquotes
+        .replace(/^[-*_]{3,}\s*$/gm, '')         // horizontal rules
+        .replace(/\n{2,}/g, ' ')                 // multiple newlines → space
+        .replace(/\n/g, ' ')                     // single newlines → space
+        .trim();
+};
+
+const truncate = (str, max) => {
+    if (!str || str.length <= max) return str;
+    return str.slice(0, max).trimEnd() + '…';
 };
 
 const iconForKey = (map, value) => {
@@ -114,13 +160,17 @@ export const AnswerCardPreview = ({answerData}) => {
     const testerId = testerIri ? testerIri.split('/').pop() : undefined;
     const {data: tester} = useTester(testerId);
 
-    return <AnswerCardContent answerData={answerData} tester={tester ?? null}/>;
+    const fileIris = answerData.files ?? [];
+    const fileQueries = useFiles(fileIris);
+    const resolvedFiles = fileQueries.map((q, i) => ({iri: fileIris[i], ...(q.data ?? {})}));
+
+    return <AnswerCardContent answerData={answerData} tester={tester ?? null} resolvedFiles={resolvedFiles}/>;
 };
 
 // ── Pure display component ────────────────────────────────────────────────────
 
-const AnswerCardContent = ({answerData, tester}) => {
-    const {author, state, comment, created, updated, systemInfos, files = []} = answerData;
+const AnswerCardContent = ({answerData, tester, resolvedFiles = []}) => {
+    const {author, state, comment, created, updated, systemInfos} = answerData;
 
     // Identity: prefer tester email, fall back to author string
     const email = tester?.email ?? null;
@@ -138,9 +188,9 @@ const AnswerCardContent = ({answerData, tester}) => {
     const osIcon = iconForKey(OS_ICONS, os);
     const deviceIcon = iconForKey(DEVICE_ICONS, device);
 
-    const MAX_FILES = 2;
-    const visibleFiles = files.slice(0, MAX_FILES);
-    const extraFiles = files.length - MAX_FILES;
+    const MAX_FILES = 3;
+    const visibleFiles = resolvedFiles.slice(0, MAX_FILES);
+    const extraFiles = resolvedFiles.length - MAX_FILES;
 
     return (
         <div className="acp-row">
@@ -180,18 +230,19 @@ const AnswerCardContent = ({answerData, tester}) => {
 
             {/* Comment */}
             <div className="acp-col acp-col-comment">
-                <p className="acp-comment">{comment}</p>
+                <p className="acp-comment">{truncate(stripMarkdown(comment), COMMENT_MAX_CHARS)}</p>
             </div>
 
             {/* Files */}
             <div className="acp-col acp-col-files">
-                {files.length === 0 ? (
+                {resolvedFiles.length === 0 ? (
                     <span className="text-muted" style={{fontSize: '.75rem'}}>No attachments</span>
                 ) : (
                     <>
                         {visibleFiles.map((f, i) => (
-                            <div key={i} className="acp-file-thumb">
-                                <i className="font-icon lni lni-image-1"/>
+                            <div key={f.iri ?? i} className="acp-file-thumb"
+                                 title={f.extension ? `.${f.extension}` : undefined}>
+                                <i className={`font-icon lni ${iconForExt(f.extension)}`}/>
                             </div>
                         ))}
                         {extraFiles > 0 && (

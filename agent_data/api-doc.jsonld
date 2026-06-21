@@ -1228,6 +1228,21 @@
           "required": false,
           "readable": true,
           "writeable": false
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
+            "@id": "#Me/type",
+            "@type": "rdf:Property",
+            "rdfs:label": "type",
+            "domain": "#Me",
+            "range": "xmls:string"
+          },
+          "title": "type",
+          "required": false,
+          "readable": true,
+          "writeable": false,
+          "description": "Account type: USER (team member) or TESTER"
         }
       ],
       "supportedOperation": [
@@ -1474,6 +1489,20 @@
         {
           "@type": "SupportedProperty",
           "property": {
+            "@id": "#Answer/important",
+            "@type": "rdf:Property",
+            "rdfs:label": "important",
+            "domain": "#Answer",
+            "range": "xmls:boolean"
+          },
+          "title": "important",
+          "required": false,
+          "readable": true,
+          "writeable": true
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
             "@id": "https://schema.org/DateTime",
             "@type": "rdf:Property",
             "rdfs:label": "created",
@@ -1525,6 +1554,17 @@
           "rdfs:label": "Retrieves a Answer resource.",
           "returns": "Answer",
           "title": "Retrieves a Answer resource."
+        },
+        {
+          "@type": [
+            "Operation",
+            "schema:ReplaceAction"
+          ],
+          "expects": "Answer",
+          "method": "PUT",
+          "rdfs:label": "Replaces the Answer resource.",
+          "returns": "Answer",
+          "title": "Replaces the Answer resource."
         },
         {
           "@type": "Operation",
@@ -1639,6 +1679,20 @@
         {
           "@type": "SupportedProperty",
           "property": {
+            "@id": "#File/signedUrl",
+            "@type": "rdf:Property",
+            "rdfs:label": "signedUrl",
+            "domain": "#File",
+            "range": "xmls:string"
+          },
+          "title": "signedUrl",
+          "required": false,
+          "readable": false,
+          "writeable": true
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
             "@id": "https://schema.org/DateTime",
             "@type": "rdf:Property",
             "rdfs:label": "created",
@@ -1704,14 +1758,6 @@
           "rdfs:label": "Retrieves a File resource.",
           "returns": "File",
           "title": "Retrieves a File resource."
-        },
-        {
-          "@type": "Operation",
-          "expects": "File",
-          "method": "PATCH",
-          "rdfs:label": "Updates the File resource.",
-          "returns": "File",
-          "title": "Updates the File resource."
         },
         {
           "@type": [
@@ -1854,6 +1900,17 @@
           "rdfs:label": "Retrieves a Project resource.",
           "returns": "Project",
           "title": "Retrieves a Project resource."
+        },
+        {
+          "@type": [
+            "Operation",
+            "schema:ReplaceAction"
+          ],
+          "expects": "Project",
+          "method": "PUT",
+          "rdfs:label": "Replaces the Project resource.",
+          "returns": "Project",
+          "title": "Replaces the Project resource."
         },
         {
           "@type": "Operation",
@@ -2296,6 +2353,27 @@
           "title": "Retrieves a TestPlan resource."
         },
         {
+          "@type": [
+            "Operation",
+            "schema:FindAction"
+          ],
+          "method": "GET",
+          "rdfs:label": "Retrieves a TestPlan resource.",
+          "returns": "TestPlan",
+          "title": "Retrieves a TestPlan resource."
+        },
+        {
+          "@type": [
+            "Operation",
+            "schema:ReplaceAction"
+          ],
+          "expects": "TestPlan",
+          "method": "PUT",
+          "rdfs:label": "Replaces the TestPlan resource.",
+          "returns": "TestPlan",
+          "title": "Replaces the TestPlan resource."
+        },
+        {
           "@type": "Operation",
           "expects": "TestPlan",
           "method": "PATCH",
@@ -2417,6 +2495,17 @@
           "title": "Retrieves a Tester resource."
         },
         {
+          "@type": [
+            "Operation",
+            "schema:ReplaceAction"
+          ],
+          "expects": "Tester",
+          "method": "PUT",
+          "rdfs:label": "Replaces the Tester resource.",
+          "returns": "Tester",
+          "title": "Replaces the Tester resource."
+        },
+        {
           "@type": "Operation",
           "expects": "Tester",
           "method": "PATCH",
@@ -2528,56 +2617,6 @@
             ]
           },
           "title": "The collection of Answer resources",
-          "readable": true,
-          "writeable": false
-        },
-        {
-          "@type": "SupportedProperty",
-          "property": {
-            "@id": "#Entrypoint/file",
-            "@type": "Link",
-            "domain": "#Entrypoint",
-            "rdfs:label": "The collection of File resources",
-            "rdfs:range": [
-              {
-                "@id": "Collection"
-              },
-              {
-                "owl:equivalentClass": {
-                  "owl:onProperty": {
-                    "@id": "member"
-                  },
-                  "owl:allValuesFrom": {
-                    "@id": "#File"
-                  }
-                }
-              }
-            ],
-            "supportedOperation": [
-              {
-                "@type": [
-                  "Operation",
-                  "schema:FindAction"
-                ],
-                "method": "GET",
-                "rdfs:label": "Retrieves the collection of File resources.",
-                "returns": "Collection",
-                "title": "Retrieves the collection of File resources."
-              },
-              {
-                "@type": [
-                  "Operation",
-                  "schema:CreateAction"
-                ],
-                "expects": "File",
-                "method": "POST",
-                "rdfs:label": "Creates a File resource.",
-                "returns": "File",
-                "title": "Creates a File resource."
-              }
-            ]
-          },
-          "title": "The collection of File resources",
           "readable": true,
           "writeable": false
         },

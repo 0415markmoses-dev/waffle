@@ -513,8 +513,15 @@ export const Page = () => {
                                             <div
                                                 className="text-muted small">{t('Flag this answer for follow-up')}</div>
                                         </div>
-                                        <Button iconOnly type="light" size="sm">
-                                            <i className="font-icon lni lni-star-fat"/>
+                                        <Button
+                                            iconOnly
+                                            type={answer?.important ? 'warning' : 'light'}
+                                            size="sm"
+                                            loading={isUpdating}
+                                            onClick={() => updateAnswer({id, data: {important: !answer?.important}})}
+                                        >
+                                            <i className="font-icon lni lni-star-fat"
+                                               style={answer?.important ? {color: '#f59e0b'} : {}}/>
                                         </Button>
                                     </CardGroup>
                                     <CardGroup className="d-flex justify-content-between align-items-center">

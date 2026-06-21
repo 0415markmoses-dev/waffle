@@ -31,6 +31,8 @@ const TestingRoute = () => {
 import {Home} from "../Pages/app/Home.jsx";
 import {Home as TestingHome} from "../Pages/testing/Home.jsx";
 import {PlanDetail as TestingPlanDetail} from "../Pages/testing/PlanDetail.jsx";
+import {ArchivedPlans as TestingArchivedPlans} from "../Pages/testing/ArchivedPlans.jsx";
+import {About as TestingAbout} from "../Pages/testing/About.jsx";
 import {Page as ReleasesPage} from "../Pages/app/project/releases/Page.jsx";
 import {Listing as ReleasesListing} from "../Pages/app/project/releases/Listing.jsx";
 import {Create as ReleasesCreate} from "../Pages/app/project/releases/Create.jsx";
@@ -38,6 +40,7 @@ import {Page as TestingPlansPage} from "../Pages/app/project/testing_plans/Page.
 import {Listing as TestingPlansListing} from "../Pages/app/project/testing_plans/Listing.jsx";
 import {Page as TestersPage} from "../Pages/app/project/testers/Page.jsx";
 import {Page as AboutPage} from "../Pages/app/about/Page.jsx";
+import {Page as ProjectPage} from "../Pages/app/project/Page.jsx";
 import {Create as QuestionsCreate} from "../Pages/app/project/questions/Create.jsx";
 import {Page as QuestionPage} from "../Pages/app/project/questions/Page.jsx";
 import {Page as AnswerPage} from "../Pages/app/project/answers/Page.jsx";
@@ -74,10 +77,22 @@ export const routes = [
                 element: <TestingHome/>,
             },
             {
+                path: "plans/archived",
+                name: 'testing_plans_archived',
+                label: 'Archived Plans',
+                element: <TestingArchivedPlans/>,
+            },
+            {
                 path: "plans/:id",
                 name: 'testing_plan_detail',
                 label: 'Plan',
                 element: <TestingPlanDetail/>,
+            },
+            {
+                path: "about",
+                name: 'testing_about',
+                label: 'About',
+                element: <TestingAbout/>,
             },
         ],
     },
@@ -99,6 +114,12 @@ export const routes = [
                 name: 'app_about',
                 label: 'About',
                 element: <AboutPage/>,
+            },
+            {
+                path: "project-settings",
+                name: 'project_settings',
+                label: 'Project',
+                element: <ProjectPage/>,
             },
             {
                 path: "project",

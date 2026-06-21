@@ -1,11 +1,13 @@
+import {PageContentWrapper} from "../../../Components/Navigation/PageContentWrapper.jsx";
+import {PageElementWrapper} from "../../../Components/Navigation/PageElementWrapper.jsx";
+import {AboutTestGator} from "../../../Components/About/AboutTestGator.jsx";
+
 export const Page = () => {
-    return <>
-        <div className="container-fluid">
-            <div className="row">
-                <div className="col-12 x">
-                    <h1>About</h1>
-                </div>
-            </div>
-        </div>
-    </>
-}
+    return (
+        <PageContentWrapper>
+            <PageElementWrapper>
+                <AboutTestGator/>
+            </PageElementWrapper>
+        </PageContentWrapper>
+    );
+};

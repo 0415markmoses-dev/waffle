@@ -123,6 +123,7 @@ export const Page = () => {
     const answerFilter = searchParams.get('state') ?? null;
     const answerSearch = searchParams.get('query') ?? '';
     const answerSort = searchParams.get('sort') ?? 'newest';
+    const answerImportant = searchParams.get('important') === 'true';
 
     const setParam = (key, value, resetPage = false) => {
         setSearchParams(prev => {
@@ -141,6 +142,7 @@ export const Page = () => {
     const setAnswerFilter = (f) => setParam('state', f, true);
     const setAnswerSearch = (q) => setParam('query', q, true);
     const setAnswerSort = (s) => setParam('sort', s === 'newest' ? null : s, true);
+    const toggleImportant = () => setParam('important', answerImportant ? null : 'true', true);
 
     const debouncedSearch = useDebounce(answerSearch, 500);
     const ANSWERS_PER_PAGE = 10;
@@ -160,13 +162,15 @@ export const Page = () => {
         order: currentSort.order,
         ...(answerFilter ? {state: answerFilter} : {}),
         ...(debouncedSearch ? {query: debouncedSearch} : {}),
+        ...(answerImportant ? {important: true} : {}),
     });
 
-    const hasActiveFilters = answerFilter !== null || answerSearch !== '' || answerSort !== 'newest';
+    const hasActiveFilters = answerFilter !== null || answerSearch !== '' || answerSort !== 'newest' || answerImportant;
     const clearFilters = () => setSearchParams(prev => {
         const next = new URLSearchParams(prev);
         next.delete('state');
         next.delete('query');
+        next.delete('important');
         next.delete('sort');
         next.delete('page');
         return next;
@@ -487,6 +491,15 @@ export const Page = () => {
                                                         onClick={clearFilters}
                                                     >
                                                         {t('Clear filters')}
+                                                    </Button>
+                                                    <Button
+                                                        type={answerImportant ? 'warning' : 'light'}
+                                                        size="sm"
+                                                        onClick={toggleImportant}
+                                                    >
+                                                        <i className="font-icon lni lni-star-fat"
+                                                           style={answerImportant ? {color: '#f59e0b'} : {}}/>
+                                                        {t('Important')}
                                                     </Button>
                                                     <div className="atb-sort">
                                                         <span className="atb-sort-label">{t('Sort by')}:</span>

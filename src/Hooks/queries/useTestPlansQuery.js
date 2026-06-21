@@ -66,11 +66,22 @@ export const useUpdateTestPlan = () => {
 };
 
 /** Fetch test plans assigned to the current tester (filtered by testersEnrolled IRI). */
-export const useAssignedTestPlans = (testerIri, extraParams = {}) => {
+export const useAssignedTestPlans = (testerIri, extraParams = {}, queryOptions = {}) => {
     return useQuery({
         queryKey: testPlanKeys.list({testersEnrolled: testerIri, ...extraParams}),
         queryFn: () => fetchAllTestPlans({testersEnrolled: testerIri, ...extraParams}),
         enabled: !!testerIri,
+        ...queryOptions,
+    });
+};
+
+export const useTestPlanProgression = (id) => {
+    return useQuery({
+        queryKey: ['testPlanProgression', id],
+        queryFn: () => TestPlansService.getProgression(id).then(r => r.data),
+        enabled: !!id,
+        staleTime: 0,
+        refetchOnMount: 'always',
     });
 };
 

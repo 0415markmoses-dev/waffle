@@ -1,4 +1,5 @@
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 import {FormGroupContext} from "../FormGroupContext.jsx";
 import PropTypes from "prop-types";
 
@@ -9,15 +10,22 @@ export const TextInput = ({
                               type = 'text',
                               placeholder = '',
                               required = false,
-                              leftIcon = null,   // lni class string, e.g. 'lni-search-1'
-                              rightIcon = null,   // lni class string, e.g. 'lni-search-1'
-                              clearable = false,  // shows × button when field has content
+                              leftIcon = null,
+                              rightIcon = null,
+                              clearable = false,
+                              // Autocomplete
+                              hasAutocomplete = false,
+                              autocompleteList = [],
+                              onSelectAutocompleteItem = () => {
+                              },
+                              maxAutocompleteItemsDisplay = 5,
                               ...props
                           }) => {
     const {id, name} = useContext(FormGroupContext);
     const [value_, setValue] = useState(value);
+    const [dropdownRect, setDropdownRect] = useState(null);
+    const wrapperRef = useRef(null);
 
-    // Sync when parent resets the value (e.g. clear from outside)
     useEffect(() => {
         setValue(value);
     }, [value]);
@@ -32,6 +40,25 @@ export const TextInput = ({
         onChange('');
     };
 
+    const handleSelect = (item) => {
+        onSelectAutocompleteItem(item);
+    };
+
+    // Measure input position whenever the dropdown list changes
+    const visibleItems = autocompleteList.slice(0, maxAutocompleteItemsDisplay);
+    const showDropdown = hasAutocomplete && visibleItems.length > 0;
+
+    useEffect(() => {
+        if (showDropdown && wrapperRef.current) {
+            const r = wrapperRef.current.getBoundingClientRect();
+            setDropdownRect({
+                top: r.bottom + window.scrollY + 4,
+                left: r.left + window.scrollX,
+                width: r.width,
+            });
+        }
+    }, [showDropdown, autocompleteList]);
+
     const showClear = clearable && value_.length > 0;
     const hasRight = showClear || rightIcon;
     const hasLeft = !!leftIcon;
@@ -39,6 +66,7 @@ export const TextInput = ({
     const input = (
         <input
             {...props}
+            ref={!hasLeft && !hasRight ? wrapperRef : undefined}
             type={type}
             className={[
                 'form-control',
@@ -54,10 +82,8 @@ export const TextInput = ({
         />
     );
 
-    if (!hasLeft && !hasRight) return input;
-
-    return (
-        <div className="text-input-wrapper">
+    const wrappedInput = (!hasLeft && !hasRight) ? input : (
+        <div className="text-input-wrapper" ref={wrapperRef}>
             {hasLeft && (
                 <div className="text-input-left">
                     <i className={`font-icon lni ${leftIcon} text-input-icon`}/>
@@ -83,6 +109,41 @@ export const TextInput = ({
             )}
         </div>
     );
+
+    // Wrap in a ref div when there are no icons (so we can still measure position)
+    const rootEl = (!hasLeft && !hasRight)
+        ? <div ref={wrapperRef}>{input}</div>
+        : wrappedInput;
+
+    return (
+        <>
+            {rootEl}
+            {showDropdown && dropdownRect && createPortal(
+                <div
+                    className="text-input-autocomplete"
+                    style={{
+                        position: 'absolute',
+                        top: dropdownRect.top,
+                        left: dropdownRect.left,
+                        width: dropdownRect.width,
+                        zIndex: 99999,
+                    }}
+                >
+                    {visibleItems.map((item, i) => (
+                        <div
+                            key={item.value ?? i}
+                            className="text-input-autocomplete-item"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => handleSelect(item)}
+                        >
+                            {item.label}
+                        </div>
+                    ))}
+                </div>,
+                document.body
+            )}
+        </>
+    );
 };
 
 TextInput.propTypes = {
@@ -94,4 +155,11 @@ TextInput.propTypes = {
     leftIcon: PropTypes.string,
     rightIcon: PropTypes.string,
     clearable: PropTypes.bool,
+    hasAutocomplete: PropTypes.bool,
+    autocompleteList: PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.any,
+        label: PropTypes.node,
+    })),
+    onSelectAutocompleteItem: PropTypes.func,
+    maxAutocompleteItemsDisplay: PropTypes.number,
 };

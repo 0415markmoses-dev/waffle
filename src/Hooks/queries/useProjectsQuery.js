@@ -1,4 +1,5 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+
 import ProjectService from "../../Services/PrivateApi/ProjectService.js";
 
 export const projectKeys = {
@@ -18,6 +19,22 @@ export const useProject = (id) => {
     return useQuery({
         queryKey: projectKeys.detail(id),
         queryFn: () => ProjectService.getProject(id).then(r => r.data),
+        enabled: !!id,
+    });
+};
+
+export const useUpdateProject = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({id, data}) => ProjectService.updateProject(id, data).then(r => r.data),
+        onSuccess: () => queryClient.invalidateQueries({queryKey: projectKeys.all}),
+    });
+};
+
+export const useProjectStats = (id) => {
+    return useQuery({
+        queryKey: [...projectKeys.detail(id), 'stats'],
+        queryFn: () => ProjectService.getStats(id).then(r => r.data),
         enabled: !!id,
     });
 };

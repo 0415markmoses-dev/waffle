@@ -55,6 +55,29 @@
   }
 }
 
+// ── TextInput autocomplete dropdown (portal) ─────────────────────────────────
+.text-input-autocomplete {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+  overflow: hidden;
+}
+
+.text-input-autocomplete-item {
+  display: flex;
+  flex-direction: column;
+  padding: .55rem .85rem;
+  cursor: pointer;
+  font-size: .85rem;
+  color: #111827;
+  transition: background 80ms ease;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
 .auth-code-input {
   display: flex;
   justify-content: space-between;

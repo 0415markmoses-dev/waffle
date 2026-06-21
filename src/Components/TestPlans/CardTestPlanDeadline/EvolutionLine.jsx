@@ -1,92 +1,54 @@
-import {useEffect, useState} from "react";
+import PropTypes from 'prop-types';
 
-export const EvolutionLine = ({start, targetFinish, current}) => {
-    const [startDate, setStartDate] = useState(new Date(start));
-    const [targetFinishDate, setTargetFinishDate] = useState(new Date(targetFinish));
-    const [currentDate, setCurrentDate] = useState(current ? new Date(current) : null);
+export const EvolutionLine = ({start, targetFinish, current, isOverdue}) => {
+    const startDate = new Date(start);
+    const endDate = new Date(targetFinish);
+    const currentDate = current ? new Date(current) : new Date();
 
-    useEffect(() => {
-        setStartDate(new Date(start));
-        setTargetFinishDate(new Date(targetFinish));
-        setCurrentDate(current ? new Date(current) : null);
-    }, [start, targetFinish, current]);
+    // When overdue: range is start→now, flag sits at where dueDate was
+    // When in time: range is start→dueDate, flag at the end
+    const rangeEnd = isOverdue ? currentDate : endDate;
+    const totalMs = rangeEnd - startDate;
+    const elapsedMs = currentDate - startDate;
 
-    const mostFarthestDate = currentDate && currentDate > targetFinishDate ? currentDate : targetFinishDate;
-    const totalDuration = mostFarthestDate - startDate;
+    const fillPct = totalMs > 0
+        ? Math.min(100, Math.max(0, Math.round((elapsedMs / totalMs) * 100)))
+        : 0;
 
-    const getPercentage = (date) => {
-        if (!date || !totalDuration) return 0;
-        return ((date - startDate) / totalDuration) * 100;
-    };
-
-    const currentPos = getPercentage(currentDate);
-    const targetPos = getPercentage(targetFinishDate);
-
-    const showOverrun = currentDate && currentDate > targetFinishDate;
+    // Position of the due date within the extended (start→now) range
+    const flagPct = isOverdue && totalMs > 0
+        ? Math.min(100, Math.max(0, Math.round(((endDate - startDate) / totalMs) * 100)))
+        : null;
 
     return (
-        <div className="container-fluid py-2">
-
-
-            {/* Labels */}
-            <div className="position-relative mb-1" style={{height: '1.2rem'}}>
-                <div className="position-absolute start-0 translate-middle-x">
-                    <small>
-                        🌱
-                    </small>
-                </div>
-                <div
-                    className="position-absolute translate-middle-x"
-                    style={{left: `${currentPos}%`}}
-                >
-                    <small>
-                        📍
-                    </small>
-                </div>
-                <div
-                    className="position-absolute translate-middle-x"
-                    style={{left: `${targetPos}%`}}
-                >
-                    <small>
+        <div className="ctpd-bar-wrap">
+            <div className="ctpd-bar-outer">
+                {/* Flag above bar at due-date position when overdue */}
+                {isOverdue && flagPct !== null && (
+                    <div className="ctpd-bar-flag-inline" style={{left: `${flagPct}%`}}>
                         🏁
-                    </small>
+                    </div>
+                )}
+
+                <div className="ctpd-bar-track">
+                    <div
+                        className={`ctpd-bar-fill ${isOverdue ? 'ctpd-bar-fill--overdue' : ''}`}
+                        style={{width: `${fillPct}%`}}
+                    >
+                        <span className="ctpd-bar-dot"/>
+                    </div>
                 </div>
             </div>
-            {/* Progress Bar Container */}
-            <div className="progress-custom-bar position-relative">
-                {/* Green bar: Start → Current */}
-                {currentDate && (
-                    <div
-                        className="position-absolute bg-primary h-100"
-                        style={{
-                            left: `0%`,
-                            width: `${currentPos}%`,
-                        }}
-                    ></div>
-                )}
 
-                {/* Gray bar: Current → Target (if current < target) */}
-                {currentDate && currentDate < targetFinishDate && (
-                    <div
-                        className="position-absolute bg-transparent h-100"
-                        style={{
-                            left: `${currentPos}%`,
-                            width: `${targetPos - currentPos}%`,
-                        }}
-                    ></div>
-                )}
-
-                {/* Red bar: Overrun (if current > target) */}
-                {showOverrun && (
-                    <div
-                        className="position-absolute bg-danger h-100"
-                        style={{
-                            left: `${targetPos}%`,
-                            width: `${currentPos - targetPos}%`,
-                        }}
-                    ></div>
-                )}
-            </div>
+            {/* Flag at the end when not overdue */}
+            {!isOverdue && <span className="ctpd-bar-flag">🏁</span>}
         </div>
     );
+};
+
+EvolutionLine.propTypes = {
+    start: PropTypes.string.isRequired,
+    targetFinish: PropTypes.string.isRequired,
+    current: PropTypes.instanceOf(Date),
+    isOverdue: PropTypes.bool,
 };

@@ -6,128 +6,116 @@ import {useEffect, useState} from "react";
 import {EvolutionLine} from "./CardTestPlanDeadline/EvolutionLine.jsx";
 import WorkingDaysService from "../../Services/PrivateApi/WorkingDaysService.js";
 
-export const CardTestPlanDeadline = ({
-                                         testPlan,
-                                     }) => {
+export const CardTestPlanDeadline = ({testPlan}) => {
     const {t} = useTranslation();
-    // get today with name of the "day + number" in the form of the locale : 3 Jun, 3 Juin
+
     const today = new Date();
-    const options = {weekday: 'short', year: undefined, month: undefined, day: 'numeric'};
-    const todayString = today.toLocaleDateString('fr-FR', options);
-    const [lastUpdate, setLastUpdate] = useState(null);
+    const todayString = today.toLocaleDateString('fr-FR', {weekday: 'short', day: 'numeric'});
+
     const [remainingDays, setRemainingDays] = useState(0);
+    const [elapsedDays, setElapsedDays] = useState(0);
     const [totalDays, setTotalDays] = useState(0);
-    const [state, setState] = useState('in_time');
-    const currentDate = new Date();
-
+    const [isOverdue, setIsOverdue] = useState(false);
 
     useEffect(() => {
+        if (!testPlan?.dueDate || !testPlan?.created) return;
 
-        // setState('overdue') = testPlan?.dueDate !== undefined && testPlan.dueDate < currentDate;
-        let overdue = false;
-        if (testPlan?.dueDate !== undefined) {
-            let endDate = new Date(testPlan?.dueDate);
-            if (endDate < currentDate) {
-                setState('overdue');
-                overdue = true;
-            } else {
-                setState('in_time');
-            }
-        }
-        const computeRemainingDays = async () => {
+        const start = new Date(testPlan.created);
+        const end = new Date(testPlan.dueDate);
+        const now = new Date();
+        const overdue = now > end;
+        setIsOverdue(overdue);
+
+        (async () => {
             try {
-                let startDate = new Date(currentDate);
-                let endDate = new Date(testPlan?.dueDate);
-                if (overdue === true) {
-                    startDate = new Date(testPlan?.dueDate);
-                    endDate = new Date(currentDate);
+                const total = await WorkingDaysService.getWorkingDayBetween(start, end);
+                setTotalDays(total);
+            } catch (e) {
+                console.error(e);
+            }
+
+            try {
+                if (overdue) {
+                    const late = await WorkingDaysService.getWorkingDayBetween(end, now);
+                    setRemainingDays(late);
+                    setElapsedDays(await WorkingDaysService.getWorkingDayBetween(start, end));
+                } else {
+                    const remaining = await WorkingDaysService.getWorkingDayBetween(now, end);
+                    const elapsed = await WorkingDaysService.getWorkingDayBetween(start, now);
+                    setRemainingDays(remaining);
+                    setElapsedDays(elapsed);
                 }
-                let workingDays = await WorkingDaysService.getWorkingDayBetween(startDate, endDate)
-                setRemainingDays(workingDays);
-            } catch (error) {
-                console.error(error);
+            } catch (e) {
+                console.error(e);
             }
+        })();
+    }, [testPlan?.dueDate, testPlan?.created]);
 
-            try {
-                let startDate = new Date(testPlan?.created);
-                let endDate = new Date(testPlan?.dueDate);
-                let workingDays = await WorkingDaysService.getWorkingDayBetween(startDate, endDate)
-                setTotalDays(workingDays);
-            } catch (error) {
-                console.error(error);
-            }
-        }
+    const pct = totalDays > 0 ? Math.min(100, Math.round((elapsedDays / totalDays) * 100)) : 0;
 
-        computeRemainingDays()
-            .catch(err => {
-                console.error(err);
-            })
-
-    }, [testPlan?.dueDate, lastUpdate]);
-
-
-    console.log('render card')
-    // make the component update itself
-    useEffect(() => {
-        let $timer = setInterval(() => {
-            setLastUpdate(new Date());
-        }, 2500);
-
-        return () => {
-            clearInterval($timer);
-        }
-    }, []);
-
-
-    return <Card className="card-colored-purple">
-        {(testPlan?.id === undefined || testPlan?.dueDate === undefined) && (
-            <div className="p-3 h-100">
-                <div className="text-center opacity-50">
-                    <div className="h5">
-                        {t('No test plan selected')}
+    if (!testPlan?.id || !testPlan?.dueDate) {
+        return (
+            <Card>
+                <CardBody>
+                    <div className="text-center opacity-50 py-4">
+                        <div className="h5">{t('No due date set')}</div>
                     </div>
-                    <div className="text-muted">
-                        {t('Select a test plan to see its deadline')}
+                </CardBody>
+            </Card>
+        );
+    }
+
+    return (
+        <Card className="ctpd-card">
+            <CardBody>
+                <div className="ctpd-body">
+
+                    {/* ── Header ── */}
+                    <div className="ctpd-header">
+                        <div className="ctpd-header-left">
+                            <div className="ctpd-pill">
+                                {t('Test Plan Evolution').toUpperCase()}
+                            </div>
                     </div>
+                        <div className="ctpd-date">{todayString}</div>
                 </div>
-            </div>
-        )}
-        {testPlan?.id !== undefined && testPlan?.dueDate !== undefined && (
-            <div className="p-3 h-100 d-flex gap-md flex-column justify-content-between">
-                <div className="w-100 d-flex justify-content-between align-items-center pb-3">
-                    <div className="left-items">
-                        <div className="test-pill">
-                        <span className="label heading">
-                            {t('Test Plan Evolution')}
-                        </span>
+
+                    {/* ── Title ── */}
+                    <div className="ctpd-title-block">
+                        <div className="ctpd-plan-name">{testPlan.name}</div>
+                        <div className="ctpd-plan-sub">{t('Total days')} : {totalDays}</div>
+                    </div>
+
+                    {/* ── Progress ── */}
+                    <div className="ctpd-progress-block">
+                        <div className="ctpd-progress-row">
+                            <span className="ctpd-progress-label">{t('Global progression')}</span>
+                            <div className="ctpd-progress-meta">
+                                <span className="ctpd-days-ratio">{elapsedDays} / {totalDays} {t('days')}</span>
+                            </div>
                         </div>
+                        <EvolutionLine
+                            start={testPlan.created}
+                            targetFinish={testPlan.dueDate}
+                            current={today}
+                            isOverdue={isOverdue}
+                        />
                     </div>
-                    <div className="right-items heading opacity-50">
-                        {todayString}
-                    </div>
+
+                    {/* ── Footer ── */}
+                    <div className="ctpd-footer">
+                        <i className="font-icon lni lni-alarm-1"/>
+                        <span>
+                        {isOverdue ? t('Overdue') : t('Remaining')} : {remainingDays} {t('days')}
+                    </span>
                 </div>
-                <div className="w-100 py-3">
-                    <div className="test-plan-title h5 text-center m-0">
-                        {testPlan?.name}
-                    </div>
-                    <div className="test-plan-subtitle heading text-center small opacity-50 m-0">
-                        {t('Total days')} : {totalDays}
-                    </div>
-                </div>
-                <div className="w-100 d-flex justify-content-between align-items-center gap-lg">
-                    <div className="item-left flex-grow-1">
-                        <EvolutionLine targetFinish={testPlan.dueDate} start={testPlan.created}
-                                       current={currentDate}/>
-                    </div>
-                    <div className="item-right flex-grow-0 heading small pt-4">
-                        {state === 'in_time' ? t('Remaining') : t('Overdue')} : {remainingDays}{t('days_short')}
-                    </div>
-                </div>
+
             </div>
-        )}
-    </Card>
-}
+            </CardBody>
+        </Card>
+    );
+};
 
 CardTestPlanDeadline.propTypes = {
     testPlan: PropTypes.object,
-}
+};

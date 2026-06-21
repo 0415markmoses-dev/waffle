@@ -100,13 +100,13 @@ export const HealthDisplay = ({
 
     return (
         <div
-            className="plan-health d-flex align-items-center gap-lg"
+            className="plan-health d-flex flex-column align-items-center gap-lg w-100"
             style={{opacity: isLoading ? 0.4 : 1, transition: 'opacity 300ms'}}
         >
-            <div className="plan-health-donut flex-shrink-0" style={{width: 110, height: 110}}>
+            <div className="plan-health-donut flex-shrink-0" style={{width: 130, height: 130}}>
                 <Doughnut ref={chartRef} data={chartData} options={chartOptions} plugins={[centerHeartPlugin]}/>
             </div>
-            <div className="plan-health-legend d-flex flex-column gap-sm">
+            <div className="plan-health-legend d-flex flex-column gap-sm w-100">
                 {legend.map(({key, label, value}, index) => (
                     <div
                         key={key}

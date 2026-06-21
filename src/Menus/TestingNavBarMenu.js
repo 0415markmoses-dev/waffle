@@ -6,12 +6,6 @@ const TestingNavBarMenu = [
         icon: 'font-icon lni lni-dashboard-square-1',
     },
     {
-        title: 'My Plans',
-        url: '/testing/plans',
-        routes: ['testing_plans', 'testing_plan_details'],
-        icon: 'font-icon lni lni-route-1',
-    },
-    {
         title: 'Archived Plans',
         url: '/testing/plans/archived',
         routes: ['testing_plans_archived'],

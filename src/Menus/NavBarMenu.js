@@ -6,6 +6,12 @@ const NavBarMenu = [
         icon: 'font-icon lni lni-dashboard-square-1',
     },
     {
+        title: 'Project',
+        url: '/app/project-settings',
+        routes: ['project_settings'],
+        icon: 'font-icon lni lni-briefcase-2',
+    },
+    {
         title: 'Testers list',
         routes: ['project_testers'],
         url: '/app/project/testers',

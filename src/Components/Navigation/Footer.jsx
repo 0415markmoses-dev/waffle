@@ -1,8 +1,8 @@
 export const Footer = () => {
-    return <footer className="footer-container heading">
+    return <footer className="footer-container">
         <div className="d-flex justify-content-between align-items-center">
             <div className="footer-left">
-                <span className="opacity-25">2025 © TestGator</span>
+                <span className="opacity-25">TestGator 2025-{new Date().getFullYear()} © arkdevuk</span>
             </div>
             <div className="footer-right">
                 <a target="_blank" rel="noopener"

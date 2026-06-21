@@ -237,9 +237,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: .8rem;
+  overflow: hidden;
   color: $tw-gray-600;
   flex-shrink: 0;
+
+  .lni {
+    font-size: 1.25rem;
+  }
 }
 
 .acp-file-extra {
@@ -654,6 +658,272 @@
   overflow: hidden;
   width: 100%;
   height: 1rem;
+}
+
+// ── CardTestPlanDeadline ──────────────────────────────────────────────────────
+.ctpd-card {
+  border: 1px solid #e5e7eb;
+}
+
+.ctpd-card .card-body {
+  padding: 2rem;
+}
+
+.ctpd-body {
+  display: flex;
+  flex-direction: column;
+  gap: .725rem;
+}
+
+// Header
+.ctpd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.ctpd-header-left {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+
+.ctpd-pill {
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: .35rem .75rem;
+  border: 1.5px solid $success;
+  border-radius: 999px;
+  color: $success;
+  background: rgba($success, .06);
+  white-space: nowrap;
+}
+
+.ctpd-date {
+  font-size: .85rem;
+  color: #9ca3af;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+// Title block
+.ctpd-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.ctpd-plan-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.ctpd-plan-sub {
+  font-size: .83rem;
+  color: #9ca3af;
+}
+
+// Progress block
+.ctpd-progress-block {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.ctpd-progress-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.ctpd-progress-label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.ctpd-progress-meta {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+}
+
+.ctpd-pct {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $success;
+}
+
+.ctpd-days-ratio {
+  font-size: .83rem;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+// Bar
+.ctpd-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.ctpd-bar-outer {
+  flex: 1;
+  position: relative;
+  padding-top: 1.4rem; // room for the inline flag
+}
+
+.ctpd-bar-flag-inline {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 1rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.ctpd-bar-track {
+  width: 100%;
+  height: .75rem;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: visible;
+  position: relative;
+}
+
+.ctpd-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: $success;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: .75rem;
+  transition: width .4s ease;
+
+  &--overdue {
+    background: $danger;
+
+    .ctpd-bar-dot {
+      border-color: $danger;
+      box-shadow: 0 0 0 2px rgba($danger, .2);
+    }
+  }
+}
+
+.ctpd-bar-dot {
+  display: block;
+  width: .85rem;
+  height: .85rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid $success;
+  flex-shrink: 0;
+  transform: translateX(50%);
+  box-shadow: 0 0 0 2px rgba($success, .2);
+}
+
+.ctpd-bar-flag {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+// Footer
+.ctpd-footer {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .85rem;
+  color: $tw-muted-text;
+  line-height: 1;
+
+  .lni {
+    font-size: .9rem;
+    color: $tw-muted-text;
+    line-height: 1;
+    vertical-align: middle;
+  }
+}
+
+// ── ModalAddTester ────────────────────────────────────────────────────────────
+.mat-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+  z-index: 99999;
+  overflow: hidden;
+}
+
+.mat-dropdown-empty {
+  padding: .6rem .85rem;
+  font-size: .82rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.mat-dropdown-item {
+  display: flex;
+  flex-direction: column;
+  padding: .6rem .85rem;
+  cursor: pointer;
+  gap: .1rem;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
+.mat-dropdown-email {
+  font-size: .85rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.mat-dropdown-name {
+  font-size: .75rem;
+}
+
+.mat-selected {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .5rem;
+  padding: .4rem .75rem;
+  border-radius: 999px;
+  background: rgba($success, .08);
+  border: 1px solid rgba($success, .25);
+  font-size: .83rem;
+  color: #111827;
+  width: fit-content;
+}
+
+.mat-selected-clear {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #9ca3af;
+  line-height: 1;
+  padding: 0 .2rem;
+
+  &:hover {
+    color: $danger;
+  }
 }
 
 // ── Answer sort / clear toolbar ───────────────────────────────────────────────

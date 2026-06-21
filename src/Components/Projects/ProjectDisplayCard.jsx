@@ -1,5 +1,7 @@
 import PropTypes from "prop-types";
 import classNames from "classnames";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const ProjectDisplayCard = ({
                                        project,
@@ -28,7 +30,9 @@ export const ProjectDisplayCard = ({
             </div>
             <div className="project-info w-75">
                 <h5 className="card-title">{project.name}</h5>
-                <div className="text-muted small">{project.description}</div>
+                <div className="text-muted small markdown-renderer">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.description ?? ''}</ReactMarkdown>
+                </div>
             </div>
             <div className="project-meta w-25 d-flex justify-content-center align-items-end flex-column gap-md">
                 <div className="badge bg-info heading super-small">

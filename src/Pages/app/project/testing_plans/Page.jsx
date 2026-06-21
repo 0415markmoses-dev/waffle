@@ -27,6 +27,8 @@ import {Separator} from "../../../../Components/UI/Separator/Separator.jsx";
 import {AgGridDisplay} from "../../../../Configs/AgGrid/AgGridDisplay.js";
 import {ModalChangeTestPlanState} from "../../../../Components/TestPlans/ModalChangeTestPlanState.jsx";
 import {ListQuestionsOrdered} from "../../../../Components/Questions/ListQuestionsOrdered.jsx";
+import {ModalCreateQuestion} from "../../../../Components/Questions/ModalCreateQuestion.jsx";
+import {ModalAddTester} from "../../../../Components/TestPlans/ModalAddTester.jsx";
 import {CardTestPlanDeadline} from "../../../../Components/TestPlans/CardTestPlanDeadline.jsx";
 import {useTestPlan, useUpdateTestPlan, useAddDemoAnswers} from "../../../../Hooks/queries/useTestPlansQuery.js";
 import {useRelease} from "../../../../Hooks/queries/useReleasesQuery.js";
@@ -50,6 +52,9 @@ export const Page = () => {
     const [editMode, setEditMode] = useState(false);
     const [currentTab, setCurrentTab] = useState(undefined);
     const [modalState, setModalState] = useState(false);
+    const [createQuestionOpen, setCreateQuestionOpen] = useState(false);
+    const [addTesterOpen, setAddTesterOpen] = useState(false);
+    const isTeamTab = currentTab?.name === 'team';
 
     const {data: testPlanData, isError, isLoading} = useTestPlan(params.tid);
     const updateTestPlan = useUpdateTestPlan();
@@ -97,19 +102,31 @@ export const Page = () => {
         <>
             <PageContentWrapper>
                 <PageTitle
-                    title={currentProject.name + " - Testing Plan " + (testPlanData?.name ?? '')}
+                    title={currentProject.name + " - " + t('Testing plan') + " " + (testPlanData?.name ?? '')}
                     breadcrumbParents={breadcrumbParents}
                     breadcrumbLabel={truncatedName}
                 >
-                    <Button
-                        icon="lni-plus"
-                        disabled={testPlanData?.state !== 'draft'}
-                        to={"/app/project/questions/create?t=" + testPlanData?.id}
-                        type="primary"
-                        size="sm"
-                    >
-                        {t('New question')}
-                    </Button>
+                    {isTeamTab ? (
+                        <Button
+                            icon="lni-user-add"
+                            disabled={!testPlanData}
+                            onClick={() => setAddTesterOpen(true)}
+                            type="primary"
+                            size="sm"
+                        >
+                            {t('Add tester')}
+                        </Button>
+                    ) : (
+                        <Button
+                            icon="lni-plus"
+                            disabled={!testPlanData}
+                            onClick={() => setCreateQuestionOpen(true)}
+                            type="primary"
+                            size="sm"
+                        >
+                            {t('New question')}
+                        </Button>
+                    )}
                 </PageTitle>
                 <PageElementWrapper>
                     <TabWrapper inUrlParams={true} onChange={(tab) => setCurrentTab(tab)} name="tab">
@@ -117,58 +134,8 @@ export const Page = () => {
                             <Row className="flex-column-reverse flex-xl-row">
                                 <Col sm={12} xl={8}>
                                     <Row>
-                                        <Col fullHeight={true} sm={12} md={6}>
-                                            <Card>
-                                                <CardBody>
-                                                    {!isLoading && testPlanData && (
-                                                        <div className="w-100 d-flex flex-column gap-lg">
-                                                            <div
-                                                                className="w-100 d-flex flex-row gap-lg align-items-center justify-content-around position-relative">
-                                                                <SingleMetricDisplay
-                                                                    label={testPlanData.totalPlans > 1 ? 'Plans' : 'Plan'}
-                                                                    value={testPlanData.totalPlans}/>
-                                                                <MetricVerticalSeparator/>
-                                                                <SingleMetricDisplay
-                                                                    label={testPlanData.totalQuestions > 1 ? 'Scenarios' : 'Scenario'}
-                                                                    value={testPlanData.totalQuestions}/>
-                                                                <MetricVerticalSeparator/>
-                                                                <SingleMetricDisplay
-                                                                    label={testPlanData.totalResponded > 1 ? 'Responses' : 'Response'}
-                                                                    value={testPlanData.totalResponded}/>
-                                                            </div>
-                                                            <div className="w-100">
-                                                                <ProgressBar value={testPlanData.percentage}/>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                        <Col fullHeight={true} sm={12} md={6}>
-                                            <Card>
-                                                <CardHeader
-                                                    title={t('Plan Health')}/>
-                                                <CardBody>
-                                                    <HealthDisplay
-                                                        pass={pass}
-                                                        passWithBugs={passWithBugs}
-                                                        failed={failed}
-                                                        blocked={blocked}
-                                                        pending={pending}
-                                                        isLoading={healthLoading}
-                                                    />
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
-                                        <Col fullHeight={true} sm={12}>
-                                            <Card>
-                                                <CardBody>
-                                                    <HealthOverTimeLineChart answersStatItems={allAnswers}/>
-                                                </CardBody>
-                                            </Card>
-                                        </Col>
                                         {testPlanData?.state && (
-                                            <Col fullHeight={true} sm={12} md={7}>
+                                            <Col fullHeight={true} sm={12} md={6}>
                                                 <Card>
                                                     <CardHeader
                                                         title={t('Status') + ' "' + t(capitalizeFirstLetter(testPlanData.state)) + '"'}/>
@@ -213,6 +180,32 @@ export const Page = () => {
                                                 </Card>
                                             </Col>
                                         )}
+                                        <Col fullHeight={true} sm={12} md={6}>
+                                            <Card className="h-100">
+                                                <CardHeader
+                                                    title={t('Plan Health')}/>
+                                                <CardBody>
+                                                    <div className="d-flex align-items-center h-100">
+                                                        <HealthDisplay
+                                                            pass={pass}
+                                                            passWithBugs={passWithBugs}
+                                                            failed={failed}
+                                                            blocked={blocked}
+                                                            pending={pending}
+                                                            isLoading={healthLoading}
+                                                        />
+                                                    </div>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                        <Col fullHeight={true} sm={12}>
+                                            <Card>
+                                                <CardBody>
+                                                    <HealthOverTimeLineChart answersStatItems={allAnswers}/>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+
 
                                         <Col>
                                             <Card>
@@ -392,6 +385,17 @@ export const Page = () => {
                 onCancel={() => setModalState(false)}
                 isVisible={modalState}
                 onConfirm={() => setModalState(false)}
+            />
+            <ModalCreateQuestion
+                isVisible={createQuestionOpen}
+                testPlan={testPlanData}
+                onCancel={() => setCreateQuestionOpen(false)}
+            />
+            <ModalAddTester
+                isVisible={addTesterOpen}
+                testPlan={testPlanData}
+                onCancel={() => setAddTesterOpen(false)}
+                onSuccess={() => setAddTesterOpen(false)}
             />
         </>
     );

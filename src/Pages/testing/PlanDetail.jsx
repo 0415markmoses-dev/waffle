@@ -24,6 +24,7 @@ import ImageLightbox from "../../Components/UI/Lightbox/ImageLightbox.jsx";
 import VideoLightbox from "../../Components/UI/Lightbox/VideoLightbox.jsx";
 import {MkEditorInstance} from "../../Components/UI/Form/Editor/MkEditorInstance.jsx";
 import {MarkdownRenderer} from "../../Components/UI/Markdown/MarkdownRenderer.jsx";
+import SystemInfoChips from "../../Components/UI/SystemInfoChips/SystemInfoChips.jsx";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -206,50 +207,89 @@ const StatusDonut = ({plan, t}) => {
     );
 };
 
-// ── Recent activity (placeholder) ─────────────────────────────────────────────
+// ── Recent activity ───────────────────────────────────────────────────────────
 
-const ACTIVITY_PLACEHOLDER = [
-    {
-        icon: 'lni-check-circle-1',
-        color: '#22c55e',
-        text: 'You answered "UI-05: Empty state"',
-        time: '2 hours ago',
-        action: 'View Answer'
-    },
-    {
-        icon: 'lni-check-circle-1',
-        color: '#22c55e',
-        text: 'You answered "UI-02: Login flow"',
-        time: 'Yesterday',
-        action: 'View Answer'
-    },
-    {
-        icon: 'lni-bolt-2',
-        color: '#f59e0b',
-        text: 'You started "UI-07: Search functionality"',
-        time: 'Yesterday',
-        action: 'Continue'
-    },
-];
+const RecentActivity = ({plan, t, onOpenDrawer}) => {
+    const planId = typeof plan?.id === 'string' ? plan.id.split('/').pop() : plan?.id;
+    const questionsOrder = plan?.questionsOrder ?? [];
 
-const RecentActivity = ({t}) => (
-    <div className="tpd-card">
-        <div className="tpd-card-title">{t('Recent Activity')}</div>
-        <div className="tpd-activity-list">
-            {ACTIVITY_PLACEHOLDER.map((item, i) => (
-                <div key={i} className="tpd-activity-row">
-                    <i className={`font-icon lni ${item.icon} tpd-activity-icon`} style={{color: item.color}}/>
-                    <div className="tpd-activity-body">
-                        <div className="tpd-activity-text">{item.text}</div>
-                        <div className="tpd-activity-time">{item.time}</div>
-                    </div>
-                    <Button type="light" size="sm" onClick={() => {
-                    }}>{t(item.action)}</Button>
+    const {data: questions = []} = useQuestions({
+        plan: `/api/test_plans/${planId}`,
+        'order[id]': 'asc',
+    });
+
+    const sorted = useMemo(() => {
+        if (!questions.length) return [];
+        if (questionsOrder.length) {
+            const indexMap = Object.fromEntries(questionsOrder.map((iri, i) => [iri, i]));
+            return [...questions].sort((a, b) => (indexMap[a['@id']] ?? Infinity) - (indexMap[b['@id']] ?? Infinity));
+        }
+        return [...questions].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+    }, [questions, questionsOrder]);
+
+    const answerQueries = useQueries({
+        queries: sorted.map(q => ({
+            queryKey: ['tester-answer', q['@id']],
+            queryFn: () => AnswersService.getAnswers({question: q['@id']}).then(r => {
+                const members = r.data['member'] ?? r.data['hydra:member'] ?? [];
+                return members[0] ?? null;
+            }),
+            enabled: !!q['@id'],
+            staleTime: 60_000,
+        })),
+    });
+
+    const recentItems = useMemo(() => {
+        const items = [];
+        sorted.forEach((q, i) => {
+            const answer = answerQueries[i]?.data;
+            if (!answer) return;
+            const created = answer.created ? new Date(answer.created) : null;
+            const updated = answer.updated ? new Date(answer.updated) : null;
+            const fresherDate = created && updated
+                ? (updated > created ? updated : created)
+                : (updated ?? created ?? new Date(0));
+            items.push({question: q, answer, index: i, fresherDate});
+        });
+        return items
+            .sort((a, b) => b.fresherDate - a.fresherDate)
+            .slice(0, 3);
+    }, [answerQueries, sorted]);
+
+    return (
+        <div className="tpd-card">
+            <div className="tpd-card-title">{t('Recent Activity')}</div>
+            {recentItems.length === 0 ? (
+                <p className="tpd-activity-empty text-muted">{t('No activity yet.')}</p>
+            ) : (
+                <div className="tpd-activity-list">
+                    {recentItems.map(({question, answer, index, fresherDate}) => {
+                        const isPending = answer.state === 'pending';
+                        return (
+                            <div key={answer['@id'] ?? index} className="tpd-activity-row">
+                                <i
+                                    className={`font-icon lni ${isPending ? 'lni-bolt-2' : 'lni-check-circle-1'} tpd-activity-icon`}
+                                    style={{color: isPending ? '#f59e0b' : '#22c55e'}}
+                                />
+                                <div className="tpd-activity-body">
+                                    <div className="tpd-activity-text">{question.name}</div>
+                                    <div className="tpd-activity-time">{formatRelative(fresherDate.toISOString())}</div>
+                                </div>
+                                <Button
+                                    type="light"
+                                    size="sm"
+                                    onClick={() => onOpenDrawer({question, answer, index, total: sorted.length})}
+                                >
+                                    {t(isPending ? 'Continue' : 'View Answer')}
+                                </Button>
+                            </div>
+                        );
+                    })}
                 </div>
-            ))}
+            )}
         </div>
-    </div>
-);
+    );
+};
 
 // ── Need help cards ───────────────────────────────────────────────────────────
 
@@ -295,7 +335,11 @@ const PlanDescription = ({plan, t}) => {
         <div className="tpd-card">
             <div className="tpd-card-title">{t('Plan Description')}</div>
             <p className="tpd-desc-text">{displayed}</p>
-            {plan?.content && <p className="tpd-desc-text">{plan.content}</p>}
+            {plan?.content && (
+                <div className="tpd-desc-text markdown-renderer">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{plan.content}</ReactMarkdown>
+                </div>
+            )}
             {long && (
                 <Button type="link" size="sm" onClick={() => setExpanded(e => !e)}>
                     {expanded ? t('Show less') : t('Show more')}
@@ -565,6 +609,8 @@ const QuestionDrawer = ({question, answer, index, total, onClose, onSaved, t}) =
     const [sessionMeta, setSessionMeta] = useState({});
     // Incremented together with comment so MkEditorInstance remounts after comment is set
     const [editorKey, setEditorKey] = useState(0);
+    // Collected by SystemInfoChips — sent only on save, never on open
+    const [collectedSystemInfo, setCollectedSystemInfo] = useState(null);
 
     const createAnswer = useCreateAnswer();
     const updateAnswer = useUpdateAnswer();
@@ -616,9 +662,23 @@ const QuestionDrawer = ({question, answer, index, total, onClose, onSaved, t}) =
 
     const code = `Q-${String((index ?? 0) + 1).padStart(2, '0')}`;
 
-    // Ensure an answer record exists; returns its numeric id
+    // Ensure an answer record exists; returns its numeric id.
+    // Always checks the API first to avoid creating duplicates if the drawer
+    // opened before useAnswers had time to resolve.
     const ensureAnswer = async () => {
         if (liveAnswerId) return liveAnswerId;
+
+        // Re-check the API — an answer may already exist (race vs. useAnswers resolving)
+        const existing = await AnswersService.getAnswers({question: question['@id']}).then(r => {
+            const members = r.data['member'] ?? r.data['hydra:member'] ?? [];
+            return members[0] ?? null;
+        });
+
+        if (existing?.id) {
+            setLiveAnswerId(existing.id);
+            return existing.id;
+        }
+
         const created = await createAnswer.mutateAsync({
             question: question['@id'],
             state: selectedState ?? 'pending',
@@ -670,10 +730,18 @@ const QuestionDrawer = ({question, answer, index, total, onClose, onSaved, t}) =
 
     const handleSave = async () => {
         if (!selectedState) return;
+        const sysInfoPayload = collectedSystemInfo ? {systemInfos: collectedSystemInfo} : {};
         if (liveAnswerId) {
-            await updateAnswer.mutateAsync({id: liveAnswerId, data: {state: selectedState, comment}});
+            await updateAnswer.mutateAsync({
+                id: liveAnswerId,
+                data: {state: selectedState, comment, ...sysInfoPayload}
+            });
         } else {
-            await createAnswer.mutateAsync({question: question['@id'], state: selectedState, comment});
+            await createAnswer.mutateAsync({
+                question: question['@id'],
+                state: selectedState,
+                comment, ...sysInfoPayload
+            });
         }
         onSaved?.();
         triggerClose();
@@ -749,6 +817,12 @@ const QuestionDrawer = ({question, answer, index, total, onClose, onSaved, t}) =
                             className="tpd-drawer-md-editor"
                         />
                     </div>
+
+                    {/* System info */}
+                    <SystemInfoChips
+                        t={t}
+                        onceFinished={setCollectedSystemInfo}
+                    />
 
                     {/* Attachments */}
                     {resolvedFiles.length > 0 && (() => {
@@ -945,7 +1019,7 @@ export const PlanDetail = () => {
                                     </div>
                                     <div className="tpd-col-side">
                                         <StatusDonut plan={plan} t={t}/>
-                                        <RecentActivity t={t}/>
+                                        <RecentActivity plan={plan} t={t} onOpenDrawer={setDrawer}/>
                                     </div>
                                 </div>
                             </Tab>

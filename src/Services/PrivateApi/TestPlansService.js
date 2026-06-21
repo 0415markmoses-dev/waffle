@@ -24,6 +24,9 @@ const TestPlansService = {
     addDemoAnswers(testingPlanIri, number = 10) {
         return Http.post('/api/demo/add_demo_answer', {testingPlanIri, number});
     },
+    getProgression(id) {
+        return Http.get(`/api/test_plans/${id}/testing_progression`);
+    },
 }
 
 export default TestPlansService;
