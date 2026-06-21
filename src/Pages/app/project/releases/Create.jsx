@@ -3,6 +3,7 @@ import {Button} from "../../../../Components/UI/Buttons/Button.jsx";
 import {PageTitle} from "../../../../Components/Navigation/PageTitle.jsx";
 import {PageElementWrapper} from "../../../../Components/Navigation/PageElementWrapper.jsx";
 import {Row} from "../../../../Components/UI/Grid/Row.jsx";
+import {useTranslation} from "react-i18next";
 import {Col} from "../../../../Components/UI/Grid/Col.jsx";
 import {Card} from "../../../../Components/UI/Card/Card.jsx";
 import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
@@ -13,6 +14,7 @@ import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 import {useNavigate} from "react-router";
 
 export const Create = () => {
+    const {t} = useTranslation();
     let navigate = useNavigate();
     const {currentProject} = useProjectStore();
     const [newRelease, setNewRelease] = useState({
@@ -34,14 +36,15 @@ export const Create = () => {
 
     return <>
         <PageContentWrapper>
-            <PageTitle title={"Create new release"}>
-                <Button onClick={handleCancel} type="light" size="sm">Cancel</Button>
+            <PageTitle title={t('Create new release')}>
+                <Button onClick={handleCancel} type="light" size="sm">{t('Cancel')}</Button>
             </PageTitle>
             <PageElementWrapper>
                 <Row>
                     <Col>
                         <Card>
-                            <CardHeader title={"Create a new release in " + currentProject?.name}/>
+                            <CardHeader
+                                title={t('Create a new release in {{project}}', {project: currentProject?.name})}/>
                             <CardBody>
                                 <EditReleaseForm release={newRelease}
                                                  onCancel={handleCancel}

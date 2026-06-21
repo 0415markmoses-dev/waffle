@@ -6,9 +6,11 @@ import {MenuBuilder} from "./MenuBuilder.jsx";
 import {DropdownMenu} from "radix-ui";
 import {UserSettingsModal} from "../User/UserSettingsModal.jsx";
 import {AdminModal} from "../Admin/AdminModal.jsx";
+import {useTranslation} from "react-i18next";
 
 
 export const NavBar = ({menuName = 'navbar'}) => {
+    const {t} = useTranslation();
     let navigate = useNavigate();
     const {user, clearUserData} = useAuthStore();
     const [settingsTab, setSettingsTab] = useState(null); // null = closed
@@ -66,7 +68,7 @@ export const NavBar = ({menuName = 'navbar'}) => {
                                             </div>
                                             <div
                                                 className="flex-grow-1 d-flex flex-column justify-content-start overflow-hidden">
-                                                <small className="opacity-50">Connected as</small>
+                                                <small className="opacity-50">{t('Connected as')}</small>
                                                 <div className="text-truncate">{user.email}</div>
                                             </div>
                                         </div>
@@ -77,7 +79,7 @@ export const NavBar = ({menuName = 'navbar'}) => {
                                             <button className="dropdown-action-item"
                                                     onClick={() => openSettings('profile')}>
                                                 <i className="font-icon lni lni-user-4"></i>
-                                                Profile
+                                                {t('Profile')}
                                             </button>
                                         </DropdownMenu.Item>
 
@@ -85,7 +87,7 @@ export const NavBar = ({menuName = 'navbar'}) => {
                                             <button className="dropdown-action-item"
                                                     onClick={() => openSettings('security')}>
                                                 <i className="font-icon lni lni-locked-1"></i>
-                                                Security
+                                                {t('Security')}
                                             </button>
                                         </DropdownMenu.Item>
 
@@ -94,7 +96,7 @@ export const NavBar = ({menuName = 'navbar'}) => {
                                                 <button className="dropdown-action-item dropdown-action-item--admin"
                                                         onClick={() => setAdminOpen(true)}>
                                                     <i className="font-icon lni lni-gear-1"></i>
-                                                    Admin
+                                                    {t('Admin')}
                                                 </button>
                                             </DropdownMenu.Item>
                                         )}
@@ -105,7 +107,7 @@ export const NavBar = ({menuName = 'navbar'}) => {
                                             <button className="dropdown-action-item dropdown-action-item--danger"
                                                     onClick={onLogout}>
                                                 <i className="font-icon lni lni-power-button"></i>
-                                                Logout
+                                                {t('Logout')}
                                             </button>
                                         </DropdownMenu.Item>
                                     </DropdownMenu.Content>

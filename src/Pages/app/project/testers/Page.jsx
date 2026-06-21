@@ -34,7 +34,7 @@ export const Page = () => {
 
     return <>
         <PageContentWrapper>
-            <PageTitle title={currentProject.name + " - All Release"}>
+            <PageTitle title={currentProject.name + " - " + t('All Testers')}>
                 <Button icon="lni-plus" onClick={handleNewReleaseClick}
                         type="primary" size="sm">{t('Create tester')}</Button>
             </PageTitle>

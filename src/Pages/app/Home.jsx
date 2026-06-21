@@ -1,6 +1,7 @@
 import {Link, NavLink} from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import {useTranslation} from "react-i18next";
 import {PageContentWrapper} from "../../Components/Navigation/PageContentWrapper.jsx";
 import {PageTitle} from "../../Components/Navigation/PageTitle.jsx";
 import {PageElementWrapper} from "../../Components/Navigation/PageElementWrapper.jsx";
@@ -108,6 +109,7 @@ const ActivityRow = ({answer, questionName, testerEmail, planName, releaseName})
 };
 
 const RecentActivityCard = ({projectId}) => {
+    const {t} = useTranslation();
     const {data, isLoading} = useRecentProjectAnswers(projectId);
     const answers = data?.member ?? [];
 
@@ -202,11 +204,11 @@ const RecentActivityCard = ({projectId}) => {
 
     return (
         <Card>
-            <CardHeader title="Recent activity"/>
+            <CardHeader title={t('Recent activity')}/>
             <CardBody>
                 {isLoading && <Loader/>}
                 {!isLoading && answers.length === 0 && (
-                    <span className="text-muted small">No activity yet.</span>
+                    <span className="text-muted small">{t('No activity yet.')}</span>
                 )}
                 {answers.map(answer => {
                     const qIri = answer.question;
@@ -273,6 +275,7 @@ const LatestPlanRow = ({testPlan}) => {
 // ── Home ──────────────────────────────────────────────────────────────────────
 
 export const Home = () => {
+    const {t} = useTranslation();
     const {currentProject} = useProjectStore();
 
     const {data: projectsData} = useProjects();
@@ -293,15 +296,15 @@ export const Home = () => {
 
     return (
         <PageContentWrapper>
-            <PageTitle title="TestGator Dashboard"/>
+            <PageTitle title={t('TestGator Dashboard')}/>
             <PageElementWrapper>
                 {/* ── Stats row ── */}
                 <Row className="mb-3">
                     {[
-                        {label: 'Releases', value: projectStats?.releases ?? '—'},
-                        {label: 'Testing Plans', value: projectStats?.testPlans ?? '—'},
-                        {label: 'Testers', value: projectStats?.testers ?? '—'},
-                        {label: 'Tests realised', value: projectStats?.answers ?? '—'},
+                        {label: t('Releases'), value: projectStats?.releases ?? '—'},
+                        {label: t('Testing Plans'), value: projectStats?.testPlans ?? '—'},
+                        {label: t('Testers'), value: projectStats?.testers ?? '—'},
+                        {label: t('Tests realised'), value: projectStats?.answers ?? '—'},
                     ].map(({label, value}) => (
                         <Col key={label} sm={6} xl={3}>
                             <Card>
@@ -321,7 +324,7 @@ export const Home = () => {
                         <Row>
                             <Col>
                                 <Card>
-                                    <CardHeader title="About"/>
+                                    <CardHeader title={t('About')}/>
                                     <CardBody>
                                         {currentProject && (
                                             <div className="w-100 d-flex flex-column gap-lg">
@@ -333,13 +336,13 @@ export const Home = () => {
                                                 <div className="w-100 d-flex flex-column gap-sm">
                                                     <ul className="list-unstyled m-0">
                                                         <li>
-                                                            <b>Latest release: </b>
+                                                            <b>{t('Latest release')}: </b>
                                                             {currentProject.latestRelease ? (
                                                                 <NavLink
                                                                     to={`/app/project/releases/${currentProject.latestRelease.id}`}>
                                                                     {currentProject.latestRelease.name}
                                                                 </NavLink>
-                                                            ) : 'No release yet'}
+                                                            ) : t('No release yet')}
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -358,14 +361,10 @@ export const Home = () => {
                             <Col>
                                 <div className="dash-hero">
                                     <div>
-                                        <h2>Unlock productivity with TestGator workflow</h2>
-                                        <p>
-                                            Welcome to TestGator! Track testing progress, manage participants,
-                                            and analyze results effortlessly. Gain insights from real user
-                                            environments to streamline your software testing process.
-                                        </p>
+                                        <h2>{t('Unlock productivity with TestGator workflow')}</h2>
+                                        <p>{t('dashboard.hero_desc')}</p>
                                         <Button icon="lni-link-2-angular-right" type="link" size="sm">
-                                            View Documentation
+                                            {t('View Documentation')}
                                         </Button>
                                     </div>
                                     <div className="dash-hero-image">
@@ -375,7 +374,7 @@ export const Home = () => {
                             </Col>
                             <Col size={12}>
                                 <Card>
-                                    <CardHeader title={currentProject?.name ?? 'About this project'}/>
+                                    <CardHeader title={currentProject?.name ?? t('About')}/>
                                     <CardBody>
                                         <div className="markdown-renderer">
                                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -387,13 +386,13 @@ export const Home = () => {
                             </Col>
                             <Col size={12}>
                                 <Card>
-                                    <CardHeader title="Latest testing plans">
-                                        <Button type="link" size="sm">View All</Button>
+                                    <CardHeader title={t('Latest testing plans')}>
+                                        <Button type="link" size="sm">{t('View All')}</Button>
                                     </CardHeader>
                                     <CardBody>
                                         {loadingTestPlans && <Loader/>}
                                         {!loadingTestPlans && testPlans.length === 0 && (
-                                            <ErrorState message="No testing plans found for this project"/>
+                                            <ErrorState message={t('No testing plans found for this project')}/>
                                         )}
                                         {testPlans.map(plan => (
                                             <LatestPlanRow key={plan.id} testPlan={plan}/>

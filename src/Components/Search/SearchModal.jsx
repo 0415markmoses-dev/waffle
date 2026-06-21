@@ -105,7 +105,7 @@ export const SearchModal = ({isOpen, onClose}) => {
                         ref={inputRef}
                         className="search-modal-input"
                         type="text"
-                        placeholder="Search anything…"
+                        placeholder={t('Search anything…')}
                         value={query}
                         onChange={e => setQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -168,7 +168,7 @@ export const SearchModal = ({isOpen, onClose}) => {
                 {/* ── Idle hint ── */}
                 {!hasQuery && !isFetching && (
                     <div className="search-modal-hint">
-                        <span>Type at least 2 characters to search…</span>
+                        <span>{t('Type at least 2 characters to search…')}</span>
                     </div>
                 )}
 

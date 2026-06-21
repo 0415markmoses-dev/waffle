@@ -278,9 +278,9 @@ export const Page = () => {
                                                 <CardGroup
                                                     className="d-flex justify-content-between align-items-center">
                                                     <div className="d-flex flex-column">
-                                                        <div className="heading">Add sample</div>
-                                                        <div className="text-muted small">Add sample answer to preview
-                                                        </div>
+                                                        <div className="heading">{t('Add sample')}</div>
+                                                        <div
+                                                            className="text-muted small">{t('Add sample answer to preview')}</div>
                                                     </div>
                                                     <Button
                                                         iconOnly
@@ -298,10 +298,9 @@ export const Page = () => {
                                                 <CardGroup
                                                     className="d-flex justify-content-between align-items-center">
                                                     <div className="d-flex flex-column" style={{opacity: .3}}>
-                                                        <div className="heading">Download</div>
-                                                        <div className="text-muted small">Get the testing details in
-                                                            CSV
-                                                        </div>
+                                                        <div className="heading">{t('Download')}</div>
+                                                        <div
+                                                            className="text-muted small">{t('Get the testing details in CSV')}</div>
                                                     </div>
                                                     <div className="d-flex align-items-center gap-sm">
                                                         <span className="badge bg-secondary">Upcoming</span>
@@ -313,10 +312,9 @@ export const Page = () => {
                                                 <CardGroup
                                                     className="d-flex justify-content-between align-items-center">
                                                     <div className="d-flex flex-column">
-                                                        <div className="heading text-danger">Danger zone</div>
-                                                        <div className="text-muted small">Delete this release and
-                                                            testings
-                                                        </div>
+                                                        <div className="heading text-danger">{t('Danger zone')}</div>
+                                                        <div
+                                                            className="text-muted small">{t('Delete this release and testings')}</div>
                                                     </div>
                                                     <Button iconOnly type="danger" size="sm">
                                                         <i className="font-icon lni lni-trash-3"></i>

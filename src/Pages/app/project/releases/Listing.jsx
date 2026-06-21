@@ -10,8 +10,10 @@ import {ListReleases} from "../../../../Components/Releases/ListReleases.jsx";
 import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
 import {useNavigate} from "react-router";
 import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
+import {Trans, useTranslation} from "react-i18next";
 
 export const Listing = () => {
+    const {t} = useTranslation();
     let navigate = useNavigate();
     const {currentProject} = useProjectStore();
 
@@ -27,9 +29,9 @@ export const Listing = () => {
 
     return <>
         <PageContentWrapper>
-            <PageTitle title={currentProject.name + " - All Release"}>
+            <PageTitle title={currentProject.name + " - " + t('All Releases')}>
                 <Button icon="lni-plus" onClick={handleNewReleaseClick}
-                        type="primary" size="sm">New release</Button>
+                        type="primary" size="sm">{t('New release')}</Button>
             </PageTitle>
             <PageElementWrapper>
                 <Row>
@@ -37,26 +39,26 @@ export const Listing = () => {
                         <Row>
                             <Col>
                                 <Card>
-                                    <CardHeader title="What is a release?"/>
+                                    <CardHeader title={t('What is a release?')}/>
                                     <CardBody>
                                         <div className="d-flex x">
                                             <img className="w-75 mx-auto" src="/assets/releases.jpg" alt="notif"/>
                                         </div>
-                                        <p>In <strong>TestGator</strong>, a <strong>release</strong> represents a
-                                            specific version or milestone of a project that requires testing before
-                                            deployment. Each release serves as a container for multiple <strong>testing
-                                                plans</strong>, which are assigned to selected testers.</p>
-
-                                        <p>These testing plans outline structured <strong>questions</strong>—feature
-                                            scenarios that testers must follow and evaluate. Within a release, different
-                                            testing plans can target various functionalities, user flows, or devices,
-                                            allowing teams to validate multiple aspects of the software simultaneously.
-                                        </p>
-
-                                        <p>By organizing testing efforts into releases, developers can systematically
-                                            track progress, collect structured feedback, and ensure that each iteration
-                                            of the project meets quality expectations before moving forward.</p>
-
+                                        <Trans i18nKey="What is a release listing description">
+                                            <p>In <strong>TestGator</strong>, a <strong>release</strong> represents a
+                                                specific version or milestone of a project that requires testing before
+                                                deployment. Each release serves as a container for multiple <strong>testing
+                                                    plans</strong>, which are assigned to selected testers.</p>
+                                            <p>These testing plans outline structured <strong>questions</strong>—feature
+                                                scenarios that testers must follow and evaluate. Within a release,
+                                                different testing plans can target various functionalities, user flows,
+                                                or devices, allowing teams to validate multiple aspects of the software
+                                                simultaneously.</p>
+                                            <p>By organizing testing efforts into releases, developers can
+                                                systematically track progress, collect structured feedback, and ensure
+                                                that each iteration of the project meets quality expectations before
+                                                moving forward.</p>
+                                        </Trans>
                                     </CardBody>
                                 </Card>
                             </Col>

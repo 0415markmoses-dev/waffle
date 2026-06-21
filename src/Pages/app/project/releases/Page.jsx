@@ -100,11 +100,12 @@ export const Page = () => {
                                     </Col>
                                     <Col>
                                         <Card>
-                                            <CardHeader title="Manage this release"/>
+                                            <CardHeader title={t('Manage this release')}/>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column">
-                                                    <div className="heading">Edit</div>
-                                                    <div className="text-muted small">Edit the release details</div>
+                                                    <div className="heading">{t('Edit')}</div>
+                                                    <div
+                                                        className="text-muted small">{t('Edit the release details')}</div>
                                                 </div>
                                                 <Button onClick={() => setEditMode(!editMode)} iconOnly type="light"
                                                         size="sm">
@@ -113,9 +114,9 @@ export const Page = () => {
                                             </CardGroup>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column" style={{opacity: .3}}>
-                                                    <div className="heading">Download</div>
-                                                    <div className="text-muted small">Get the testing details in CSV
-                                                    </div>
+                                                    <div className="heading">{t('Download')}</div>
+                                                    <div
+                                                        className="text-muted small">{t('Get the testing details in CSV')}</div>
                                                 </div>
                                                 <div className="d-flex align-items-center gap-sm">
                                                     <span className="badge bg-secondary">Upcoming</span>
@@ -126,8 +127,8 @@ export const Page = () => {
                                             </CardGroup>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column">
-                                                    <div className="heading">Archive</div>
-                                                    <div className="text-muted small">Close this release</div>
+                                                    <div className="heading">{t('Archive')}</div>
+                                                    <div className="text-muted small">{t('Close this release')}</div>
                                                 </div>
                                                 <Button iconOnly type="light" size="sm">
                                                     <i className="font-icon lni lni-box-archive-1"></i>
@@ -135,9 +136,9 @@ export const Page = () => {
                                             </CardGroup>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column">
-                                                    <div className="heading text-danger">Danger zone</div>
-                                                    <div className="text-muted small">Delete this release and testings
-                                                    </div>
+                                                    <div className="heading text-danger">{t('Danger zone')}</div>
+                                                    <div
+                                                        className="text-muted small">{t('Delete this release and testings')}</div>
                                                 </div>
                                                 <Button iconOnly type="danger" size="sm">
                                                     <i className="font-icon lni lni-trash-3"></i>
