@@ -10,7 +10,6 @@ import {Col} from "../../Components/UI/Grid/Col.jsx";
 import {Card} from "../../Components/UI/Card/Card.jsx";
 import {CardBody} from "../../Components/UI/Card/CardBody.jsx";
 import {CardHeader} from "../../Components/UI/Card/CardHeader.jsx";
-import {CardFooter} from "../../Components/UI/Card/CardFooter.jsx";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 import {SingleMetricDisplay} from "../../Components/UI/Metrics/SingleMetricDisplay.jsx";
 import {MetricVerticalSeparator} from "../../Components/UI/Metrics/MetricVerticalSeparator.jsx";
@@ -357,28 +356,22 @@ export const Home = () => {
                     <Col sm={12} xl={8}>
                         <Row>
                             <Col>
-                                <Card>
-                                    <CardBody>
-                                        <div className="w-100 d-flex justify-content-between gap-md align-items-center">
-                                            <div className="d-flex flex-column">
-                                                <h2>Unlock productivity with TestGator workflow</h2>
-                                                <p>
-                                                    Welcome to TestGator! Track testing progress, manage participants,
-                                                    and analyze results effortlessly. Gain insights from real user
-                                                    environments to streamline your software testing process.
-                                                </p>
-                                            </div>
-                                            <div className="d-flex x">
-                                                <img className="w-100" src="/assets/getting_started.jpg" alt="notif"/>
-                                            </div>
-                                        </div>
-                                    </CardBody>
-                                    <CardFooter>
+                                <div className="dash-hero">
+                                    <div>
+                                        <h2>Unlock productivity with TestGator workflow</h2>
+                                        <p>
+                                            Welcome to TestGator! Track testing progress, manage participants,
+                                            and analyze results effortlessly. Gain insights from real user
+                                            environments to streamline your software testing process.
+                                        </p>
                                         <Button icon="lni-link-2-angular-right" type="link" size="sm">
                                             View Documentation
                                         </Button>
-                                    </CardFooter>
-                                </Card>
+                                    </div>
+                                    <div className="dash-hero-image">
+                                        <img src="/assets/fighting_bugs.png" alt=""/>
+                                    </div>
+                                </div>
                             </Col>
                             <Col size={12}>
                                 <Card>

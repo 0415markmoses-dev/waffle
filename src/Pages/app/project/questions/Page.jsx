@@ -329,14 +329,17 @@ export const Page = () => {
                                                 </Button>
                                             </CardGroup>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
-                                                <div className="d-flex flex-column">
+                                                <div className="d-flex flex-column" style={{opacity: .3}}>
                                                     <div className="heading">{t('Export')}</div>
                                                     <div
                                                         className="text-muted small">{t('Download question as CSV')}</div>
                                                 </div>
-                                                <Button iconOnly type="light" size="sm">
-                                                    <i className="font-icon lni lni-download-1"/>
-                                                </Button>
+                                                <div className="d-flex align-items-center gap-sm">
+                                                    <span className="badge bg-secondary">Upcoming</span>
+                                                    <Button iconOnly type="light" size="sm" disabled>
+                                                        <i className="font-icon lni lni-download-1"/>
+                                                    </Button>
+                                                </div>
                                             </CardGroup>
                                             <CardGroup className="d-flex justify-content-between align-items-center">
                                                 <div className="d-flex flex-column">

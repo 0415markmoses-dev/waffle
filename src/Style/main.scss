@@ -181,9 +181,12 @@ body {
 
 @import "./NavBar/navbar";
 @import "./TopBar/topbar";
+@import "./Search/search";
 @import "./Footer/footer";
 
 @import "./Pages/pages_elements";
 @import "./Testing/tester-dashboard";
 @import "./About/about";
+@import "./ReactModal/user-settings";
+@import "./Settings/app-setting";
 @import "lightbox";

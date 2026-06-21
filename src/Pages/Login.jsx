@@ -1,5 +1,5 @@
 import {useAuthStore, isTester} from "../Store/auth.js";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {Button} from "../Components/UI/Buttons/Button.jsx";
 import {AuthCodeInput} from "../Components/UI/Form/Inputs/AuthCodeInput.jsx";
@@ -14,6 +14,7 @@ export const Login = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
     const {user, isLoadingUser, requestLogin, generateCode} = useAuthStore();
+    const autoCodeSent = useRef(false);
     const [error, setError] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState('none'); // none(default), team or tester
@@ -23,11 +24,29 @@ export const Login = () => {
 
     console.log('code', code)
 
+    const sendCode = async (email) => {
+        setLoading(true);
+        setError(undefined);
+        setUsername(email);
+        try {
+            await generateCode(email);
+            setHasCode(true);
+        } catch (error) {
+            console.error(error);
+            setError('An error occurred');
+        }
+        setLoading(false);
+    };
+
     useEffect(() => {
-        // if query string mode=tester, set mode to tester
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('mode') && urlParams.get('mode') === 'tester') {
+        if (urlParams.get('mode') === 'tester') {
             setMode('tester');
+            const emailParam = urlParams.get('email');
+            if (emailParam && !autoCodeSent.current) {
+                autoCodeSent.current = true;
+                sendCode(emailParam);
+            }
         }
     }, [])
 
@@ -79,20 +98,7 @@ export const Login = () => {
             return;
         }
 
-        setLoading(true);
-        setError(undefined);
-
-        const email = e.target[0].value;
-        setUsername(email);
-
-        try {
-            await generateCode(email);
-            setHasCode(true);
-        } catch (error) {
-            console.error(error)
-            setError('An error occurred');
-        }
-        setLoading(false);
+        await sendCode(e.target[0].value);
     }
 
     const handleSendForm = (e) => {

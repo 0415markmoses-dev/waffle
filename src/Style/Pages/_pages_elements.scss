@@ -192,6 +192,85 @@ a.breadcrumb-item:not(.active-item) {
   white-space: nowrap;
 }
 
+// ── Dashboard hero banner ─────────────────────────────────────────────────────
+.dash-hero {
+  background: linear-gradient(135deg, #f0fdf4 0%, #fefce8 100%);
+  border: $card-border;
+  border-radius: $border-radius;
+  border-color: rgba($primary, .45);
+  position: relative;
+  overflow: visible;
+  margin-bottom: 1.5rem;
+
+  padding: 1.25rem;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+
+  h2 {
+    margin: 0 0 .5rem;
+    font-size: 1.5rem;
+  }
+
+  p {
+    margin: 0 0 1rem;
+    color: #374151;
+    font-size: .9375rem;
+    font-weight: 500;
+  }
+
+  @include media-breakpoint-up(md) {
+    padding: 1.5rem 2rem;
+    min-height: 160px;
+    padding-right: 320px;
+
+    h2 {
+      font-size: 1.75rem;
+    }
+  }
+
+  @include media-breakpoint-up(lg) {
+    min-height: 185px;
+    padding-right: 400px;
+  }
+
+  @include media-breakpoint-up(xl) {
+    min-height: 210px;
+    padding-right: 490px;
+  }
+}
+
+.dash-hero-image {
+  display: none;
+  position: absolute;
+  right: 4%;
+  bottom: 0;
+  overflow: visible;
+  pointer-events: none;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform: translateY(5%) scale(1.15);
+  }
+
+  @include media-breakpoint-up(md) {
+    display: block;
+    width: 270px;
+  }
+
+  @include media-breakpoint-up(lg) {
+    width: 330px;
+    right: 5%;
+  }
+
+  @include media-breakpoint-up(xl) {
+    width: 405px;
+    right: 6%;
+  }
+}
+
 // ── Dashboard stats row ───────────────────────────────────────────────────────
 .dash-stat-card {
   display: flex;

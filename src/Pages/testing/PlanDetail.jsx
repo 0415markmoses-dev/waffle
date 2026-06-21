@@ -25,6 +25,7 @@ import VideoLightbox from "../../Components/UI/Lightbox/VideoLightbox.jsx";
 import {MkEditorInstance} from "../../Components/UI/Form/Editor/MkEditorInstance.jsx";
 import {MarkdownRenderer} from "../../Components/UI/Markdown/MarkdownRenderer.jsx";
 import SystemInfoChips from "../../Components/UI/SystemInfoChips/SystemInfoChips.jsx";
+import toast from "react-hot-toast";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -731,20 +732,29 @@ const QuestionDrawer = ({question, answer, index, total, onClose, onSaved, t}) =
     const handleSave = async () => {
         if (!selectedState) return;
         const sysInfoPayload = collectedSystemInfo ? {systemInfos: collectedSystemInfo} : {};
-        if (liveAnswerId) {
-            await updateAnswer.mutateAsync({
-                id: liveAnswerId,
-                data: {state: selectedState, comment, ...sysInfoPayload}
-            });
-        } else {
-            await createAnswer.mutateAsync({
-                question: question['@id'],
-                state: selectedState,
-                comment, ...sysInfoPayload
-            });
+        try {
+            if (liveAnswerId) {
+                await updateAnswer.mutateAsync({
+                    id: liveAnswerId,
+                    data: {state: selectedState, comment, ...sysInfoPayload}
+                });
+            } else {
+                await createAnswer.mutateAsync({
+                    question: question['@id'],
+                    state: selectedState,
+                    comment, ...sysInfoPayload
+                });
+            }
+            onSaved?.();
+            triggerClose();
+        } catch (err) {
+            const detail = err?.response?.data?.detail
+                ?? err?.response?.data?.['hydra:description']
+                ?? err?.response?.data?.message
+                ?? err?.message
+                ?? t('An error occurred while saving your answer.');
+            toast.error(`${t('Failed to save answer.')} ${detail}`);
         }
-        onSaved?.();
-        triggerClose();
     };
 
     return (

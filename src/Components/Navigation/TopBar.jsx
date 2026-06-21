@@ -1,13 +1,30 @@
+import {useEffect, useState} from 'react';
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 import {useAuthStore, isTester} from "../../Store/auth.js";
 import {DropdownMenu} from "radix-ui";
+import {SearchModal} from "../Search/SearchModal.jsx";
 
 export const TopBar = () => {
     const {currentProject, openSelectionModal} = useProjectStore();
     const {user} = useAuthStore();
     const tester = isTester(user);
+    const [searchOpen, setSearchOpen] = useState(false);
+
+    // ⌘K / Ctrl+K global shortcut
+    useEffect(() => {
+        const handleKey = (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                setSearchOpen(true);
+            }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, []);
 
     return (
+        <>
+            <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)}/>
         <div className="topbar">
             {/* Left — project selector (team only) */}
             <div className="topbar-left">
@@ -24,7 +41,7 @@ export const TopBar = () => {
 
             {/* Center — search */}
             <div className="topbar-center">
-                <div className="topbar-search">
+                <div className="topbar-search" onClick={() => setSearchOpen(true)}>
                     <i className="font-icon lni lni-search-1 topbar-search-icon"></i>
                     <input
                         type="text"
@@ -73,5 +90,6 @@ export const TopBar = () => {
                 )}
             </div>
         </div>
+        </>
     );
 };
