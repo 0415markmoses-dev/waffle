@@ -10,6 +10,8 @@ import {ModalBody} from '../UI/ReactModal/ModalBody.jsx';
 import {ModalFooter} from '../UI/ReactModal/ModalFooter.jsx';
 import {AppSetting} from '../UI/Settings/AppSetting.jsx';
 import SettingsService from '../../Services/PrivateApi/SettingsService.js';
+import {UsersTab} from './UsersTab.jsx';
+import {ModalCreateUser} from './ModalCreateUser.jsx';
 
 Modal.setAppElement('#root');
 
@@ -19,8 +21,8 @@ const modalStyles = {
         top: '50%', left: '50%', right: 'auto', bottom: 'auto',
         marginRight: '-50%', transform: 'translate(-50%, -50%)',
         padding: 0, border: 'none', borderRadius: '12px',
-        width: '100%', minWidth: '650px', maxWidth: '780px',
-        maxHeight: '85vh', overflow: 'hidden',
+        width: '100%', minWidth: '780px', maxWidth: '1024px',
+        minHeight: '65vh', maxHeight: '85vh', overflow: 'hidden',
         display: 'flex', flexDirection: 'column',
     },
 };
@@ -69,6 +71,7 @@ export const AdminModal = ({isOpen, onClose}) => {
     const queryClient = useQueryClient();
     const [dirty, setDirty] = useState({});
     const [saving, setSaving] = useState(false);
+    const [createUserOpen, setCreateUserOpen] = useState(false);
 
     // Load all settings (100 per page is plenty for admin settings)
     const {data: settingsRaw, isLoading} = useQuery({
@@ -174,6 +177,7 @@ export const AdminModal = ({isOpen, onClose}) => {
     );
 
     return (
+        <>
         <Modal style={modalStyles} isOpen={isOpen} onRequestClose={onClose}>
             <div style={{padding: PAD, paddingBottom: 0}}>
                 <ModalHeader title="Admin settings"/>
@@ -190,6 +194,12 @@ export const AdminModal = ({isOpen, onClose}) => {
                         </Tab>
                         <Tab icon="lni-bell-1" name="notifications" title="Notifications">
                             {renderSettings('notifications')}
+                        </Tab>
+                        <Tab icon="lni-user-multiple-4" name="users" title="Users">
+                            <UsersTab onAddUser={() => {
+                                onClose();
+                                setCreateUserOpen(true);
+                            }}/>
                         </Tab>
                     </TabWrapper>
                 </div>
@@ -209,5 +219,11 @@ export const AdminModal = ({isOpen, onClose}) => {
                 </ModalFooter>
             </div>
         </Modal>
+
+            <ModalCreateUser
+                isOpen={createUserOpen}
+                onClose={() => setCreateUserOpen(false)}
+            />
+        </>
     );
 };

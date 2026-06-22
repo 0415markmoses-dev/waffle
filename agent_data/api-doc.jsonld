@@ -1904,6 +1904,16 @@
         {
           "@type": [
             "Operation",
+            "schema:FindAction"
+          ],
+          "method": "GET",
+          "rdfs:label": "Retrieves a Project resource.",
+          "returns": "Project",
+          "title": "Retrieves a Project resource."
+        },
+        {
+          "@type": [
+            "Operation",
             "schema:ReplaceAction"
           ],
           "expects": "Project",
@@ -2036,6 +2046,17 @@
           "title": "Retrieves a Question resource."
         },
         {
+          "@type": [
+            "Operation",
+            "schema:ReplaceAction"
+          ],
+          "expects": "Question",
+          "method": "PUT",
+          "rdfs:label": "Replaces the Question resource.",
+          "returns": "Question",
+          "title": "Replaces the Question resource."
+        },
+        {
           "@type": "Operation",
           "expects": "Question",
           "method": "PATCH",
@@ -2147,6 +2168,144 @@
           "rdfs:label": "Deletes the Release resource.",
           "returns": "owl:Nothing",
           "title": "Deletes the Release resource."
+        }
+      ]
+    },
+    {
+      "@id": "#Settings",
+      "@type": "Class",
+      "rdfs:label": "Settings",
+      "title": "Settings",
+      "supportedProperty": [
+        {
+          "@type": "SupportedProperty",
+          "property": {
+            "@id": "#Settings/section",
+            "@type": "rdf:Property",
+            "rdfs:label": "section",
+            "domain": "#Settings",
+            "range": "xmls:string"
+          },
+          "title": "section",
+          "required": true,
+          "readable": true,
+          "writeable": true
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
+            "@id": "#Settings/name",
+            "@type": "rdf:Property",
+            "rdfs:label": "name",
+            "domain": "#Settings",
+            "range": "xmls:string"
+          },
+          "title": "name",
+          "required": true,
+          "readable": true,
+          "writeable": true
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
+            "@id": "#Settings/value",
+            "@type": "rdf:Property",
+            "rdfs:label": "value",
+            "domain": "#Settings",
+            "range": "xmls:string"
+          },
+          "title": "value",
+          "required": false,
+          "readable": true,
+          "writeable": true
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
+            "@id": "#Settings/autoload",
+            "@type": "rdf:Property",
+            "rdfs:label": "autoload",
+            "domain": "#Settings",
+            "range": "xmls:boolean"
+          },
+          "title": "autoload",
+          "required": false,
+          "readable": true,
+          "writeable": true
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
+            "@id": "#Settings/public",
+            "@type": "rdf:Property",
+            "rdfs:label": "public",
+            "domain": "#Settings",
+            "range": "xmls:boolean"
+          },
+          "title": "public",
+          "required": false,
+          "readable": true,
+          "writeable": true
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
+            "@id": "https://schema.org/DateTime",
+            "@type": "rdf:Property",
+            "rdfs:label": "created",
+            "domain": "#Settings",
+            "range": "xmls:dateTime"
+          },
+          "title": "created",
+          "required": false,
+          "readable": true,
+          "writeable": false,
+          "description": "Returns created."
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
+            "@id": "https://schema.org/DateTime",
+            "@type": "rdf:Property",
+            "rdfs:label": "updated",
+            "domain": "#Settings",
+            "range": "xmls:dateTime"
+          },
+          "title": "updated",
+          "required": false,
+          "readable": true,
+          "writeable": false,
+          "description": "Returns updated."
+        }
+      ],
+      "supportedOperation": [
+        {
+          "@type": [
+            "Operation",
+            "schema:FindAction"
+          ],
+          "method": "GET",
+          "rdfs:label": "Retrieves a Settings resource.",
+          "returns": "Settings",
+          "title": "Retrieves a Settings resource."
+        },
+        {
+          "@type": "Operation",
+          "expects": "Settings",
+          "method": "PATCH",
+          "rdfs:label": "Updates the Settings resource.",
+          "returns": "Settings",
+          "title": "Updates the Settings resource."
+        },
+        {
+          "@type": [
+            "Operation",
+            "schema:DeleteAction"
+          ],
+          "method": "DELETE",
+          "rdfs:label": "Deletes the Settings resource.",
+          "returns": "owl:Nothing",
+          "title": "Deletes the Settings resource."
         }
       ]
     },
@@ -2522,6 +2681,24 @@
           "rdfs:label": "Deletes the Tester resource.",
           "returns": "owl:Nothing",
           "title": "Deletes the Tester resource."
+        },
+        {
+          "@type": [
+            "Operation",
+            "schema:FindAction"
+          ],
+          "method": "GET",
+          "rdfs:label": "Retrieves a User resource.",
+          "returns": "User",
+          "title": "Retrieves a User resource."
+        },
+        {
+          "@type": "Operation",
+          "expects": "User",
+          "method": "PATCH",
+          "rdfs:label": "Updates the User resource.",
+          "returns": "User",
+          "title": "Updates the User resource."
         }
       ],
       "description": "Single account entity. Team members and testers are differentiated\nby the $type field (UserType::USER | UserType::TESTER).\n\nThe ApiResource is exposed under the \"Tester\" short name so the\nexisting /api/testers endpoints keep working for the React client.\nThe TesterTypeExtension automatically restricts API queries to\ntype = TESTER, and TesterStateProcessor forces type = TESTER on write."
@@ -2773,6 +2950,56 @@
         {
           "@type": "SupportedProperty",
           "property": {
+            "@id": "#Entrypoint/settings",
+            "@type": "Link",
+            "domain": "#Entrypoint",
+            "rdfs:label": "The collection of Settings resources",
+            "rdfs:range": [
+              {
+                "@id": "Collection"
+              },
+              {
+                "owl:equivalentClass": {
+                  "owl:onProperty": {
+                    "@id": "member"
+                  },
+                  "owl:allValuesFrom": {
+                    "@id": "#Settings"
+                  }
+                }
+              }
+            ],
+            "supportedOperation": [
+              {
+                "@type": [
+                  "Operation",
+                  "schema:FindAction"
+                ],
+                "method": "GET",
+                "rdfs:label": "Retrieves the collection of Settings resources.",
+                "returns": "Collection",
+                "title": "Retrieves the collection of Settings resources."
+              },
+              {
+                "@type": [
+                  "Operation",
+                  "schema:CreateAction"
+                ],
+                "expects": "Settings",
+                "method": "POST",
+                "rdfs:label": "Creates a Settings resource.",
+                "returns": "Settings",
+                "title": "Creates a Settings resource."
+              }
+            ]
+          },
+          "title": "The collection of Settings resources",
+          "readable": true,
+          "writeable": false
+        },
+        {
+          "@type": "SupportedProperty",
+          "property": {
             "@id": "#Entrypoint/testPlan",
             "@type": "Link",
             "domain": "#Entrypoint",
@@ -2863,6 +3090,27 @@
                 "rdfs:label": "Creates a Tester resource.",
                 "returns": "Tester",
                 "title": "Creates a Tester resource."
+              },
+              {
+                "@type": [
+                  "Operation",
+                  "schema:FindAction"
+                ],
+                "method": "GET",
+                "rdfs:label": "Retrieves the collection of User resources.",
+                "returns": "Collection",
+                "title": "Retrieves the collection of User resources."
+              },
+              {
+                "@type": [
+                  "Operation",
+                  "schema:CreateAction"
+                ],
+                "expects": "User",
+                "method": "POST",
+                "rdfs:label": "Creates a User resource.",
+                "returns": "User",
+                "title": "Creates a User resource."
               }
             ]
           },
