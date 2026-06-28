@@ -22,8 +22,9 @@ Http.interceptors.request.use((config) => {
     if (config.method === 'patch') {
         config.headers['Content-Type'] = 'application/merge-patch+json';
     }
-    // if there is a POST, add Content-Type application/ld+json
-    if (config.method === 'post') {
+    // if there is a POST without an explicit Content-Type, default to application/ld+json
+    // (don't override multipart/form-data or other explicitly set types)
+    if (config.method === 'post' && !config.headers['Content-Type']) {
         config.headers['Content-Type'] = 'application/ld+json';
     }
 

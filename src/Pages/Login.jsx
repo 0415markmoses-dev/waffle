@@ -8,6 +8,7 @@ import {Row} from "../Components/UI/Grid/Row.jsx";
 import {Col} from "../Components/UI/Grid/Col.jsx";
 import {Separator} from "../Components/UI/Separator/Separator.jsx";
 import {Alert} from "../Components/UI/Alert/Alert.jsx";
+import AuthService from "../Services/Authentication/AuthService.js";
 
 
 export const Login = () => {
@@ -21,6 +22,8 @@ export const Login = () => {
     const [hasCode, setHasCode] = useState(false);
     const [code, setCode] = useState('');
     const [username, setUsername] = useState('');
+    const [serverAuthMode, setServerAuthMode] = useState(null); // { mode: 'db'|'ldap', usernameIsEmail: bool }
+    const [fetchingAuthMode, setFetchingAuthMode] = useState(true);
 
     console.log('code', code)
 
@@ -37,6 +40,14 @@ export const Login = () => {
         }
         setLoading(false);
     };
+
+    // Fetch auth mode on mount
+    useEffect(() => {
+        AuthService.getAuthMode()
+            .then(r => setServerAuthMode(r.data))
+            .catch(() => setServerAuthMode({mode: 'ldap', usernameIsEmail: false}))
+            .finally(() => setFetchingAuthMode(false));
+    }, []);
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -77,7 +88,7 @@ export const Login = () => {
 
         try {
             if (mode === 'team') {
-                await requestLogin(email, password);
+                await requestLogin(email, password, 'team', serverAuthMode?.mode ?? 'ldap');
             } else if (mode === 'tester') {
                 console.log('tester request login');
                 await requestLogin(email, password, 'tester', 'app');
@@ -114,7 +125,7 @@ export const Login = () => {
         }
     }
 
-    if (isLoadingUser) {
+    if (isLoadingUser || fetchingAuthMode) {
         return (
             <div className="w-100 h-100 d-flex justify-content-center align-items-center"
                  style={{minHeight: '100vh'}}>
@@ -127,6 +138,8 @@ export const Login = () => {
             </div>
         );
     }
+
+    const isDbMode = serverAuthMode?.mode === 'db';
 
     return <>
         <div className="w-100 login-container position-relative">
@@ -203,21 +216,31 @@ export const Login = () => {
                                         {!hasCode && (
                                             <div className="form-group mb-2">
                                                 <label htmlFor="loginLogin">
-                                                    {mode === 'team' ? t('Username') : t('Email')}
+                                                    {mode === 'team'
+                                                        ? (isDbMode ? t('Email') : t('Username'))
+                                                        : t('Email')}
                                                 </label>
-                                                <input type="text" className="form-control" id="loginLogin"
-                                                       disabled={loading}
-                                                       aria-describedby="emailHelp"
-                                                       placeholder={mode === 'team' ? 'john.doe' : 'john.doe@domain.tld'}/>
-                                                {mode === 'team' && (
-                                                    <small id="emailHelp" className="form-text text-muted">
+                                                <input
+                                                    type={mode === 'team' && isDbMode ? 'email' : 'text'}
+                                                    className="form-control"
+                                                    id="loginLogin"
+                                                    disabled={loading}
+                                                    aria-describedby="loginHelp"
+                                                    placeholder={
+                                                        mode === 'team'
+                                                            ? (isDbMode ? 'john.doe@domain.tld' : 'john.doe')
+                                                            : 'john.doe@domain.tld'
+                                                    }
+                                                />
+                                                {mode === 'team' && !isDbMode && (
+                                                    <small id="loginHelp" className="form-text text-muted">
                                                         <Trans i18nKey="Use your AD login name without the @domain.tld">
                                                             Use your AD login name <i>without the @domain.tld</i>
                                                         </Trans>
                                                     </small>
                                                 )}
                                                 {mode !== 'team' && (
-                                                    <small id="emailHelp" className="form-text text-muted">
+                                                    <small id="loginHelp" className="form-text text-muted">
                                                         {t('Use the email you received your invitation to')}
                                                     </small>
                                                 )}

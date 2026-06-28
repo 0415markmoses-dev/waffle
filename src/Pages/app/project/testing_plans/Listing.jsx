@@ -29,6 +29,13 @@ export const Listing = () => {
             </PageTitle>
             <PageElementWrapper>
                 <Row>
+                    <Col fullHeight sm={12} xl={8}>
+                        <Row className="h-100">
+                            <Col fullHeight size={12}>
+                                <ListTestPlans/>
+                            </Col>
+                        </Row>
+                    </Col>
                     <Col fullHeight sm={12} xl={4}>
                         <Row>
                             <Col>
@@ -43,13 +50,6 @@ export const Listing = () => {
                                         </Trans>
                                     </CardBody>
                                 </Card>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Col fullHeight sm={12} xl={8}>
-                        <Row className="h-100">
-                            <Col fullHeight size={12}>
-                                <ListTestPlans/>
                             </Col>
                         </Row>
                     </Col>

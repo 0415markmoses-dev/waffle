@@ -7,6 +7,7 @@ import {DropdownMenu} from "radix-ui";
 import {UserSettingsModal} from "../User/UserSettingsModal.jsx";
 import {AdminModal} from "../Admin/AdminModal.jsx";
 import {useTranslation} from "react-i18next";
+import {useAdminModalStore} from "../../Store/UI/adminModalStore.js";
 
 
 export const NavBar = ({menuName = 'navbar'}) => {
@@ -14,7 +15,7 @@ export const NavBar = ({menuName = 'navbar'}) => {
     let navigate = useNavigate();
     const {user, clearUserData} = useAuthStore();
     const [settingsTab, setSettingsTab] = useState(null); // null = closed
-    const [adminOpen, setAdminOpen] = useState(false);
+    const {isOpen: adminOpen, open: openAdmin, close: closeAdmin} = useAdminModalStore();
 
     const onLogout = (e) => {
         e?.preventDefault();
@@ -26,7 +27,8 @@ export const NavBar = ({menuName = 'navbar'}) => {
     const closeSettings = () => setSettingsTab(null);
 
     const isAdmin = user?.roles?.includes('ROLE_ADMIN');
-    const displayName = user?.name ?? user?.email ?? 'User';
+    const displayName = user?.nickname ?? user?.name ?? user?.email ?? 'User';
+    const avatarSrc = user?.profilePictureUrl ?? '/assets/fake_user.jpg';
 
     return (
         <>
@@ -49,9 +51,13 @@ export const NavBar = ({menuName = 'navbar'}) => {
                             <DropdownMenu.Root>
                                 <DropdownMenu.Trigger className="profile-trigger">
                                     <div className="profile-avatar flex-shrink-0">
-                                        <img src="/assets/fake_user.jpg" alt={displayName}/>
+                                        <img src={avatarSrc} alt={displayName}/>
                                     </div>
-                                    <span className="profile-trigger-name">{displayName}</span>
+                                    <div className="d-flex flex-column overflow-hidden">
+                                        <span className="profile-trigger-name">{displayName}</span>
+                                        {user.email &&
+                                            <span className="profile-trigger-email text-truncate">{user.email}</span>}
+                                    </div>
                                     <i className="font-icon lni lni-chevron-down profile-trigger-chevron"></i>
                                 </DropdownMenu.Trigger>
 
@@ -64,12 +70,15 @@ export const NavBar = ({menuName = 'navbar'}) => {
                                     >
                                         <div className="dropdown-item dropdown-user-header">
                                             <div className="profile-avatar me-2 flex-shrink-0">
-                                                <img src="/assets/fake_user.jpg" alt={displayName}/>
+                                                <img src={avatarSrc} alt={displayName}/>
                                             </div>
                                             <div
                                                 className="flex-grow-1 d-flex flex-column justify-content-start overflow-hidden">
                                                 <small className="opacity-50">{t('Connected as')}</small>
-                                                <div className="text-truncate">{user.email}</div>
+                                                {user.nickname &&
+                                                    <div className="fw-semibold text-truncate">{user.nickname}</div>}
+                                                <div className="text-truncate opacity-75"
+                                                     style={{fontSize: '.8em'}}>{user.email}</div>
                                             </div>
                                         </div>
 
@@ -94,7 +103,7 @@ export const NavBar = ({menuName = 'navbar'}) => {
                                         {isAdmin && (
                                             <DropdownMenu.Item asChild>
                                                 <button className="dropdown-action-item dropdown-action-item--admin"
-                                                        onClick={() => setAdminOpen(true)}>
+                                                        onClick={() => openAdmin()}>
                                                     <i className="font-icon lni lni-gear-1"></i>
                                                     {t('Admin')}
                                                 </button>
@@ -125,7 +134,7 @@ export const NavBar = ({menuName = 'navbar'}) => {
                     onClose={closeSettings}
                 />
             )}
-            <AdminModal isOpen={adminOpen} onClose={() => setAdminOpen(false)}/>
+            <AdminModal isOpen={adminOpen} onClose={closeAdmin}/>
         </>
     );
 };

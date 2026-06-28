@@ -3,12 +3,14 @@ import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 import {useAuthStore, isTester} from "../../Store/auth.js";
 import {DropdownMenu} from "radix-ui";
 import {SearchModal} from "../Search/SearchModal.jsx";
+import {useAdminModalStore} from "../../Store/UI/adminModalStore.js";
 
 export const TopBar = () => {
     const {currentProject, openSelectionModal} = useProjectStore();
     const {user} = useAuthStore();
     const tester = isTester(user);
     const [searchOpen, setSearchOpen] = useState(false);
+    const {open: openAdmin} = useAdminModalStore();
 
     // ⌘K / Ctrl+K global shortcut
     useEffect(() => {
@@ -75,6 +77,9 @@ export const TopBar = () => {
                                 <i className="font-icon lni lni-bell-1"></i>
                                 <span>No notifications</span>
                             </div>
+                            <div className="topbar-notif-footer">
+                                <span className="badge bg-secondary">Upcoming feature</span>
+                            </div>
                         </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                 </DropdownMenu.Root>
@@ -84,7 +89,7 @@ export const TopBar = () => {
                         <i className="font-icon lni lni-question-mark-circle"></i>
                     </button>
                 ) : (
-                    <button className="topbar-icon-btn" aria-label="Settings">
+                    <button className="topbar-icon-btn" aria-label="Settings" onClick={openAdmin}>
                         <i className="font-icon lni lni-gear-1"></i>
                     </button>
                 )}

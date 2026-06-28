@@ -39,6 +39,7 @@ import {Create as ReleasesCreate} from "../Pages/app/project/releases/Create.jsx
 import {Page as TestingPlansPage} from "../Pages/app/project/testing_plans/Page.jsx";
 import {Listing as TestingPlansListing} from "../Pages/app/project/testing_plans/Listing.jsx";
 import {Page as TestersPage} from "../Pages/app/project/testers/Page.jsx";
+import {TesterProfile} from "../Pages/app/project/testers/TesterProfile.jsx";
 import {Page as AboutPage} from "../Pages/app/about/Page.jsx";
 import {Page as ProjectPage} from "../Pages/app/project/Page.jsx";
 import {Create as QuestionsCreate} from "../Pages/app/project/questions/Create.jsx";
@@ -130,7 +131,19 @@ export const routes = [
                         path: "testers",
                         name: 'project_testers',
                         label: 'Testers',
-                        element: <TestersPage/>,
+                        children: [
+                            {
+                                path: "",
+                                name: 'project_testers_list',
+                                element: <TestersPage/>,
+                            },
+                            {
+                                path: ":testerId",
+                                name: 'project_tester_profile',
+                                label: 'Tester',
+                                element: <TesterProfile/>,
+                            },
+                        ],
                     },
                     {
                         path: "releases",

@@ -53,6 +53,22 @@ export const useRecentProjectAnswers = (projectId) => {
     });
 };
 
+const ACTIVITY_PAGE_SIZE = 10;
+
+export const useAnswersByTester = (testerIri, projectId, page = 1) => {
+    return useQuery({
+        queryKey: answerKeys.list({tester: testerIri, project: projectId, page}),
+        queryFn: () => AnswersService.getAnswers({
+            tester: testerIri,
+            'question.testPlan.release.project': projectId,
+            'order[created]': 'desc',
+            itemsPerPage: ACTIVITY_PAGE_SIZE,
+            page,
+        }).then(r => r.data),
+        enabled: !!testerIri && !!projectId,
+    });
+};
+
 export const useUpdateAnswer = () => {
     const queryClient = useQueryClient();
     return useMutation({

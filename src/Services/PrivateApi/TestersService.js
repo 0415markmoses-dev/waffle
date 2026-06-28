@@ -23,7 +23,10 @@ const TestersService = {
     },
     getTesterStats(id) {
         return Http.get('/api/testers/' + id);
-    }
+    },
+    updateNickname(id, nickname) {
+        return Http.post(`/api/testers/${id}/nickname`, {nickname});
+    },
 }
 
 export default TestersService;

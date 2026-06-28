@@ -69,6 +69,33 @@ export const Page = () => {
                 <TabWrapper inUrlParams={true} onChange={(tab) => setCurrentTab(tab)} name="tab">
                     <Tab icon="lni-book-1" active={true} name="overview" title={t('Overview')}>
                         <Row className="flex-column-reverse flex-xl-row">
+                            <Col sm={12} xl={8}>
+                                <Row>
+                                    <Col>
+                                        <Card>
+                                            {editMode && !isLoading && releaseData && (
+                                                <CardBody>
+                                                    <EditReleaseForm
+                                                        onCancel={() => setEditMode(false)}
+                                                        onUpdate={() => setEditMode(false)}
+                                                        release={releaseData}
+                                                    />
+                                                </CardBody>
+                                            )}
+                                            {!editMode && (
+                                                <>
+                                                    <CardHeader title={releaseData?.name}/>
+                                                    <CardBody>
+                                                        <div className="release-description">
+                                                            <ReleaseDescription description={releaseData?.description}/>
+                                                        </div>
+                                                    </CardBody>
+                                                </>
+                                            )}
+                                        </Card>
+                                    </Col>
+                                </Row>
+                            </Col>
                             <Col sm={12} xl={4}>
                                 <Row>
                                     <Col>
@@ -177,33 +204,6 @@ export const Page = () => {
                                     </Col>
                                 </Row>
                             </Col>
-                            <Col sm={12} xl={8}>
-                                <Row>
-                                    <Col>
-                                        <Card>
-                                            {editMode && !isLoading && releaseData && (
-                                                <CardBody>
-                                                    <EditReleaseForm
-                                                        onCancel={() => setEditMode(false)}
-                                                        onUpdate={() => setEditMode(false)}
-                                                        release={releaseData}
-                                                    />
-                                                </CardBody>
-                                            )}
-                                            {!editMode && (
-                                                <>
-                                                    <CardHeader title={releaseData?.name}/>
-                                                    <CardBody>
-                                                        <div className="release-description">
-                                                            <ReleaseDescription description={releaseData?.description}/>
-                                                        </div>
-                                                    </CardBody>
-                                                </>
-                                            )}
-                                        </Card>
-                                    </Col>
-                                </Row>
-                            </Col>
                         </Row>
                     </Tab>
                     <Tab icon="lni-bug-1" name="testing_plans" title={t('Testing Plans')}>
@@ -216,9 +216,6 @@ export const Page = () => {
                                 </div>
                             </Col>
                         </Row>
-                    </Tab>
-                    <Tab icon="lni-user-multiple-4" name="team" title={t('Team')}>
-                        <ErrorState message="Coming soon..."/>
                     </Tab>
                 </TabWrapper>
             </PageElementWrapper>

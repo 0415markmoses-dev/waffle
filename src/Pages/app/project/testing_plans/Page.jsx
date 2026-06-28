@@ -30,7 +30,7 @@ import {ListQuestionsOrdered} from "../../../../Components/Questions/ListQuestio
 import {ModalCreateQuestion} from "../../../../Components/Questions/ModalCreateQuestion.jsx";
 import {ModalAddTester} from "../../../../Components/TestPlans/ModalAddTester.jsx";
 import {CardTestPlanDeadline} from "../../../../Components/TestPlans/CardTestPlanDeadline.jsx";
-import {useTestPlan, useUpdateTestPlan, useAddDemoAnswers} from "../../../../Hooks/queries/useTestPlansQuery.js";
+import {useTestPlan, useUpdateTestPlan} from "../../../../Hooks/queries/useTestPlansQuery.js";
 import {useRelease} from "../../../../Hooks/queries/useReleasesQuery.js";
 import {usePlanHealth} from "../../../../Hooks/queries/useQuestionsQuery.js";
 import {HealthDisplay} from "../../../../Components/Health/HealthDisplay.jsx";
@@ -58,7 +58,6 @@ export const Page = () => {
 
     const {data: testPlanData, isError, isLoading} = useTestPlan(params.tid);
     const updateTestPlan = useUpdateTestPlan();
-    const addDemoAnswers = useAddDemoAnswers();
     const {
         isLoading: healthLoading,
         pass,
@@ -273,26 +272,6 @@ export const Page = () => {
                                                     <Button disabled={editMode} onClick={() => setModalState(true)}
                                                             iconOnly type="light" size="sm">
                                                         <i className="font-icon lni lni-flag-1"></i>
-                                                    </Button>
-                                                </CardGroup>
-                                                <CardGroup
-                                                    className="d-flex justify-content-between align-items-center">
-                                                    <div className="d-flex flex-column">
-                                                        <div className="heading">{t('Add sample')}</div>
-                                                        <div
-                                                            className="text-muted small">{t('Add sample answer to preview')}</div>
-                                                    </div>
-                                                    <Button
-                                                        iconOnly
-                                                        type="light"
-                                                        size="sm"
-                                                        loading={addDemoAnswers.isPending}
-                                                        onClick={() => addDemoAnswers.mutate({
-                                                            testingPlanIri: `/api/test_plans/${testPlanData?.id}`,
-                                                            number: 10,
-                                                        })}
-                                                    >
-                                                        <i className="font-icon lni lni-bolt-2"></i>
                                                     </Button>
                                                 </CardGroup>
                                                 <CardGroup

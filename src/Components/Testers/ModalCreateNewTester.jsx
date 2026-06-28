@@ -10,6 +10,7 @@ import {FormGroupLabel} from "../UI/Form/FormGroupLabel.jsx";
 import {TextInput} from "../UI/Form/Inputs/TextInput.jsx";
 import {useState} from "react";
 import {useCreateTester} from "../../Hooks/queries/useTestersQuery.js";
+import toast from "react-hot-toast";
 
 Modal.setAppElement('#root');
 
@@ -40,10 +41,16 @@ export const ModalCreateNewTester = ({
     const createTester = useCreateTester();
 
     const handleCreateTester = () => {
-        onProgress();
         createTester.mutate(
             {email: testerEmail},
-            {onSuccess: (data) => onConfirm(data)}
+            {
+                onSuccess: (data) => {
+                    toast.success(t('Tester created successfully.'));
+                    setTesterEmail('');
+                    onConfirm(data);
+                },
+                onError: () => toast.error(t('Failed to create tester.')),
+            }
         );
     };
 

@@ -19,7 +19,6 @@ export const Page = () => {
     let navigate = useNavigate();
     const {currentProject} = useProjectStore();
     const [modalVisible, setModalVisible] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     const handleNewReleaseClick = () => {
         //navigate('/app/project/testers/create');
@@ -40,6 +39,13 @@ export const Page = () => {
             </PageTitle>
             <PageElementWrapper>
                 <Row>
+                    <Col fullHeight sm={12} xl={8}>
+                        <Row className="h-100">
+                            <Col fullHeight size={12}>
+                                <ListTesters/>
+                            </Col>
+                        </Row>
+                    </Col>
                     <Col fullHeight sm={12} xl={4}>
                         <Row>
                             <Col>
@@ -58,7 +64,7 @@ export const Page = () => {
                                             <p>
                                                 Testers are usually <b>non-technical users</b>—like clients, team
                                                 members, or end-users—who receive a simple and secure link to try out
-                                                specific scenarios you define. They don’t need to install anything.
+                                                specific scenarios you define. They don't need to install anything.
                                             </p>
                                             <p>
                                                 Their job is to follow your instructions,<b> give quick feedback</b>
@@ -71,29 +77,13 @@ export const Page = () => {
                             </Col>
                         </Row>
                     </Col>
-                    <Col fullHeight sm={12} xl={8}>
-                        <Row className="h-100">
-                            <Col fullHeight size={12}>
-                                {!loading && (
-                                    <ListTesters/>
-                                )}
-                            </Col>
-                        </Row>
-                    </Col>
                 </Row>
 
             </PageElementWrapper>
         </PageContentWrapper>
         <ModalCreateNewTester
-            onProgress={() => setLoading(true)}
-            onConfirm={() => {
-                setLoading(false)
-                setModalVisible(false)
-            }}
-            onCancel={() => {
-                setLoading(false)
-                setModalVisible(false)
-            }}
+            onConfirm={() => setModalVisible(false)}
+            onCancel={() => setModalVisible(false)}
             isVisible={modalVisible}/>
     </>
 }

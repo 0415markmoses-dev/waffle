@@ -107,14 +107,19 @@ nav.navbar-app {
   }
 
   .profile-trigger-name {
-    flex: 1;
-    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: .8rem;
     font-weight: 500;
+  }
 
+  .profile-trigger-email {
+    font-size: .7rem;
+    opacity: .55;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .profile-trigger-chevron {

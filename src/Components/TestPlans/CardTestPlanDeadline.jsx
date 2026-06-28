@@ -83,7 +83,6 @@ export const CardTestPlanDeadline = ({testPlan}) => {
                     {/* ── Title ── */}
                     <div className="ctpd-title-block">
                         <div className="ctpd-plan-name">{testPlan.name}</div>
-                        <div className="ctpd-plan-sub">{t('Total days')} : {totalDays}</div>
                     </div>
 
                     {/* ── Progress ── */}

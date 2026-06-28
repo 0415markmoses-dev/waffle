@@ -518,10 +518,33 @@ export const Page = () => {
                                             type={answer?.important ? 'warning' : 'light'}
                                             size="sm"
                                             loading={isUpdating}
-                                            onClick={() => updateAnswer({id, data: {important: !answer?.important}})}
+                                            onClick={() => updateAnswer({
+                                                id,
+                                                data: {important: !answer?.important, ignored: false}
+                                            })}
                                         >
                                             <i className="font-icon lni lni-star-fat"
                                                style={answer?.important ? {color: '#f59e0b'} : {}}/>
+                                        </Button>
+                                    </CardGroup>
+                                    <CardGroup className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex flex-column">
+                                            <div className="heading">{t('Mark as ignored')}</div>
+                                            <div
+                                                className="text-muted small">{t('Exclude this answer from reports')}</div>
+                                        </div>
+                                        <Button
+                                            iconOnly
+                                            type={answer?.ignored ? 'danger' : 'light'}
+                                            size="sm"
+                                            loading={isUpdating}
+                                            onClick={() => updateAnswer({
+                                                id,
+                                                data: {ignored: !answer?.ignored, important: false}
+                                            })}
+                                        >
+                                            <i className="font-icon lni lni-ban-2"
+                                               style={answer?.ignored ? {color: '#ef4444'} : {}}/>
                                         </Button>
                                     </CardGroup>
                                     <CardGroup className="d-flex justify-content-between align-items-center">
