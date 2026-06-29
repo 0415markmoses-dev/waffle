@@ -15,6 +15,7 @@ import AuthService from '../../Services/Authentication/AuthService.js';
 import UsersService from '../../Services/PrivateApi/UsersService.js';
 import TestersService from '../../Services/PrivateApi/TestersService.js';
 import {DevTeamAvatarEditor} from './DevTeamAvatarEditor.jsx';
+import {TesterAvatarEditor} from './TesterAvatarEditor.jsx';
 
 Modal.setAppElement('#root');
 
@@ -65,18 +66,17 @@ const ProfileTab = ({user, tester}) => {
     };
 
     return (
-        <div className={tester ? undefined : 'row g-4 align-items-start'}>
-            {/* Left col — avatar editor (dev team only) */}
-            {!tester && (
-                <div className="col-4">
-                    <DevTeamAvatarEditor
-                        profilePictureUrl={user?.profilePictureUrl}
-                    />
-                </div>
-            )}
+        <div className="row g-4 align-items-start">
+            {/* Left col — avatar editor */}
+            <div className="col-4">
+                {tester
+                    ? <TesterAvatarEditor profilePictureUrl={user?.profilePictureUrl}/>
+                    : <DevTeamAvatarEditor profilePictureUrl={user?.profilePictureUrl}/>
+                }
+            </div>
 
             {/* Right col — info + editable nickname */}
-            <div className={tester ? undefined : 'col-7'}>
+            <div className="col-7">
                 <div className="d-flex flex-column gap-md">
                     <div className="form-group">
                         <label className="form-label text-muted small mb-1">{t('UUID')}</label>

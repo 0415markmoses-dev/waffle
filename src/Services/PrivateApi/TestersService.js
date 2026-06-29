@@ -27,6 +27,12 @@ const TestersService = {
     updateNickname(id, nickname) {
         return Http.post(`/api/testers/${id}/nickname`, {nickname});
     },
+    setProfilePicture(id, url) {
+        return Http.post(`/api/testers/${id}/profile-picture`, {url});
+    },
+    deleteProfilePicture(id) {
+        return Http.delete(`/api/users/${id}/profile-picture`);
+    },
 }
 
 export default TestersService;

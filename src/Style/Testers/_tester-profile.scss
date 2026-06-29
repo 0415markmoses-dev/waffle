@@ -531,6 +531,312 @@
   font-size: .875rem;
 }
 
+// ── TesterTagEditor ───────────────────────────────────────────────────────────
+
+.tte-root {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  &--separated {
+    padding-top: .75rem;
+    border-top: 1px solid $card-border-color;
+    margin-top: .5rem;
+  }
+}
+
+.tte-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+  align-items: center;
+}
+
+.tte-badge {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .2rem .55rem;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 500;
+  background: rgba(var(--bs-primary-rgb), .1);
+  color: var(--color-primary, var(--bs-primary));
+  border: 1px solid rgba(var(--bs-primary-rgb), .2);
+  line-height: 1.4;
+
+  &--add {
+    background: $body-bg;
+    color: $tw-muted-text;
+    border-color: $card-border-color;
+    cursor: pointer;
+    transition: background 120ms, color 120ms, border-color 120ms;
+
+    &:hover {
+      background: rgba(var(--bs-primary-rgb), .07);
+      color: var(--color-primary, var(--bs-primary));
+      border-color: rgba(var(--bs-primary-rgb), .25);
+    }
+  }
+}
+
+.tte-badge-icon {
+  font-size: .65rem;
+  opacity: .7;
+}
+
+.tte-badge-remove {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: .6rem;
+  opacity: .55;
+  transition: opacity 100ms, background 100ms;
+  margin-left: .1rem;
+
+  &:hover {
+    opacity: 1;
+    background: rgba(var(--bs-danger-rgb), .15);
+    color: var(--bs-danger);
+  }
+}
+
+.tte-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.tte-input-icon {
+  position: absolute;
+  left: .55rem;
+  font-size: .8rem;
+  color: $tw-muted-text;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tte-input {
+  width: 100%;
+  height: 30px;
+  padding: 0 .65rem 0 1.8rem;
+  border: 1px solid $card-border-color;
+  border-radius: $border-radius;
+  background: $body-bg;
+  color: $body-color;
+  font-size: .82rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 120ms;
+
+  &:focus {
+    border-color: rgba(var(--bs-primary-rgb), .5);
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .08);
+  }
+}
+
+.tte-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: $white;
+  border-radius: 10px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .18), 0 2px 8px rgba(0, 0, 0, .08);
+  overflow: hidden;
+  padding: .25rem 0;
+}
+
+.tte-create-icon {
+  background: rgba($success, .1);
+  color: $success;
+}
+
+// ── PlanEnrollSearch ──────────────────────────────────────────────────────────
+
+.pes-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: .85rem;
+  flex-shrink: 0;
+}
+
+.pes-wrap {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.pes-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pes-icon {
+  position: absolute;
+  left: .55rem;
+  font-size: .8rem;
+  color: $tw-muted-text;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pes-input {
+  width: 200px;
+  height: 30px;
+  padding: 0 .65rem 0 1.8rem;
+  border: 1px solid $card-border-color;
+  border-radius: $border-radius;
+  background: $body-bg;
+  color: $body-color;
+  font-size: .82rem;
+  outline: none;
+  transition: border-color 120ms, width 200ms ease;
+
+  &:focus {
+    border-color: rgba(var(--bs-primary-rgb), .5);
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .08);
+  }
+}
+
+.pes-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: .8rem;
+  flex-shrink: 0;
+}
+
+.pes-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 320px;
+  z-index: 200;
+  background: $white;
+  border-radius: 10px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .18), 0 2px 8px rgba(0, 0, 0, .08);
+  overflow: hidden;
+  padding: .25rem 0;
+}
+
+// ── ListTesters grid ──────────────────────────────────────────────────────────
+
+.lt-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(var(--bs-primary-rgb), .1);
+  border: 1px solid rgba(var(--bs-primary-rgb), .2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--color-primary, var(--bs-primary));
+  flex-shrink: 0;
+}
+
+.lt-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lt-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .35rem;
+  height: 100%;
+}
+
+.lt-tooltip-portal {
+  position: absolute;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: .7rem;
+  padding: .25rem .5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -100%);
+}
+
+.lt-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .2rem .45rem;
+  font-size: .8rem;
+  line-height: 1;
+
+  &--danger {
+    &:not(:disabled):hover {
+      color: var(--bs-danger);
+      border-color: var(--bs-danger);
+      background: rgba(var(--bs-danger-rgb), .06);
+    }
+
+    &:disabled {
+      opacity: .35;
+    }
+  }
+}
+
+// ── TestersListingInTestPlan – per-tester progress bar ───────────────────────
+
+.tlitp-progress {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  height: 100%;
+}
+
+.tlitp-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(var(--bs-primary-rgb), .12);
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.tlitp-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-primary, var(--bs-primary));
+  transition: width .3s ease;
+}
+
+.tlitp-label {
+  font-size: .72rem;
+  color: var(--bs-secondary-color);
+  white-space: nowrap;
+  min-width: 38px;
+  text-align: right;
+}
+
 // ── Pagination bar ────────────────────────────────────────────────────────────
 
 .tp-pagination {

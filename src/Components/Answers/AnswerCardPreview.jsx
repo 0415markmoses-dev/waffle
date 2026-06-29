@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import {HEALTH_COLORS} from '../Health/HealthDisplay.jsx';
 import {useTester} from '../../Hooks/queries/useTestersQuery.js';
 import {useFiles} from '../../Hooks/queries/useFilesQuery.js';
+import {TesterTagEditor} from '../Testers/TesterTagEditor.jsx';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -124,11 +125,16 @@ const iconForKey = (map, value) => {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-const Avatar = ({label}) => (
-    <div className="acp-avatar">
-        <span>{initials(label)}</span>
-    </div>
-);
+const DEFAULT_AVATAR = '/assets/gator_avatar.png';
+
+const Avatar = ({label, src}) => {
+    const hasImg = src && src !== DEFAULT_AVATAR;
+    return (
+        <div className={`acp-avatar${hasImg ? ' acp-avatar--img' : ''}`}>
+            {hasImg ? <img src={src} alt={label}/> : <span>{initials(label)}</span>}
+        </div>
+    );
+};
 
 const StateBadge = ({state}) => {
     const colorKey = state === 'pass_with_bugs' ? 'passWithBugs' : state;
@@ -164,19 +170,20 @@ export const AnswerCardPreview = ({answerData}) => {
     const fileQueries = useFiles(fileIris);
     const resolvedFiles = fileQueries.map((q, i) => ({iri: fileIris[i], ...(q.data ?? {})}));
 
-    return <AnswerCardContent answerData={answerData} tester={tester ?? null} resolvedFiles={resolvedFiles}/>;
+    return <AnswerCardContent answerData={answerData} tester={tester ?? null} testerId={testerId}
+                              resolvedFiles={resolvedFiles}/>;
 };
 
 // ── Pure display component ────────────────────────────────────────────────────
 
-const AnswerCardContent = ({answerData, tester, resolvedFiles = []}) => {
+const AnswerCardContent = ({answerData, tester, testerId, resolvedFiles = []}) => {
     const {author, state, comment, created, updated, systemInfos} = answerData;
 
-    // Identity: prefer tester email, fall back to author string
+    // Identity: prefer nickname, then email localpart
     const email = tester?.email ?? null;
-    const displayName = email ?? author ?? '—';
-    // Show localpart of email as the "name" (part before @), full email as subtitle
-    const namePart = email ? email.split('@')[0] : displayName;
+    const nickname = tester?.nickname ?? null;
+    const avatarSrc = tester?.profilePictureUrl ?? null;
+    const displayName = nickname ?? (email ? email.split('@')[0] : (author ?? '—'));
     const emailPart = email ?? (author?.includes('@') ? author : null);
     const date = created ?? updated ?? null;
 
@@ -197,9 +204,9 @@ const AnswerCardContent = ({answerData, tester, resolvedFiles = []}) => {
 
             {/* Author */}
             <div className="acp-col acp-col-author">
-                <Avatar label={namePart}/>
+                <Avatar label={displayName} src={avatarSrc}/>
                 <div className="acp-author-info">
-                    <span className="acp-author-name">{namePart}</span>
+                    <span className="acp-author-name">{displayName}</span>
                     {emailPart && (
                         <span className="text-muted" style={{
                             fontSize: '.72rem',
@@ -209,6 +216,13 @@ const AnswerCardContent = ({answerData, tester, resolvedFiles = []}) => {
                         }}>
                             {emailPart}
                         </span>
+                    )}
+                    {tester?.tags?.length > 0 && (
+                        <TesterTagEditor
+                            tags={tester.tags}
+                            testerId={testerId}
+                            editable={false}
+                        />
                     )}
                 </div>
             </div>

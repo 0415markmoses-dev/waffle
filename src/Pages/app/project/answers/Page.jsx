@@ -14,6 +14,7 @@ import {useQuestion} from '../../../../Hooks/queries/useQuestionsQuery.js';
 import {useTestPlan} from '../../../../Hooks/queries/useTestPlansQuery.js';
 import {useRelease} from '../../../../Hooks/queries/useReleasesQuery.js';
 import {useTester} from '../../../../Hooks/queries/useTestersQuery.js';
+import {TesterTagEditor} from '../../../../Components/Testers/TesterTagEditor.jsx';
 import {useProjectStore} from '../../../../Store/PrivateData/ProjectsStore.js';
 import {PageContentWrapper} from '../../../../Components/Navigation/PageContentWrapper.jsx';
 import {PageTitle} from '../../../../Components/Navigation/PageTitle.jsx';
@@ -272,8 +273,10 @@ export const Page = () => {
         ...(question ? [{label: question.name, path: `/app/project/questions/${questionId}`}] : []),
     ];
 
-    const displayName = tester?.email ?? answer?.author ?? '—';
+    const displayName = tester?.nickname ?? tester?.email ?? answer?.author ?? '—';
     const namePart = displayName.includes('@') ? displayName.split('@')[0] : displayName;
+    const testerAvatarUrl = tester?.profilePictureUrl ?? null;
+    const testerEmail = tester?.email ?? null;
 
     return (
         <PageContentWrapper>
@@ -296,12 +299,25 @@ export const Page = () => {
 
                                             {/* Tester */}
                                             <div className="ap-header-col ap-tester">
-                                                <div className="ap-avatar">{initials(namePart)}</div>
+                                                {testerAvatarUrl
+                                                    ?
+                                                    <div className="ap-avatar ap-avatar--img"><img src={testerAvatarUrl}
+                                                                                                   alt={displayName}/>
+                                                    </div>
+                                                    : <div className="ap-avatar">{initials(namePart)}</div>
+                                                }
                                                 <div className="ap-tester-info">
-                                                    <span className="ap-tester-name">{namePart}</span>
-                                                    {tester?.email && (
+                                                    <span className="ap-tester-name">{displayName}</span>
+                                                    {testerEmail && (
                                                         <span
-                                                            className="text-muted ap-tester-email">{tester.email}</span>
+                                                            className="text-muted ap-tester-email">{testerEmail}</span>
+                                                    )}
+                                                    {tester?.tags?.length > 0 && (
+                                                        <TesterTagEditor
+                                                            tags={tester.tags}
+                                                            testerId={testerId}
+                                                            editable={false}
+                                                        />
                                                     )}
                                                 </div>
                                             </div>

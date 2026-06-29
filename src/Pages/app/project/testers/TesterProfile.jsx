@@ -1,12 +1,16 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useNavigate, useParams, NavLink} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import toast from 'react-hot-toast';
+import {useQuery} from '@tanstack/react-query';
 import {useProjectStore} from '../../../../Store/PrivateData/ProjectsStore.js';
 import {useTester, useUpdateTester} from '../../../../Hooks/queries/useTestersQuery.js';
-import {useAssignedTestPlans} from '../../../../Hooks/queries/useTestPlansQuery.js';
+import {useAssignedTestPlans, useUpdateTestPlan} from '../../../../Hooks/queries/useTestPlansQuery.js';
+import TestPlansService from '../../../../Services/PrivateApi/TestPlansService.js';
+import {useDebounce} from '../../../../Hooks/useDebounce.js';
 import {useAnswersByTester} from '../../../../Hooks/queries/useAnswersQuery.js';
 import {TesterAnnotations} from '../../../../Components/Testers/TesterAnnotations.jsx';
+import {TesterTagEditor} from '../../../../Components/Testers/TesterTagEditor.jsx';
 import {PageContentWrapper} from '../../../../Components/Navigation/PageContentWrapper.jsx';
 import {PageTitle} from '../../../../Components/Navigation/PageTitle.jsx';
 import {PageElementWrapper} from '../../../../Components/Navigation/PageElementWrapper.jsx';
@@ -222,6 +226,138 @@ const ActivityFeed = ({testerIri, projectId}) => {
     );
 };
 
+// ── PlanEnrollSearch ──────────────────────────────────────────────────────────
+
+const PlanEnrollSearch = ({testerIri}) => {
+    const {t} = useTranslation();
+    const {currentProject} = useProjectStore();
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState('');
+    const [focusedIdx, setFocusedIdx] = useState(0);
+    const inputRef = useRef(null);
+    const debouncedQuery = useDebounce(query, 300);
+    const updateTestPlan = useUpdateTestPlan();
+
+    useEffect(() => {
+        if (open) {
+            setQuery('');
+            setFocusedIdx(0);
+            setTimeout(() => inputRef.current?.focus(), 50);
+        }
+    }, [open]);
+
+    const searchEnabled = debouncedQuery.trim().length >= 2 && !!currentProject?.id;
+
+    const {data: results = [], isFetching} = useQuery({
+        queryKey: ['plan-enroll-search', currentProject?.id, debouncedQuery],
+        queryFn: () =>
+            TestPlansService.getTestPlans({
+                project: currentProject.id,
+                name: debouncedQuery,
+                itemsPerPage: 5,
+            }).then(r => (r.data['member'] ?? []).slice(0, 5)),
+        enabled: searchEnabled,
+        staleTime: 30_000,
+    });
+
+    useEffect(() => {
+        setFocusedIdx(0);
+    }, [results]);
+
+    const handleSelect = (plan) => {
+        const existing = (plan.testersEnrolled ?? []).map(t =>
+            typeof t === 'string' ? t : t['@id'] ?? `/api/testers/${t.id}`
+        );
+        if (existing.includes(testerIri)) {
+            toast.error(t('Tester is already enrolled in this plan.'));
+            return;
+        }
+        updateTestPlan.mutate(
+            {id: plan.id, data: {testersEnrolled: [...existing, testerIri]}},
+            {
+                onSuccess: () => {
+                    toast.success(t('Tester enrolled in plan.'));
+                    setOpen(false);
+                    setQuery('');
+                },
+                onError: () => toast.error(t('Failed to enroll tester.')),
+            }
+        );
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+            setOpen(false);
+            return;
+        }
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setFocusedIdx(i => Math.min(i + 1, results.length - 1));
+        }
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setFocusedIdx(i => Math.max(i - 1, 0));
+        }
+        if (e.key === 'Enter' && results[focusedIdx]) {
+            handleSelect(results[focusedIdx]);
+        }
+    };
+
+    if (!open) {
+        return (
+            <button className="btn btn-sm btn-light pes-add-btn" onClick={() => setOpen(true)}
+                    title={t('Enroll in plan')}>
+                <i className="font-icon lni lni-plus"/>
+            </button>
+        );
+    }
+
+    return (
+        <div className="pes-wrap">
+            <div className="pes-input-wrap">
+                <i className={`font-icon lni ${isFetching ? 'lni-spinner-3 lni-is-spinning' : 'lni-search-1'} pes-icon`}/>
+                <input
+                    ref={inputRef}
+                    className="pes-input"
+                    type="text"
+                    placeholder={t('Search test plans…')}
+                    value={query}
+                    onChange={e => {
+                        setQuery(e.target.value);
+                        setFocusedIdx(0);
+                    }}
+                    onKeyDown={handleKeyDown}
+                    disabled={updateTestPlan.isPending}
+                />
+                {searchEnabled && results.length > 0 && (
+                    <div className="pes-dropdown">
+                        {results.map((plan, i) => (
+                            <button
+                                key={plan.id}
+                                className={`search-result-item${i === focusedIdx ? ' is-focused' : ''}`}
+                                onMouseDown={() => handleSelect(plan)}
+                                onMouseEnter={() => setFocusedIdx(i)}
+                            >
+                                <span className="search-result-icon-wrap">
+                                    <i className="font-icon lni lni-clipboard"/>
+                                </span>
+                                <span className="search-result-body">
+                                    <span className="search-result-name">{plan.name}</span>
+                                </span>
+                                <span className="search-result-type">{t('Testing Plan')}</span>
+                                <i className="font-icon lni lni-arrow-right search-result-arrow"/>
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
+            <button className="btn btn-sm btn-light pes-close-btn" onClick={() => setOpen(false)}>
+                <i className="font-icon lni lni-xmark"/>
+            </button>
+        </div>
+    );
+};
+
 // ── TesterInfoCard ────────────────────────────────────────────────────────────
 
 const TesterInfoCard = ({tester}) => {
@@ -269,6 +405,8 @@ const TesterInfoCard = ({tester}) => {
                         <p className="tp-info-type">{t('Tester')}</p>
                     </div>
                 </div>
+
+                <TesterTagEditor tags={tester?.tags ?? []} testerId={testerId} className="tte-root--separated"/>
 
                 <div className="tp-info-rows">
                     {/* Active toggle */}
@@ -377,7 +515,9 @@ export const TesterProfile = () => {
                                 {/* Plans */}
                                 <Col size={12}>
                                     <Card>
-                                        <CardHeader title={t('Enrolled plans')}/>
+                                        <CardHeader title={t('Enrolled plans')}>
+                                            <PlanEnrollSearch testerIri={testerIri}/>
+                                        </CardHeader>
                                         <CardBody>
                                             <TabWrapper name="tester-plans">
                                                 <Tab

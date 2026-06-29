@@ -21,7 +21,7 @@ import {TabWrapper} from "../../../../Components/UI/Tabs/TabWrapper.jsx";
 import {Tab} from "../../../../Components/UI/Tabs/Tab.jsx";
 import {Trans, useTranslation} from "react-i18next";
 import {ErrorState} from "../../../../Components/UI/ErrorState.jsx";
-import {ListTesters} from "../../../../Components/Testers/ListTesters.jsx";
+import {TestersListingInTestPlan} from "../../../../Components/Testers/TestersListingInTestPlan.jsx";
 import {EditTestPlanForm} from "../../../../Components/TestPlans/EditTestPlanForm.jsx";
 import {Separator} from "../../../../Components/UI/Separator/Separator.jsx";
 import {AgGridDisplay} from "../../../../Configs/AgGrid/AgGridDisplay.js";
@@ -351,7 +351,7 @@ export const Page = () => {
                                 <Col col={12}>
                                     <div style={AgGridDisplay.defaultWrapperStyle} className="w-100">
                                         {testPlanData?.id && currentTab?.name === 'team' && (
-                                            <ListTesters testPlan={testPlanData}/>
+                                            <TestersListingInTestPlan testPlan={testPlanData}/>
                                         )}
                                     </div>
                                 </Col>

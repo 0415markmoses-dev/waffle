@@ -13,13 +13,39 @@ import {useTesters, useUpdateTester} from "../../Hooks/queries/useTestersQuery.j
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const LinkCellRenderer = ({value, data}) => (
-    <NavLink to={'/app/project/testers/' + data.id}>{value}</NavLink>
-);
+const DEFAULT_AVATAR = '/assets/gator_avatar.png';
 
-LinkCellRenderer.propTypes = {
-    value: PropTypes.string.isRequired,
-    data: PropTypes.object.isRequired,
+const initials = (str = '') => {
+    const s = typeof str === 'string' ? str : '';
+    const parts = s.split(/[\s@._-]+/).filter(Boolean);
+    return parts.slice(0, 2).map(p => p[0]?.toUpperCase() ?? '').join('') || '?';
+};
+
+const AvatarCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
+    const avatarUrl = data?.profilePictureUrl;
+    const label = data?.nickname ?? data?.email ?? '';
+    const isDefault = !avatarUrl || avatarUrl === DEFAULT_AVATAR;
+    return (
+        <div className="lt-avatar">
+            {!isDefault
+                ? <img src={avatarUrl} alt={label} className="lt-avatar-img"/>
+                : <span>{initials(label)}</span>
+            }
+        </div>
+    );
+};
+
+const ActionsCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
+    return (
+        <div className="lt-actions">
+            <NavLink to={'/app/project/testers/' + data.id} className="btn btn-sm btn-light lt-action-btn">
+                <i className="font-icon lni lni-eye"/>
+            </NavLink>
+            <button className="btn btn-sm btn-light lt-action-btn lt-action-btn--danger" disabled>
+                <i className="font-icon lni lni-trash-3"/>
+            </button>
+        </div>
+    );
 };
 
 const ActiveToggleCellRenderer = ({value, data, api}) => { // eslint-disable-line react/prop-types
@@ -73,16 +99,34 @@ export const ListTesters = ({testPlan = undefined}) => {
         : allTesters;
 
     const [colDefs] = useState([
-        {field: "email", filter: true, width: 200, cellRenderer: LinkCellRenderer},
-        {field: "id", filter: true, width: 200},
-        {field: "active", filter: true, width: 80, cellRenderer: ActiveToggleCellRenderer},
         {
-            field: "activeProjects",
+            headerName: '',
+            field: 'profilePictureUrl',
+            width: 56,
+            sortable: false,
             filter: false,
-            valueFormatter: params => params.value.length,
-            width: 160,
             resizable: false,
-            suppressSizeToFit: true,
+            cellRenderer: AvatarCellRenderer,
+        },
+        {field: 'email', filter: true, flex: 1, minWidth: 160},
+        {field: 'nickname', filter: true, flex: 1, minWidth: 120},
+        {field: 'active', headerName: 'Active', filter: true, width: 90, cellRenderer: ActiveToggleCellRenderer},
+        {
+            field: 'activeProjects',
+            headerName: 'Projects',
+            filter: false,
+            valueFormatter: params => params.value?.length ?? 0,
+            width: 100,
+            resizable: false,
+        },
+        {
+            headerName: 'Actions',
+            field: 'id',
+            sortable: false,
+            filter: false,
+            width: 100,
+            resizable: false,
+            cellRenderer: ActionsCellRenderer,
         },
     ]);
 

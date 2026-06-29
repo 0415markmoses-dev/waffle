@@ -161,6 +161,21 @@
   flex-shrink: 0;
   background: rgba($primary, .1);
   border: 2px solid rgba($primary, .25);
+  overflow: hidden;
+
+  &--img {
+    background: none;
+    border-color: $card-border-color;
+    padding: 0;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
 }
 
 .acp-author-info {
@@ -321,6 +336,21 @@
   flex-shrink: 0;
   background: rgba($primary, .1);
   border: 2px solid rgba($primary, .25);
+  overflow: hidden;
+
+  &--img {
+    background: none;
+    border-color: $card-border-color;
+    padding: 0;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
 }
 
 .ap-tester-info {
@@ -344,6 +374,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 
 // State col — true center, inherits align-items: center
 .ap-state-col {
