@@ -45,11 +45,11 @@ export const Listing = () => {
                     <Col fullHeight sm={12} xl={4}>
                         <Row>
                             <Col>
-                                <Card>
+                                <Card isAppCard={true}>
                                     <CardHeader title={t('What is a release?')}/>
                                     <CardBody>
                                         <div className="d-flex x">
-                                            <img className="w-75 mx-auto" src="/assets/releases.jpg" alt="notif"/>
+                                            <img className="w-75 mx-auto" src="/assets/releases.png" alt="notif"/>
                                         </div>
                                         <Trans i18nKey="What is a release listing description">
                                             <p>In <strong>TestGator</strong>, a <strong>release</strong> represents a

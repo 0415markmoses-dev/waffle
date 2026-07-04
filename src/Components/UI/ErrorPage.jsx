@@ -8,7 +8,7 @@ import {ErrorState} from "./ErrorState.jsx";
 export const ErrorPage = ({
                               pageTitle = 'Error 404',
                               message = 'Page not found',
-                              image = "error_default.jpg",
+                              image = "error_default.png",
                               children = undefined,
                           }) => {
     return <PageContentWrapper>

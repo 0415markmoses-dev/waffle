@@ -12,7 +12,7 @@ export const Error404 = ({
         navigate(goBackUrl);
     }
     return <ErrorPage pageTitle="Lost in the swamp ?! This page is nowhere to be found."
-                      image="error_not_found.jpg"
+                      image="error_not_found.png"
                       message={message}>
         {goBackUrl !== undefined && (
             <div className="w-100 d-flex justify-content-center align-items-center gap-md">

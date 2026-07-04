@@ -174,7 +174,7 @@ export const Page = () => {
                                         </Card>
                                     </Col>
                                     <Col>
-                                        <Card>
+                                        <Card isAppCard={true}>
                                             <CardHeader title={t('What is a release?')}/>
                                             <CardBody>
                                                 <div
@@ -192,7 +192,7 @@ export const Page = () => {
                                                     </div>
                                                     <div className="d-flex x">
                                                         <img className="w-100 horizontal-flip-img"
-                                                             src="/assets/releases.jpg" alt="notif"/>
+                                                             src="/assets/releases.png" alt="notif"/>
                                                     </div>
                                                 </div>
                                             </CardBody>

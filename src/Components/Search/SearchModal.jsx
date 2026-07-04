@@ -21,7 +21,7 @@ const iriToPath = (type, iri) => {
         case 'projects':
             return `/app/project-settings`;
         case 'testers':
-            return `/app/project/testers`;
+            return `/app/project/testers/${id}`;
         case 'test_plan':
             return `/app/project/testing_plans/${id}`;
         case 'questions':

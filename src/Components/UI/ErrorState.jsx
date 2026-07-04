@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 export const ErrorState = ({
                                message = "An error occurred",
                                submessage = "",
-                               image = "error_default.jpg",
+                               image = "error_default.png",
                                grayscale = true,
                                size = "md",
                            }) => {

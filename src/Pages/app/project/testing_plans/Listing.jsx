@@ -39,7 +39,7 @@ export const Listing = () => {
                     <Col fullHeight sm={12} xl={4}>
                         <Row>
                             <Col>
-                                <Card>
+                                <Card isAppCard={true}>
                                     <CardHeader title={t('What is a testing plan?')}/>
                                     <CardBody>
                                         <Trans i18nKey="What is a testing plan description">

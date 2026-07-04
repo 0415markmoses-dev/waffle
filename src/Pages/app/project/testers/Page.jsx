@@ -49,11 +49,11 @@ export const Page = () => {
                     <Col fullHeight sm={12} xl={4}>
                         <Row>
                             <Col>
-                                <Card>
+                                <Card isAppCard={true}>
                                     <CardHeader title={t('What is a tester?')}/>
                                     <CardBody>
                                         <div className="d-flex x">
-                                            <img className="w-75 mx-auto" src="/assets/testers.jpg" alt="notif"/>
+                                            <img className="w-75 mx-auto" src="/assets/testers.png" alt="notif"/>
                                         </div>
                                         <Trans i18nKey='What is a tester description'>
                                             <p>

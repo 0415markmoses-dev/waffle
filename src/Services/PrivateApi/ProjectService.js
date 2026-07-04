@@ -19,6 +19,22 @@ const ProjectService = {
     getStats(id) {
         return Http.get(`/api/projects/${id}/stats`);
     },
+    uploadProjectPicture(id, formData) {
+        return Http.post(`/api/projects/${id}/project-picture`, formData, {
+            headers: {'Content-Type': 'multipart/form-data'},
+        });
+    },
+    deleteProjectPicture(id) {
+        return Http.delete(`/api/projects/${id}/project-picture`);
+    },
+    uploadProjectBanner(id, formData) {
+        return Http.post(`/api/projects/${id}/project-banner`, formData, {
+            headers: {'Content-Type': 'multipart/form-data'},
+        });
+    },
+    deleteProjectBanner(id) {
+        return Http.delete(`/api/projects/${id}/project-banner`);
+    },
 }
 
 export default ProjectService;

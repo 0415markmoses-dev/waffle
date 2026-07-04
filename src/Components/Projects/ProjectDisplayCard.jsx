@@ -25,7 +25,7 @@ export const ProjectDisplayCard = ({
         <div className="card-body d-flex gap-md">
             <div className="project-meta flex-grow-0 d-flex justify-content-end align-items-center">
                 <div className="project-picture-wrapper">
-                    <img src="/assets/gator_avatar.png" alt=""/>
+                    <img src={project.projectPictureUrl ?? '/assets/gator_avatar.png'} alt=""/>
                 </div>
             </div>
             <div className="project-info w-75">

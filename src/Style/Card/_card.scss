@@ -51,6 +51,12 @@
   }
 
 
+  &.card--app {
+    background: linear-gradient(135deg, #f0fdf4 0%, #fefce8 100%);
+    border-color: rgba($primary, .3);
+    box-shadow: 0 2px 12px rgba($primary, .08);
+  }
+
   &.card-colored-purple {
     background: #795CD1;
     background: linear-gradient(321deg, rgba(121, 92, 209, 1) 0%, rgba(85, 71, 189, 1) 46%);

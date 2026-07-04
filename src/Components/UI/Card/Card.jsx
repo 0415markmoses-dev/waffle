@@ -7,6 +7,7 @@ export const Card = ({
                          },
                          interractive = false,
                          active = false,
+                         isAppCard = false,
                          children,
                          ...props
                      }) => {
@@ -19,6 +20,7 @@ export const Card = ({
         {
             "border-1 border-primary": active,
             "cursor-pointer": interractive,
+            "card--app": isAppCard,
         }
     );
 
@@ -32,5 +34,6 @@ Card.propTypes = {
     onClick: PropTypes.func,
     interractive: PropTypes.bool,
     active: PropTypes.bool,
+    isAppCard: PropTypes.bool,
     children: PropTypes.node.isRequired,
 }

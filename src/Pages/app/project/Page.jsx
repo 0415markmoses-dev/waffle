@@ -17,6 +17,8 @@ import {useProjectStore} from "../../../Store/PrivateData/ProjectsStore.js";
 import {useProject, useUpdateProject} from "../../../Hooks/queries/useProjectsQuery.js";
 import {useTranslation} from "react-i18next";
 import {useState, useEffect} from "react";
+import {ProjectPictureEditor} from "../../../Components/Project/ProjectPictureEditor.jsx";
+import {ProjectBannerEditor} from "../../../Components/Project/ProjectBannerEditor.jsx";
 import toast from "react-hot-toast";
 
 export const Page = () => {
@@ -57,9 +59,9 @@ export const Page = () => {
             />
             <PageElementWrapper>
                 <Row>
-                    {/* Col A — project details */}
+                    {/* Col A — project details + image editors */}
                     <Col sm={12} xl={8}>
-                        <Card>
+                        <Card className="mb-3">
                             <CardHeader title={t('Project details')}/>
                             <CardBody>
                                 {isLoading || !project ? (
@@ -98,16 +100,47 @@ export const Page = () => {
                                 )}
                             </CardBody>
                         </Card>
+
+                        <Row>
+                            <Col sm={12} xl={6}>
+                                <Card>
+                                    <CardHeader title={t('Project picture')}/>
+                                    <CardBody>
+                                        {project
+                                            ? <ProjectPictureEditor
+                                                projectId={project.id}
+                                                projectPictureUrl={project.projectPictureUrl}
+                                            />
+                                            : <div className="text-muted">{t('Loading…')}</div>
+                                        }
+                                    </CardBody>
+                                </Card>
+                            </Col>
+                            <Col sm={12} xl={6}>
+                                <Card>
+                                    <CardHeader title={t('Project banner')}/>
+                                    <CardBody>
+                                        {project
+                                            ? <ProjectBannerEditor
+                                                projectId={project.id}
+                                                projectBannerUrl={project.projectBannerUrl}
+                                            />
+                                            : <div className="text-muted">{t('Loading…')}</div>
+                                        }
+                                    </CardBody>
+                                </Card>
+                            </Col>
+                        </Row>
                     </Col>
 
-                    {/* Col B — about */}
+                    {/* Col B — help */}
                     <Col sm={12} xl={4}>
-                        <Card>
+                        <Card isAppCard={true}>
                             <CardHeader title={t('What is a project?')}/>
                             <CardBody>
                                 <p>{t('What is a project description')}</p>
                                 <div className="d-flex justify-content-center mt-3">
-                                    <img src="/assets/testers.jpg" alt="" className="w-100" style={{borderRadius: 8}}/>
+                                    <img src="/assets/testers.png" alt="" className="w-100" style={{borderRadius: 8}}/>
                                 </div>
                             </CardBody>
                             <CardFooter>

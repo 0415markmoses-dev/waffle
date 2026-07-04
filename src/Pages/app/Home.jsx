@@ -16,7 +16,7 @@ import {SingleMetricDisplay} from "../../Components/UI/Metrics/SingleMetricDispl
 import {MetricVerticalSeparator} from "../../Components/UI/Metrics/MetricVerticalSeparator.jsx";
 import {ErrorState} from "../../Components/UI/ErrorState.jsx";
 import {Loader} from "../../Components/UI/Loader.jsx";
-import {useProjects, useProjectStats} from "../../Hooks/queries/useProjectsQuery.js";
+import {useProject, useProjects, useProjectStats} from "../../Hooks/queries/useProjectsQuery.js";
 import {useTestPlansPage} from "../../Hooks/queries/useTestPlansQuery.js";
 import {usePlanHealth, questionKeys} from "../../Hooks/queries/useQuestionsQuery.js";
 import {HEALTH_COLORS} from "../../Components/Health/HealthDisplay.jsx";
@@ -281,6 +281,8 @@ export const Home = () => {
     const {data: projectsData} = useProjects();
     const projects = projectsData?.member ?? [];
 
+    const {data: projectDetail} = useProject(currentProject?.id);
+
     const {data: testPlans = [], isLoading: loadingTestPlans} = useTestPlansPage({
         'order[created]': 'desc',
         'release.project': currentProject?.id,
@@ -330,17 +332,19 @@ export const Home = () => {
                                             <div className="w-100 d-flex flex-column gap-lg">
                                                 <div className="d-flex justify-content-center align-items-center">
                                                     <div className="project-picture-wrapper size-lg">
-                                                        <img src="/assets/gator_avatar.png" alt=""/>
+                                                        <img
+                                                            src={projectDetail?.projectPictureUrl ?? currentProject.projectPictureUrl ?? '/assets/gator_avatar.png'}
+                                                            alt=""/>
                                                     </div>
                                                 </div>
                                                 <div className="w-100 d-flex flex-column gap-sm">
                                                     <ul className="list-unstyled m-0">
                                                         <li>
                                                             <b>{t('Latest release')}: </b>
-                                                            {currentProject.latestRelease ? (
+                                                            {projectDetail?.latestRelease ? (
                                                                 <NavLink
-                                                                    to={`/app/project/releases/${currentProject.latestRelease.id}`}>
-                                                                    {currentProject.latestRelease.name}
+                                                                    to={`/app/project/releases/${projectDetail.latestRelease.id}`}>
+                                                                    {projectDetail.latestRelease.name}
                                                                 </NavLink>
                                                             ) : t('No release yet')}
                                                         </li>

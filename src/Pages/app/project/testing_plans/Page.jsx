@@ -29,8 +29,12 @@ import {ModalChangeTestPlanState} from "../../../../Components/TestPlans/ModalCh
 import {ListQuestionsOrdered} from "../../../../Components/Questions/ListQuestionsOrdered.jsx";
 import {ModalCreateQuestion} from "../../../../Components/Questions/ModalCreateQuestion.jsx";
 import {ModalAddTester} from "../../../../Components/TestPlans/ModalAddTester.jsx";
+import {ModalBulkTestersAdd} from "../../../../Components/TestPlans/ModalBulkTestersAdd.jsx";
+import {ModalDuplicateTestingPlan} from "../../../../Components/TestPlans/ModalDuplicateTestingPlan.jsx";
 import {CardTestPlanDeadline} from "../../../../Components/TestPlans/CardTestPlanDeadline.jsx";
-import {useTestPlan, useUpdateTestPlan} from "../../../../Hooks/queries/useTestPlansQuery.js";
+import {useQueryClient} from "@tanstack/react-query";
+import {useTestPlan, useUpdateTestPlan, testPlanKeys} from "../../../../Hooks/queries/useTestPlansQuery.js";
+import {testerKeys} from "../../../../Hooks/queries/useTestersQuery.js";
 import {useRelease} from "../../../../Hooks/queries/useReleasesQuery.js";
 import {usePlanHealth} from "../../../../Hooks/queries/useQuestionsQuery.js";
 import {HealthDisplay} from "../../../../Components/Health/HealthDisplay.jsx";
@@ -39,9 +43,9 @@ import {HealthOverTimeLineChart} from "../../../../Components/Health/HealthOverT
 const capitalizeFirstLetter = (val) => String(val).charAt(0).toUpperCase() + String(val).slice(1);
 
 const stateToImg = (state) => {
-    if (state === 'published') return '/assets/testers.jpg';
-    if (state === 'archived') return '/assets/sleep.jpg';
-    return '/assets/draft.jpg';
+    if (state === 'published') return '/assets/testers.png';
+    if (state === 'archived') return '/assets/sleep.png';
+    return '/assets/draft.png';
 };
 
 export const Page = () => {
@@ -54,6 +58,14 @@ export const Page = () => {
     const [modalState, setModalState] = useState(false);
     const [createQuestionOpen, setCreateQuestionOpen] = useState(false);
     const [addTesterOpen, setAddTesterOpen] = useState(false);
+    const [bulkTesterOpen, setBulkTesterOpen] = useState(false);
+    const [duplicateOpen, setDuplicateOpen] = useState(false);
+    const queryClient = useQueryClient();
+
+    const handleBulkEnd = () => {
+        queryClient.invalidateQueries({queryKey: testPlanKeys.detail(Number(params.tid))});
+        queryClient.invalidateQueries({queryKey: testerKeys.all});
+    };
     const isTeamTab = currentTab?.name === 'team';
 
     const {data: testPlanData, isError, isLoading} = useTestPlan(params.tid);
@@ -106,25 +118,47 @@ export const Page = () => {
                     breadcrumbLabel={truncatedName}
                 >
                     {isTeamTab ? (
-                        <Button
-                            icon="lni-user-add"
-                            disabled={!testPlanData}
-                            onClick={() => setAddTesterOpen(true)}
-                            type="primary"
-                            size="sm"
-                        >
-                            {t('Add tester')}
-                        </Button>
+                        <div className="d-flex gap-2">
+                            <Button
+                                icon="lni-users"
+                                disabled={!testPlanData}
+                                onClick={() => setBulkTesterOpen(true)}
+                                type="light"
+                                size="sm"
+                            >
+                                {t('Add bulk testers')}
+                            </Button>
+                            <Button
+                                icon="lni-user-add"
+                                disabled={!testPlanData}
+                                onClick={() => setAddTesterOpen(true)}
+                                type="primary"
+                                size="sm"
+                            >
+                                {t('Add tester')}
+                            </Button>
+                        </div>
                     ) : (
-                        <Button
-                            icon="lni-plus"
-                            disabled={!testPlanData}
-                            onClick={() => setCreateQuestionOpen(true)}
-                            type="primary"
-                            size="sm"
-                        >
-                            {t('New question')}
-                        </Button>
+                        <div className="d-flex gap-2">
+                            <Button
+                                icon="lni-copy"
+                                disabled={!testPlanData}
+                                onClick={() => setDuplicateOpen(true)}
+                                type="light"
+                                size="sm"
+                            >
+                                {t('Duplicate this testing plan')}
+                            </Button>
+                            <Button
+                                icon="lni-plus"
+                                disabled={!testPlanData}
+                                onClick={() => setCreateQuestionOpen(true)}
+                                type="primary"
+                                size="sm"
+                            >
+                                {t('New question')}
+                            </Button>
+                        </div>
                     )}
                 </PageTitle>
                 <PageElementWrapper>
@@ -135,7 +169,7 @@ export const Page = () => {
                                     <Row>
                                         {testPlanData?.state && (
                                             <Col fullHeight={true} sm={12} md={6}>
-                                                <Card>
+                                                <Card isAppCard={true}>
                                                     <CardHeader
                                                         title={t('Status') + ' "' + t(capitalizeFirstLetter(testPlanData.state)) + '"'}/>
                                                     <CardBody>
@@ -302,7 +336,7 @@ export const Page = () => {
                                             </Card>
                                         </Col>
                                         <Col>
-                                            <Card>
+                                            <Card isAppCard={true}>
                                                 <CardHeader title={t('What is a testing plan?')}/>
                                                 <CardBody>
                                                     <div
@@ -319,7 +353,7 @@ export const Page = () => {
                                                             </Trans>
                                                         </div>
                                                         <div className="d-flex x">
-                                                            <img className="w-100" src="/assets/testers.jpg"
+                                                            <img className="w-100" src="/assets/testers.png"
                                                                  alt="notif"/>
                                                         </div>
                                                     </div>
@@ -376,6 +410,19 @@ export const Page = () => {
                 testPlan={testPlanData}
                 onCancel={() => setAddTesterOpen(false)}
                 onSuccess={() => setAddTesterOpen(false)}
+            />
+            <ModalBulkTestersAdd
+                isVisible={bulkTesterOpen}
+                testPlan={testPlanData}
+                onClose={() => setBulkTesterOpen(false)}
+                onEnd={handleBulkEnd}
+                onSuccessItem={handleBulkEnd}
+                onErrorItem={handleBulkEnd}
+            />
+            <ModalDuplicateTestingPlan
+                isVisible={duplicateOpen}
+                testPlanId={params.tid}
+                onClose={() => setDuplicateOpen(false)}
             />
         </>
     );
