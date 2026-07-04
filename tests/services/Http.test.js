@@ -2,7 +2,7 @@ import {describe, it, expect, vi, afterEach} from 'vitest';
 import AxiosMockAdapter from 'axios-mock-adapter';
 
 // Mock the auth store to avoid circular dependency and zustand/localStorage issues
-vi.mock('../../src/store/auth.js', () => ({
+vi.mock('../../src/Store/auth.js', () => ({
     getCurrentJWT: vi.fn(() => null),
     getCurrentUserData: vi.fn(),
     useAuthStore: vi.fn(),
@@ -10,7 +10,7 @@ vi.mock('../../src/store/auth.js', () => ({
 }));
 
 import Http from '../../src/Services/Http.js';
-import {getCurrentJWT} from '../../src/store/auth.js';
+import {getCurrentJWT} from '../../src/Store/auth.js';
 
 const mock = new AxiosMockAdapter(Http);
 
