@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "types": [
+      "vitest/globals"
+    ],
+    "jsx": "react"
+  },
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ]
+}
