@@ -3,7 +3,7 @@ import {createRoot} from 'react-dom/client'
 import './Style/main.scss'
 import {router} from "./Router/main.jsx";
 import {RouterProvider} from "react-router-dom";
-import {getCurrentUserData} from "./store/auth.js";
+import {getCurrentUserData} from "./Store/auth.js";
 import i18n from "i18next";
 import LanguageDetector from 'i18next-browser-languagedetector';
 import {initReactI18next} from "react-i18next";

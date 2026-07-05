@@ -1,5 +1,5 @@
 import axios from "axios";
-import {getCurrentJWT} from "../store/auth.js";
+import {getCurrentJWT} from "../Store/auth.js";
 
 // current base url using window
 let baseURL = 'https://ezmeet.arkdev.io';

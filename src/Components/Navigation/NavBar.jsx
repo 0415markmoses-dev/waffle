@@ -1,6 +1,6 @@
 import {NavLink} from "react-router-dom";
 import {useState} from "react";
-import {useAuthStore} from "../../store/auth.js";
+import {useAuthStore} from "../../Store/auth.js";
 import {useNavigate} from "react-router";
 import {MenuBuilder} from "./MenuBuilder.jsx";
 import {DropdownMenu} from "radix-ui";
