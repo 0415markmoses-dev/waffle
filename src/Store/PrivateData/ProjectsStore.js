@@ -1,6 +1,6 @@
 import {create} from 'zustand'
 import {persist} from 'zustand/middleware'
-import createSelector from "../../utils/store.createSelector.js";
+import createSelector from "../../Utils/store.createSelector.js";
 
 export const useProjectStore = createSelector(create(persist((set) => ({
     currentProject: null,

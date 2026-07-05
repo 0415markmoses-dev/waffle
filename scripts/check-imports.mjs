@@ -10,7 +10,7 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = __dirname;
+const ROOT = path.join(__dirname, '..');
 const SCAN_DIRS = ['src', 'tests'];
 const EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.mjs'];
 const IMPORT_RE = /(?:import|from|require)\s*\(?['"](\.[^'"]+)['"]\)?/g;
