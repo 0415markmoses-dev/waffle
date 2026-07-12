@@ -22,5 +22,8 @@ RUN printf 'server {\n\
     }\n\
 }\n' > /etc/nginx/conf.d/default.conf
 
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+
 EXPOSE 80
+ENTRYPOINT ["docker-entrypoint"]
 CMD ["nginx", "-g", "daemon off;"]

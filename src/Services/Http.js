@@ -1,11 +1,24 @@
 import axios from "axios";
 import {getCurrentJWT} from "../Store/auth.js";
 
-// current base url using window
-let baseURL = 'https://ezmeet.arkdev.io';
-// if current domain is localhost or 127.0.0.1 use https://localhost:5173 instead
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    baseURL = 'http://localhost';
+// API base URL resolution, in order:
+// 1. Runtime value injected into window.__ENV__ by the Docker entrypoint
+//    (see public/env.js + docker-entrypoint.sh) from the VITE_API_URL
+//    container env var — lets a single built image be pointed at any API
+//    without rebuilding.
+// 2. Build-time VITE_API_URL, if the app was built with one baked in
+//    (e.g. `VITE_API_URL=... npm run build`).
+// 3. localhost fallback for local dev (`npm run dev` / `vite preview`).
+// 4. Last-resort default so the app still boots if nothing is configured.
+const runtimeApiUrl = window.__ENV__?.VITE_API_URL;
+const buildTimeApiUrl = import.meta.env.VITE_API_URL;
+
+let baseURL = runtimeApiUrl || buildTimeApiUrl;
+
+if (!baseURL) {
+    baseURL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost'
+        : 'https://ezmeet.arkdev.io';
 }
 
 const Http = axios.create({
