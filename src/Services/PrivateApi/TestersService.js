@@ -33,6 +33,9 @@ const TestersService = {
     deleteProfilePicture(id) {
         return Http.delete(`/api/users/${id}/profile-picture`);
     },
+    deleteTester(id) {
+        return Http.delete('/api/testers/' + id);
+    },
 }
 
 export default TestersService;

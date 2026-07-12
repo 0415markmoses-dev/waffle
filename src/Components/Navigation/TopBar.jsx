@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {useTranslation} from "react-i18next";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 import {useAuthStore, isTester} from "../../Store/auth.js";
 import {DropdownMenu} from "radix-ui";
@@ -6,6 +7,7 @@ import {SearchModal} from "../Search/SearchModal.jsx";
 import {useAdminModalStore} from "../../Store/UI/adminModalStore.js";
 
 export const TopBar = () => {
+    const {t} = useTranslation();
     const {currentProject, openSelectionModal} = useProjectStore();
     const {user} = useAuthStore();
     const tester = isTester(user);
@@ -48,7 +50,7 @@ export const TopBar = () => {
                     <input
                         type="text"
                         className="topbar-search-input"
-                        placeholder="Search anything..."
+                        placeholder={t('Search anything…')}
                         readOnly
                     />
                     <kbd className="topbar-search-kbd">⌘K</kbd>

@@ -55,3 +55,11 @@ export const useUpdateTester = () => {
         onSuccess: () => queryClient.invalidateQueries({queryKey: testerKeys.all}),
     });
 };
+
+export const useDeleteTester = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => TestersService.deleteTester(id),
+        onSuccess: () => queryClient.invalidateQueries({queryKey: testerKeys.all}),
+    });
+};

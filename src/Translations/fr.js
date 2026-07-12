@@ -20,6 +20,10 @@ const fr = {
         'Total days': 'Nombre de jour(s) total',
         'Global progression': 'Progression globale',
         'days': 'jours',
+        // Navigation latérale (équipe dev)
+        'Dashboard': 'Tableau de bord',
+        'Testers list': 'Liste des testeurs',
+        'Loader Playground': 'Aire de test du loader',
         // Page Projet
         'Project': 'Projet',
         'Project details': 'Détails du projet',
@@ -379,6 +383,10 @@ const fr = {
         'User deleted.': 'Utilisateur supprimé.',
         'Failed to delete user.': 'Échec de la suppression de l\'utilisateur.',
         'Delete user {{email}}?': 'Supprimer l\'utilisateur {{email}} ?',
+        'Delete this tester': 'Supprimer ce testeur',
+        'Delete tester {{email}}?': 'Supprimer le testeur {{email}} ?',
+        'Tester deleted.': 'Testeur supprimé.',
+        'Failed to delete tester.': 'Échec de la suppression du testeur.',
         'Create a new team member account.': 'Créer un nouveau compte membre de l\'équipe.',
         'Email and password are required.': 'L\'e-mail et le mot de passe sont requis.',
         'User created.': 'Utilisateur créé.',

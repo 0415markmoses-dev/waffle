@@ -41,17 +41,11 @@ export const MkEditorInstance = ({value, onChange, className = ''}) => {
     }, [])
 
     const handleUpload = async (image) => {
-        // get file size and name
-        const filesize = image.size;
-        const filename = image.name;
-        // get upload request
         try {
-            const response = await UploadService.getUploadRequest(filename, filesize);
-            const {jwt} = response.data;
-            // upload file to s3
-            const response2 = await UploadService.uploadFile(image, jwt);
+            // single-step upload (uses the standard app JWT via the Http interceptor)
+            const response = await UploadService.uploadFile(image);
             // return the url of the uploaded file
-            return response2?.data?.url ?? null;
+            return response?.data?.url ?? null;
         } catch (e) {
             console.error(e);
             return null;

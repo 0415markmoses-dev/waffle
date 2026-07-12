@@ -20,6 +20,10 @@ const en = {
         'Total days': 'Total days',
         'Global progression': 'Global progression',
         'days': 'days',
+        // Sidebar navigation (dev team)
+        'Dashboard': 'Dashboard',
+        'Testers list': 'Testers list',
+        'Loader Playground': 'Loader Playground',
         // Project page
         'Project': 'Project',
         'Project details': 'Project details',
@@ -364,6 +368,10 @@ const en = {
         'User deleted.': 'User deleted.',
         'Failed to delete user.': 'Failed to delete user.',
         'Delete user {{email}}?': 'Delete user {{email}}?',
+        'Delete this tester': 'Delete this tester',
+        'Delete tester {{email}}?': 'Delete tester {{email}}?',
+        'Tester deleted.': 'Tester deleted.',
+        'Failed to delete tester.': 'Failed to delete tester.',
         'Create a new team member account.': 'Create a new team member account.',
         'Email and password are required.': 'Email and password are required.',
         'User created.': 'User created.',

@@ -25,10 +25,7 @@ const Uploader = ({accepts = null, multiple = true, onUploaded}) => {
 
         for (const file of Array.from(files)) {
             try {
-                const reqRes = await UploadService.getUploadRequest(file.name, file.size);
-                const {jwt} = reqRes.data;
-
-                const upRes = await UploadService.uploadFile(file, jwt);
+                const upRes = await UploadService.uploadFile(file);
                 const data = upRes?.data ?? {};
                 const iri = data['@id'] ?? null;
 

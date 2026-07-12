@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next';
 import toast from 'react-hot-toast';
 import {useQuery} from '@tanstack/react-query';
 import {useProjectStore} from '../../../../Store/PrivateData/ProjectsStore.js';
-import {useTester, useUpdateTester} from '../../../../Hooks/queries/useTestersQuery.js';
+import {useTester, useUpdateTester, useDeleteTester} from '../../../../Hooks/queries/useTestersQuery.js';
 import {useAssignedTestPlans, useUpdateTestPlan} from '../../../../Hooks/queries/useTestPlansQuery.js';
 import TestPlansService from '../../../../Services/PrivateApi/TestPlansService.js';
 import {useDebounce} from '../../../../Hooks/useDebounce.js';
@@ -16,6 +16,8 @@ import {PageTitle} from '../../../../Components/Navigation/PageTitle.jsx';
 import {PageElementWrapper} from '../../../../Components/Navigation/PageElementWrapper.jsx';
 import {Row} from '../../../../Components/UI/Grid/Row.jsx';
 import {Col} from '../../../../Components/UI/Grid/Col.jsx';
+import {Button} from '../../../../Components/UI/Buttons/Button.jsx';
+import {ConfirmModal} from '../../../../Components/UI/ConfirmModal.jsx';
 import {Card} from '../../../../Components/UI/Card/Card.jsx';
 import {CardBody} from '../../../../Components/UI/Card/CardBody.jsx';
 import {CardHeader} from '../../../../Components/UI/Card/CardHeader.jsx';
@@ -468,6 +470,8 @@ export const TesterProfile = () => {
     const {currentProject} = useProjectStore();
 
     const {data: tester, isLoading, isError} = useTester(testerId);
+    const deleteTester = useDeleteTester();
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
     const testerIri = tester?.['@id'] ?? (testerId ? `/api/testers/${testerId}` : null);
 
@@ -475,6 +479,19 @@ export const TesterProfile = () => {
         navigate('/app/');
         return null;
     }
+
+    const handleConfirmDelete = () => {
+        deleteTester.mutate(testerId, {
+            onSuccess: () => {
+                toast.success(t('Tester deleted.'));
+                navigate('/app/project/testers');
+            },
+            onError: () => {
+                setConfirmDeleteOpen(false);
+                toast.error(t('Failed to delete tester.'));
+            },
+        });
+    };
 
     if (isError) {
         return (
@@ -500,6 +517,27 @@ export const TesterProfile = () => {
                     {label: t('Testers'), path: '/app/project/testers'},
                 ]}
                 breadcrumbLabel={displayEmail}
+            >
+                <Button
+                    type="danger"
+                    outline
+                    size="sm"
+                    icon="lni-trash-3"
+                    onClick={() => setConfirmDeleteOpen(true)}
+                >
+                    {t('Delete this tester')}
+                </Button>
+            </PageTitle>
+
+            <ConfirmModal
+                isVisible={confirmDeleteOpen}
+                title={t('Delete this tester')}
+                message={t('Delete tester {{email}}?', {email: displayEmail})}
+                confirmLabel={t('Delete')}
+                confirmIcon="lni-trash-3"
+                loading={deleteTester.isPending}
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setConfirmDeleteOpen(false)}
             />
 
             <PageElementWrapper>

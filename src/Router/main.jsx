@@ -45,6 +45,7 @@ import {Page as ProjectPage} from "../Pages/app/project/Page.jsx";
 import {Create as QuestionsCreate} from "../Pages/app/project/questions/Create.jsx";
 import {Page as QuestionPage} from "../Pages/app/project/questions/Page.jsx";
 import {Page as AnswerPage} from "../Pages/app/project/answers/Page.jsx";
+import {LoaderPlayground} from "../Pages/app/dev/LoaderPlayground.jsx";
 
 
 // Routes that have a `label` appear in the breadcrumb trail.
@@ -115,6 +116,12 @@ export const routes = [
                 name: 'app_about',
                 label: 'About',
                 element: <AboutPage/>,
+            },
+            {
+                path: "dev/loader",
+                name: 'dev_loader_playground',
+                label: 'Loader Playground',
+                element: <LoaderPlayground/>,
             },
             {
                 path: "project-settings",

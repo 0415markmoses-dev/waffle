@@ -1,11 +1,13 @@
 import {Accordion} from "radix-ui";
 import PropTypes from "prop-types";
+import {useTranslation} from "react-i18next";
 import {MenuLink} from "./MenuLink.jsx";
 
 export const MenuBuilderGroup = ({
                                      data = [],
                                      index_ = 0,
                                  }) => {
+    const {t} = useTranslation();
 
     //console.log('MenuBuilderGroup::data', data, index_);
     let classCss = '';
@@ -36,7 +38,7 @@ export const MenuBuilderGroup = ({
                                     </div>
                                 )}
                                 <div className="navbar-item-text">
-                                    {data.title}
+                                    {t(data.title)}
                                 </div>
                             </Accordion.Trigger>
                             <Accordion.Content className="AccordionContent">
@@ -56,7 +58,7 @@ export const MenuBuilderGroup = ({
                         </div>
                     )}
                     <div className="navbar-item-text">
-                        {data.title}
+                        {t(data.title)}
                     </div>
                 </MenuLink>
             )}
