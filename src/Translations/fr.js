@@ -28,6 +28,11 @@ const fr = {
         'Project': 'Projet',
         'Project details': 'Détails du projet',
         'Project name': 'Nom du projet',
+        'Create a new project': 'Créer un nouveau projet',
+        'Give your project a name — you can add more details later.': 'Donnez un nom à votre projet — vous pourrez ajouter plus de détails plus tard.',
+        'My awesome project': 'Mon super projet',
+        'Project created successfully.': 'Projet créé avec succès.',
+        'Failed to create project.': 'Échec de la création du projet.',
         'Description': 'Description',
         'Project updated': 'Projet mis à jour',
         'Failed to update project.': 'Échec de la mise à jour du projet.',
@@ -43,6 +48,8 @@ const fr = {
         'View': 'Voir',
         'Save changes': 'Enregistrer les modifications',
         // page Details Release
+        'This release does not belong to the currently selected project.': 'Cette release n\'appartient pas au projet actuellement sélectionné.',
+        'This testing plan does not belong to the currently selected project.': 'Ce plan de test n\'appartient pas au projet actuellement sélectionné.',
         'Overview': 'Vue d\'ensemble',
         'Testing Plans': 'Testing Plans',
         'Team': 'Équipe',
@@ -328,6 +335,7 @@ const fr = {
         // ── Search ────────────────────────────────────────────────────────────
         'Search anything…': 'Rechercher…',
         'Type at least 2 characters to search…': 'Tapez au moins 2 caractères pour rechercher…',
+        'Failed to open this item.': 'Impossible d\'ouvrir cet élément.',
         // ── Releases ──────────────────────────────────────────────────────────
         'All Releases': 'Toutes les releases',
         'All Testers': 'Tous les testeurs',

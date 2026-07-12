@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {useParams} from "react-router";
+import {useParams, useSearchParams} from "react-router";
 import {useTranslation} from "react-i18next";
 import {useQueries} from "@tanstack/react-query";
 import {PageContentWrapper} from "../../Components/Navigation/PageContentWrapper.jsx";
@@ -366,7 +366,15 @@ const formatRelative = (iso) => {
     return `${days} days ago`;
 };
 
-const QuestionsList = ({plan, t, onOpenDrawer}) => {
+const QuestionsList = ({
+                           plan,
+                           t,
+                           onOpenDrawer,
+                           targetAnswerId,
+                           onConsumeTargetAnswer,
+                           targetQuestionId,
+                           onConsumeTargetQuestion,
+                       }) => {
     const planId = typeof plan?.id === 'string' ? plan.id.split('/').pop() : plan?.id;
     const questionsOrder = plan?.questionsOrder ?? [];
 
@@ -429,6 +437,42 @@ const QuestionsList = ({plan, t, onOpenDrawer}) => {
         });
         return map;
     }, [answerQueries, sorted]);
+
+    // Deep-link support: auto-open the drawer for a specific answer (e.g. coming
+    // from search results) once its question + answer have both resolved.
+    const autoOpenedRef = useRef(false);
+    useEffect(() => {
+        if (!targetAnswerId || autoOpenedRef.current || !sorted.length) return;
+        const idx = sorted.findIndex(q => String(answerByQuestion[q['@id']]?.id) === String(targetAnswerId));
+        if (idx === -1) return;
+        autoOpenedRef.current = true;
+        onOpenDrawer({
+            question: sorted[idx],
+            answer: answerByQuestion[sorted[idx]['@id']],
+            index: idx,
+            total: sorted.length,
+        });
+        onConsumeTargetAnswer?.();
+    }, [targetAnswerId, sorted, answerByQuestion, onOpenDrawer, onConsumeTargetAnswer]);
+
+    // Deep-link support: auto-open the drawer for a specific question (e.g. coming
+    // from search results) as soon as the question list has loaded. The answer,
+    // if any, is attached when already resolved — otherwise the drawer fetches
+    // it itself once open.
+    const autoOpenedQuestionRef = useRef(false);
+    useEffect(() => {
+        if (!targetQuestionId || autoOpenedQuestionRef.current || !sorted.length) return;
+        const idx = sorted.findIndex(q => String(q.id) === String(targetQuestionId));
+        if (idx === -1) return;
+        autoOpenedQuestionRef.current = true;
+        onOpenDrawer({
+            question: sorted[idx],
+            answer: answerByQuestion[sorted[idx]['@id']],
+            index: idx,
+            total: sorted.length,
+        });
+        onConsumeTargetQuestion?.();
+    }, [targetQuestionId, sorted, answerByQuestion, onOpenDrawer, onConsumeTargetQuestion]);
 
     // Reset to page 1 when search changes
     const handleSearch = (v) => {
@@ -1007,6 +1051,22 @@ export const PlanDetail = () => {
     const {data: plan, isLoading} = useTestPlan(id);
     const [drawer, setDrawer] = useState(null); // {question, answer}
 
+    // Deep-link support: ?answer=123 or ?question=456 auto-opens the matching
+    // drawer (used by the search modal, since testers can't reach the
+    // team-only answer/question pages).
+    const [searchParams, setSearchParams] = useSearchParams();
+    const targetAnswerId = searchParams.get('answer');
+    const targetQuestionId = searchParams.get('question');
+    const clearTargetParam = (key) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.delete(key);
+            return next;
+        }, {replace: true});
+    };
+    const clearTargetAnswer = () => clearTargetParam('answer');
+    const clearTargetQuestion = () => clearTargetParam('question');
+
     return (
         <PageContentWrapper>
             <PageTitle
@@ -1038,7 +1098,15 @@ export const PlanDetail = () => {
                                 <div className="tpd-overview-grid">
                                     <div className="tpd-col-main">
                                         <div className="tpd-card">
-                                            <QuestionsList plan={plan} t={t} onOpenDrawer={setDrawer}/>
+                                            <QuestionsList
+                                                plan={plan}
+                                                t={t}
+                                                onOpenDrawer={setDrawer}
+                                                targetAnswerId={targetAnswerId}
+                                                onConsumeTargetAnswer={clearTargetAnswer}
+                                                targetQuestionId={targetQuestionId}
+                                                onConsumeTargetQuestion={clearTargetQuestion}
+                                            />
                                         </div>
                                     </div>
                                     <div className="tpd-col-side">

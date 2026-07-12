@@ -27,6 +27,11 @@ const it = {
         'Project': 'Progetto',
         'Project details': 'Dettagli del progetto',
         'Project name': 'Nome del progetto',
+        'Create a new project': 'Crea un nuovo progetto',
+        'Give your project a name — you can add more details later.': 'Dai un nome al tuo progetto — potrai aggiungere altri dettagli in seguito.',
+        'My awesome project': 'Il mio fantastico progetto',
+        'Project created successfully.': 'Progetto creato con successo.',
+        'Failed to create project.': 'Creazione del progetto fallita.',
         'Description': 'Descrizione',
         'Project updated': 'Progetto aggiornato',
         'Failed to update project.': 'Aggiornamento del progetto fallito.',
@@ -40,6 +45,8 @@ const it = {
         'Edit': 'Modifica',
         'View': 'Visualizza',
         'Save changes': 'Salva modifiche',
+        'This release does not belong to the currently selected project.': 'Questa release non appartiene al progetto attualmente selezionato.',
+        'This testing plan does not belong to the currently selected project.': 'Questo piano di test non appartiene al progetto attualmente selezionato.',
         'Overview': 'Panoramica',
         'Testing Plans': 'Piani di test',
         'Team': 'Team',
@@ -302,6 +309,7 @@ const it = {
         // ── Ricerca ───────────────────────────────────────────────────────────
         'Search anything…': 'Cerca…',
         'Type at least 2 characters to search…': 'Digita almeno 2 caratteri per cercare…',
+        'Failed to open this item.': 'Impossibile aprire questo elemento.',
         // ── Release ───────────────────────────────────────────────────────────
         'All Releases': 'Tutte le release',
         'All Testers': 'Tutti i tester',

@@ -27,6 +27,11 @@ const de = {
         'Project': 'Projekt',
         'Project details': 'Projektdetails',
         'Project name': 'Projektname',
+        'Create a new project': 'Neues Projekt erstellen',
+        'Give your project a name — you can add more details later.': 'Geben Sie Ihrem Projekt einen Namen — weitere Details können Sie später hinzufügen.',
+        'My awesome project': 'Mein tolles Projekt',
+        'Project created successfully.': 'Projekt erfolgreich erstellt.',
+        'Failed to create project.': 'Projekt konnte nicht erstellt werden.',
         'Description': 'Beschreibung',
         'Project updated': 'Projekt aktualisiert',
         'Failed to update project.': 'Projekt konnte nicht aktualisiert werden.',
@@ -40,6 +45,8 @@ const de = {
         'Edit': 'Bearbeiten',
         'View': 'Anzeigen',
         'Save changes': 'Änderungen speichern',
+        'This release does not belong to the currently selected project.': 'Diese Release gehört nicht zum aktuell ausgewählten Projekt.',
+        'This testing plan does not belong to the currently selected project.': 'Dieser Testplan gehört nicht zum aktuell ausgewählten Projekt.',
         'Overview': 'Übersicht',
         'Testing Plans': 'Testpläne',
         'Team': 'Team',
@@ -302,6 +309,7 @@ const de = {
         // ── Suche ─────────────────────────────────────────────────────────────
         'Search anything…': 'Suchen…',
         'Type at least 2 characters to search…': 'Mindestens 2 Zeichen eingeben…',
+        'Failed to open this item.': 'Dieses Element konnte nicht geöffnet werden.',
         // ── Releases ──────────────────────────────────────────────────────────
         'All Releases': 'Alle Releases',
         'All Testers': 'Alle Tester',

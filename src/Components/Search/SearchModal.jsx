@@ -2,7 +2,12 @@ import {useState, useEffect, useRef, useCallback} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useQuery} from '@tanstack/react-query';
 import {useTranslation} from 'react-i18next';
+import toast from 'react-hot-toast';
 import SearchService from '../../Services/PrivateApi/SearchService.js';
+import AnswersService from '../../Services/PrivateApi/AnswersService.js';
+import QuestionsService from '../../Services/PrivateApi/QuestionsService.js';
+import {useAuthStore, isTester} from '../../Store/auth.js';
+import {useProjectStore} from '../../Store/PrivateData/ProjectsStore.js';
 import {useDebounce} from '../../Hooks/useDebounce.js';
 
 // ── Type metadata ─────────────────────────────────────────────────────────────
@@ -33,19 +38,50 @@ const iriToPath = (type, iri) => {
     }
 };
 
+/**
+ * Testers don't have access to /app/project/answers/:id or /app/project/questions/:id
+ * (team-only routes). For them, an answer or question result should instead open
+ * the parent testing plan on the Questions tab with that item's drawer opened.
+ */
+const resolveTesterAnswerPath = async (answerId) => {
+    const {data: answer} = await AnswersService.getAnswer(answerId);
+    const questionIri = answer?.question;
+    const questionId = typeof questionIri === 'string' ? questionIri.split('/').pop() : questionIri?.id;
+    if (!questionId) return null;
+
+    const {data: question} = await QuestionsService.getOne(questionId);
+    const planIri = question?.plan;
+    const planId = typeof planIri === 'string' ? planIri.split('/').pop() : planIri?.id;
+    if (!planId) return null;
+
+    return `/testing/plans/${planId}?tab=questions&answer=${answerId}`;
+};
+
+const resolveTesterQuestionPath = async (questionId) => {
+    const {data: question} = await QuestionsService.getOne(questionId);
+    const planIri = question?.plan;
+    const planId = typeof planIri === 'string' ? planIri.split('/').pop() : planIri?.id;
+    if (!planId) return null;
+
+    return `/testing/plans/${planId}?tab=questions&question=${questionId}`;
+};
+
 // ── SearchModal ───────────────────────────────────────────────────────────────
 
 export const SearchModal = ({isOpen, onClose}) => {
     const {t} = useTranslation();
     const navigate = useNavigate();
+    const {user} = useAuthStore();
+    const tester = isTester(user);
+    const {currentProject} = useProjectStore();
     const inputRef = useRef(null);
     const [query, setQuery] = useState('');
     const [focusedIdx, setFocusedIdx] = useState(0);
     const debouncedQuery = useDebounce(query, 300);
 
     const {data: results = [], isFetching} = useQuery({
-        queryKey: ['search', debouncedQuery],
-        queryFn: () => SearchService.search(debouncedQuery).then(r => r.data),
+        queryKey: ['search', debouncedQuery, currentProject?.id],
+        queryFn: () => SearchService.search(debouncedQuery, [], currentProject?.id).then(r => r.data),
         enabled: debouncedQuery.trim().length >= 2,
         staleTime: 30_000,
     });
@@ -66,10 +102,35 @@ export const SearchModal = ({isOpen, onClose}) => {
     }, [results]);
 
     const handleSelect = useCallback((result) => {
+        // Testers can't reach the team-only answer/question detail pages — route
+        // them to the parent testing plan's Questions tab with the relevant
+        // item's drawer opened instead.
+        if (tester && (result.type === 'answers' || result.type === 'questions')) {
+            const itemId = result.iri?.split('/').pop();
+            onClose();
+            const resolver = result.type === 'answers'
+                ? resolveTesterAnswerPath(itemId)
+                : resolveTesterQuestionPath(itemId);
+            resolver
+                .then(path => {
+                    if (path) navigate(path);
+                    else toast.error(t('Failed to open this item.'));
+                })
+                .catch(() => toast.error(t('Failed to open this item.')));
+            return;
+        }
+
+        if (tester && result.type === 'test_plan') {
+            const planId = result.iri?.split('/').pop();
+            navigate(`/testing/plans/${planId}`);
+            onClose();
+            return;
+        }
+
         const path = iriToPath(result.type, result.iri);
         if (path) navigate(path);
         onClose();
-    }, [navigate, onClose]);
+    }, [navigate, onClose, tester, t]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Escape') {

@@ -28,6 +28,11 @@ const en = {
         'Project': 'Project',
         'Project details': 'Project details',
         'Project name': 'Project name',
+        'Create a new project': 'Create a new project',
+        'Give your project a name — you can add more details later.': 'Give your project a name — you can add more details later.',
+        'My awesome project': 'My awesome project',
+        'Project created successfully.': 'Project created successfully.',
+        'Failed to create project.': 'Failed to create project.',
         'Description': 'Description',
         'Project updated': 'Project updated',
         'Failed to update project.': 'Failed to update project.',
@@ -43,6 +48,8 @@ const en = {
         'View': 'View',
         'Save changes': 'Save changes',
         // Release detail page
+        'This release does not belong to the currently selected project.': 'This release does not belong to the currently selected project.',
+        'This testing plan does not belong to the currently selected project.': 'This testing plan does not belong to the currently selected project.',
         'Overview': 'Overview',
         'Testing Plans': 'Testing Plans',
         'Team': 'Team',
@@ -287,6 +294,7 @@ const en = {
         // ── Search ────────────────────────────────────────────────────────────
         'Search anything…': 'Search anything…',
         'Type at least 2 characters to search…': 'Type at least 2 characters to search…',
+        'Failed to open this item.': 'Failed to open this item.',
         // ── Releases listing / create ─────────────────────────────────────────
         'All Releases': 'All Releases',
         'All Testers': 'All Testers',

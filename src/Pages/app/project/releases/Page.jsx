@@ -38,6 +38,9 @@ export const Page = () => {
     const {data: releaseData, isError, isLoading} = useRelease(params.rid);
     const {data: releaseStats = {}} = useReleaseStats(params.rid);
 
+    const projectMismatch = !isLoading && !isError && !!releaseData
+        && String(releaseData.project?.id) !== String(currentProject?.id);
+
     const truncatedName = (releaseData?.name ?? '').length > 120
         ? releaseData.name.slice(0, 120) + '…'
         : releaseData?.name;
@@ -54,6 +57,11 @@ export const Page = () => {
     if (isError) {
         return <Error404 goBackUrl="/app/project/releases"
                          message="Gator could not find this Release... Maybe try to look elsewhere."/>;
+    }
+
+    if (projectMismatch) {
+        return <Error404 goBackUrl="/app/project/releases"
+                         message={t('This release does not belong to the currently selected project.')}/>;
     }
 
     return (

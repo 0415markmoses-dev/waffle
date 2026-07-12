@@ -70,6 +70,13 @@ export const Page = () => {
 
     const {data: testPlanData, isError, isLoading} = useTestPlan(params.tid);
     const updateTestPlan = useUpdateTestPlan();
+
+    const releaseProjectIri = testPlanData?.release?.project;
+    const releaseProjectId = typeof releaseProjectIri === 'string'
+        ? releaseProjectIri.split('/').pop()
+        : releaseProjectIri?.id;
+    const projectMismatch = !isLoading && !isError && !!testPlanData
+        && String(releaseProjectId) !== String(currentProject?.id);
     const {
         isLoading: healthLoading,
         pass,
@@ -103,6 +110,11 @@ export const Page = () => {
     if (isError) {
         return <Error404 goBackUrl="/app/project/releases"
                          message="Gator could not find this Release... Maybe try to look elsewhere."/>;
+    }
+
+    if (projectMismatch) {
+        return <Error404 goBackUrl="/app/project/testing_plans"
+                         message={t('This testing plan does not belong to the currently selected project.')}/>;
     }
 
     const changeState = (state) => {

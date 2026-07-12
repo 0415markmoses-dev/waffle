@@ -7,4 +7,29 @@
   }
 }
 
+.card.project-card--create {
+  border: 1px dashed $card-border-color;
+  box-shadow: none;
+  background: transparent;
+
+  .card-body {
+    min-height: 72px;
+    color: $tw-muted-text;
+    font-weight: 500;
+
+    .font-icon {
+      font-size: 1.1rem;
+    }
+  }
+
+  &:hover {
+    border-color: $primary;
+    background: rgba($primary, 0.05);
+
+    .card-body {
+      color: $primary;
+    }
+  }
+}
+
 

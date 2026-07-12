@@ -31,6 +31,14 @@ export const useUpdateProject = () => {
     });
 };
 
+export const useCreateProject = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data) => ProjectService.createProject(data).then(r => r.data),
+        onSuccess: () => queryClient.invalidateQueries({queryKey: projectKeys.all}),
+    });
+};
+
 export const useProjectStats = (id) => {
     return useQuery({
         queryKey: [...projectKeys.detail(id), 'stats'],

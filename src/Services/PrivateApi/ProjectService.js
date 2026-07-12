@@ -11,6 +11,9 @@ const ProjectService = {
     getProject(projectId) {
         return Http.get(`/api/projects/${projectId}`);
     },
+    createProject(data) {
+        return Http.post('/api/projects', data);
+    },
     updateProject(id, data) {
         return Http.patch(`/api/projects/${id}`, data, {
             headers: {'Content-Type': 'application/merge-patch+json'},
