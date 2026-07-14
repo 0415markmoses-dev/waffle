@@ -4,12 +4,15 @@ import {ModuleRegistry, AllCommunityModule} from 'ag-grid-community';
 import {AgGridReact} from "ag-grid-react";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 import {useCallback, useRef, useState, useMemo} from "react";
+import {useTranslation} from "react-i18next";
+import toast from "react-hot-toast";
 import {PaginationSettings} from "../../Configs/PaginationSettings.js";
 import {ColumnSizing} from "../../Configs/AgGrid/ColumnSizing.js";
 import {RowDataUpdate} from "../../Configs/AgGrid/RowDataUpdate.js";
 import PropTypes from "prop-types";
 import {NavLink} from "react-router-dom";
-import {useTesters, useUpdateTester} from "../../Hooks/queries/useTestersQuery.js";
+import {useTesters, useUpdateTester, useDeleteTester} from "../../Hooks/queries/useTestersQuery.js";
+import {ConfirmModal} from "../UI/ConfirmModal.jsx";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -35,15 +38,46 @@ const AvatarCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
     );
 };
 
-const ActionsCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
+const ActionsCellRenderer = ({data, api}) => { // eslint-disable-line react/prop-types
+    const {t} = useTranslation();
+    const deleteTester = useDeleteTester();
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
+    const handleConfirmDelete = () => {
+        deleteTester.mutate(data.id, {
+            onSuccess: () => {
+                toast.success(t('Tester deleted.'));
+                setConfirmOpen(false);
+                api?.applyTransaction({remove: [data]});
+            },
+            onError: () => {
+                setConfirmOpen(false);
+                toast.error(t('Failed to delete tester.'));
+            },
+        });
+    };
+
     return (
         <div className="lt-actions">
             <NavLink to={'/app/project/testers/' + data.id} className="btn btn-sm btn-light lt-action-btn">
                 <i className="font-icon lni lni-eye"/>
             </NavLink>
-            <button className="btn btn-sm btn-light lt-action-btn lt-action-btn--danger" disabled>
+            <button
+                className="btn btn-sm btn-light lt-action-btn lt-action-btn--danger"
+                onClick={() => setConfirmOpen(true)}
+            >
                 <i className="font-icon lni lni-trash-3"/>
             </button>
+            <ConfirmModal
+                isVisible={confirmOpen}
+                title={t('Delete this tester')}
+                message={t('Delete tester {{email}}?', {email: data.email ?? `#${data.id}`})}
+                confirmLabel={t('Delete')}
+                confirmIcon="lni-trash-3"
+                loading={deleteTester.isPending}
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setConfirmOpen(false)}
+            />
         </div>
     );
 };
