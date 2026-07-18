@@ -146,14 +146,6 @@ export const ListTesters = ({testPlan = undefined}) => {
         {field: 'nickname', filter: true, flex: 1, minWidth: 120},
         {field: 'active', headerName: 'Active', filter: true, width: 90, cellRenderer: ActiveToggleCellRenderer},
         {
-            field: 'activeProjects',
-            headerName: 'Projects',
-            filter: false,
-            valueFormatter: params => params.value?.length ?? 0,
-            width: 100,
-            resizable: false,
-        },
-        {
             headerName: 'Actions',
             field: 'id',
             sortable: false,
