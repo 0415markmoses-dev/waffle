@@ -1,0 +1,50 @@
+name: CI
+
+# main has no direct pushes (branch protection requires a PR), so this only
+# needs to run on PRs — same reasoning as testgator_server's ci.yml. This is
+# the required status check the dev -> main branch ruleset points at.
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# checkout is the only thing here that talks to GitHub, and it only needs
+# read access.
+permissions:
+  contents: read
+
+jobs:
+  qa-and-tests:
+    name: QA & tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # Catches relative imports whose casing doesn't match the file on disk
+      # — passes silently on case-insensitive filesystems (macOS/Windows) but
+      # breaks the build on Linux, which is what CI and prod both run on.
+      - name: Check import casing
+        run: npm run check:imports
+
+      # `test:run` (not `test`) — `test` is vitest's own watch mode, which
+      # never exits and would hang the job.
+      - name: Run tests
+        run: npm run test:run
