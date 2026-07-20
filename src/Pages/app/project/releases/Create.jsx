@@ -17,7 +17,7 @@ export const Create = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
     const {currentProject} = useProjectStore();
-    const [newRelease, setNewRelease] = useState({
+    const [newRelease] = useState({
         name: '',
         description: '',
         id: undefined,

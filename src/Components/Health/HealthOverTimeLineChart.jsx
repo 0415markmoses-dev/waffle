@@ -21,7 +21,7 @@ const lastPointPlugin = {
     id: 'lastPoint',
     afterDraw(chart) {
         const metas = chart.config.options._visibleDatasets ?? [];
-        metas.forEach(({metaIndex, label, pct}) => {
+        metas.forEach(({metaIndex}) => {
             const ds = chart.getDatasetMeta(metaIndex);
             const pts = ds.data.filter(p => p && !p.skip && p.y != null);
             if (!pts.length) return;

@@ -3,7 +3,7 @@
 import {ModuleRegistry, AllCommunityModule} from 'ag-grid-community';
 import {AgGridReact} from "ag-grid-react";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
-import {useCallback, useRef, useState, useMemo} from "react";
+import {useCallback, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import toast from "react-hot-toast";
 import {PaginationSettings} from "../../Configs/PaginationSettings.js";

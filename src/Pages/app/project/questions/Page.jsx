@@ -45,52 +45,6 @@ const StatCard = ({icon, iconColor, label, value, sub}) => (
     </div>
 );
 
-// ── Answer state badge ────────────────────────────────────────────────────────
-const STATE_LABELS = {
-    pass: 'Passed',
-    pass_with_bugs: 'Passed with bugs',
-    failed: 'Failed',
-    blocked: 'Blocked',
-    pending: 'Pending',
-};
-
-const STATE_COLOR_KEY = {
-    pass: 'pass',
-    pass_with_bugs: 'passWithBugs',
-    failed: 'failed',
-    blocked: 'blocked',
-    pending: 'pending',
-};
-
-const AnswerStateBadge = ({state}) => {
-    const color = HEALTH_COLORS[STATE_COLOR_KEY[state]] ?? '#d1d5db';
-    return (
-        <span className="badge heading" style={{backgroundColor: color, color: '#fff'}}>
-            {STATE_LABELS[state] ?? state}
-        </span>
-    );
-};
-
-// ── Answer card ───────────────────────────────────────────────────────────────
-const AnswerCard = ({answer}) => {
-    const date = answer.date
-        ? new Date(answer.date).toLocaleDateString(undefined, {day: '2-digit', month: 'short', year: 'numeric'})
-        : null;
-
-    return (
-        <div className="answer-card d-flex flex-column gap-sm p-3">
-            <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center gap-sm">
-                    <AnswerStateBadge state={answer.state}/>
-                    {answer.author && <span className="small fw-semibold">{answer.author}</span>}
-                </div>
-                {date && <span className="text-muted small">{date}</span>}
-            </div>
-            {answer.comment && <p className="m-0 small text-muted">{answer.comment}</p>}
-        </div>
-    );
-};
-
 // ── Page ──────────────────────────────────────────────────────────────────────
 export const Page = () => {
     const {t} = useTranslation();
@@ -187,7 +141,6 @@ export const Page = () => {
 
     const currentName = name ?? question?.name ?? '';
     const currentContent = content ?? question?.content ?? '';
-    const answers = stats?.answers ?? [];
 
     const truncatedName = currentName.length > 120
         ? currentName.slice(0, 120) + '…'

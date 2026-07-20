@@ -12,11 +12,9 @@ import {Card} from "../../Components/UI/Card/Card.jsx";
 import {CardBody} from "../../Components/UI/Card/CardBody.jsx";
 import {CardHeader} from "../../Components/UI/Card/CardHeader.jsx";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
-import {SingleMetricDisplay} from "../../Components/UI/Metrics/SingleMetricDisplay.jsx";
-import {MetricVerticalSeparator} from "../../Components/UI/Metrics/MetricVerticalSeparator.jsx";
 import {ErrorState} from "../../Components/UI/ErrorState.jsx";
 import {Loader} from "../../Components/UI/Loader.jsx";
-import {useProject, useProjects, useProjectStats} from "../../Hooks/queries/useProjectsQuery.js";
+import {useProject, useProjectStats} from "../../Hooks/queries/useProjectsQuery.js";
 import {useTestPlansPage} from "../../Hooks/queries/useTestPlansQuery.js";
 import {usePlanHealth, questionKeys} from "../../Hooks/queries/useQuestionsQuery.js";
 import {HEALTH_COLORS} from "../../Components/Health/HealthDisplay.jsx";
@@ -92,7 +90,7 @@ const ActivityRow = ({answer, questionName, testerEmail, planName, releaseName})
             <div className="activity-info">
                 {context && <span className="activity-context">{context}</span>}
                 <span className="activity-title">
-                    <em>"{name}"</em> — {label}
+                    <em>&quot;{name}&quot;</em> — {label}
                 </span>
                 {answer.author && (
                     <span className="activity-author">{answer.author}</span>
@@ -278,9 +276,6 @@ export const Home = () => {
     const {t} = useTranslation();
     const {currentProject} = useProjectStore();
 
-    const {data: projectsData} = useProjects();
-    const projects = projectsData?.member ?? [];
-
     const {data: projectDetail} = useProject(currentProject?.id);
 
     const {data: testPlans = [], isLoading: loadingTestPlans} = useTestPlansPage({
@@ -289,10 +284,6 @@ export const Home = () => {
         itemsPerPage: 5,
         page: 1,
     });
-
-    const otherProjects = currentProject?.id
-        ? projects.filter(p => p.id !== currentProject.id)
-        : projects;
 
     const {data: projectStats} = useProjectStats(currentProject?.id);
 

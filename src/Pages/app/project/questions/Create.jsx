@@ -7,7 +7,6 @@ import {Col} from "../../../../Components/UI/Grid/Col.jsx";
 import {Card} from "../../../../Components/UI/Card/Card.jsx";
 import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
 import {useState} from "react";
-import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
 import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 import {useNavigate} from "react-router";
 import {EditQuestionForm} from "../../../../Components/Questions/EditQuestionForm.jsx";
@@ -17,8 +16,7 @@ import {Alert} from "../../../../Components/UI/Alert/Alert.jsx";
 export const Create = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
-    const {currentProject} = useProjectStore();
-    const [newQuestion, setNewQuestion] = useState({
+    const [newQuestion] = useState({
         name: '',
         description: '',
         id: undefined,

@@ -51,8 +51,6 @@ export const CardTestPlanDeadline = ({testPlan}) => {
         })();
     }, [testPlan?.dueDate, testPlan?.created]);
 
-    const pct = totalDays > 0 ? Math.min(100, Math.round((elapsedDays / totalDays) * 100)) : 0;
-
     if (!testPlan?.id || !testPlan?.dueDate) {
         return (
             <Card>

@@ -3,9 +3,9 @@ import {createContext} from "react";
 
 export const TabsContext = createContext({
     id: '',
-    setId: (id) => {
+    setId: () => {
     },
     activeTab: undefined,
-    setActiveTab: (activeTab) => {
+    setActiveTab: () => {
     }
 });

@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import {useUsers, useUpdateUser, useDeleteUser} from '../../Hooks/queries/useUsersQuery.js';
 import {useDebounce} from '../../Hooks/useDebounce.js';
 import {Button} from '../UI/Buttons/Button.jsx';
-import {ModalCreateUser} from './ModalCreateUser.jsx';
 import {ModalChangePassword} from './ModalChangePassword.jsx';
 
 const ROLES = ['ROLE_MANAGER', 'ROLE_ADMIN'];

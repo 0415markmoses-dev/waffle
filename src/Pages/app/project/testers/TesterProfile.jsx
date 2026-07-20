@@ -179,7 +179,7 @@ const ActivityFeed = ({testerIri, projectId}) => {
                     const cfg = stateConf(answer.state);
                     const answerId = answer.id ?? answer['@id']?.split('/').pop();
                     const commentExcerpt = answer.comment
-                        ? answer.comment.replace(/[#*_`>\[\]]/g, '').slice(0, 80) + (answer.comment.length > 80 ? '…' : '')
+                        ? answer.comment.replace(/[#*_`>[\]]/g, '').slice(0, 80) + (answer.comment.length > 80 ? '…' : '')
                         : null;
 
                     return (

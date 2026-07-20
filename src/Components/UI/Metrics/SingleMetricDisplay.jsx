@@ -5,7 +5,6 @@ export const SingleMetricDisplay = ({
                                         label = "",
                                         prefix = '',
                                         suffix = '',
-                                        color = "default",
                                     }) => {
     return <div className="metric-display flex-grow-0 d-flex flex-column">
         <div className="metric-value text-center heading fs-3 fw-bolder">
@@ -22,5 +21,4 @@ SingleMetricDisplay.propTypes = {
     label: PropTypes.string,
     prefix: PropTypes.string,
     suffix: PropTypes.string,
-    color: PropTypes.string,
 }

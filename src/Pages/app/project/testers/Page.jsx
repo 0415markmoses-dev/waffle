@@ -64,7 +64,7 @@ export const Page = () => {
                                             <p>
                                                 Testers are usually <b>non-technical users</b>—like clients, team
                                                 members, or end-users—who receive a simple and secure link to try out
-                                                specific scenarios you define. They don't need to install anything.
+                                                specific scenarios you define. They don&apos;t need to install anything.
                                             </p>
                                             <p>
                                                 Their job is to follow your instructions,<b> give quick feedback</b>

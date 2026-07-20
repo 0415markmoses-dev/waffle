@@ -34,6 +34,29 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+        // {node, ...rest} = props is a common React pattern to strip a prop
+        // before spreading the remainder onto a real DOM element — that's a
+        // deliberate use of `node`, not dead code.
+        'no-unused-vars': ['error', {ignoreRestSiblings: true}],
+    },
+  },
+    {
+        // vite.config.js has test.globals = true, so Vitest injects describe/it/
+        // expect/vi/beforeEach/afterEach etc. into every tests/**/*.js file at
+        // runtime without an explicit import — tell ESLint about them too,
+        // otherwise it flags every single one as an undefined global.
+        files: ['tests/**/*.{js,jsx}'],
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                ...globals.vitest,
+            },
+        },
+        rules: {
+            // Every hook test wraps renderHook() in an inline, anonymous
+            // QueryClientProvider — a test-only helper, not part of the real
+            // component tree, so a display name buys nothing here.
+            'react/display-name': 'off',
     },
   },
 ]

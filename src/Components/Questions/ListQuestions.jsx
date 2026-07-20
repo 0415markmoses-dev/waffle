@@ -128,7 +128,7 @@ export const ListQuestions = ({testingPlan = undefined}) => {
             {hasEditedQuestionOrder && (
                 <div className="w-100">
                     <Alert type="info">
-                        Vous avez modifié l'ordre des questions. Pensez à enregistrer vos modifications.
+                        Vous avez modifié l&apos;ordre des questions. Pensez à enregistrer vos modifications.
                     </Alert>
                 </div>
             )}

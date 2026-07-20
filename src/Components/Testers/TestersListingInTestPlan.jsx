@@ -78,15 +78,6 @@ const AvatarCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
     );
 };
 
-const ActiveToggleCellRenderer = ({value}) => ( // eslint-disable-line react/prop-types
-    <input
-        type="checkbox"
-        checked={!!value}
-        readOnly
-        style={{cursor: 'default', accentColor: 'var(--color-primary)'}}
-    />
-);
-
 const ProgressCellRenderer = ({data, context}) => { // eslint-disable-line react/prop-types
     const {testPlan} = context;
     const testerIri = data?.['@id'] ?? (data?.id ? `/api/testers/${data.id}` : null);

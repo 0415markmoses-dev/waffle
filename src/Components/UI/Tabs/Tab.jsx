@@ -4,7 +4,6 @@ export const Tab = ({
                         title = '',
                         name = '',
                         icon = '',
-                        badge = undefined,
                         active = false,
                         children,
                     }) => {

@@ -21,7 +21,6 @@ import {ReleaseDescription} from "../../../../Components/Releases/ReleaseDescrip
 import {TabWrapper} from "../../../../Components/UI/Tabs/TabWrapper.jsx";
 import {Tab} from "../../../../Components/UI/Tabs/Tab.jsx";
 import {Trans, useTranslation} from "react-i18next";
-import {ErrorState} from "../../../../Components/UI/ErrorState.jsx";
 import {ListTestPlans} from "../../../../Components/TestPlans/ListTestPlans.jsx";
 import {AgGridDisplay} from "../../../../Configs/AgGrid/AgGridDisplay.js";
 import {useRelease, useReleaseStats} from "../../../../Hooks/queries/useReleasesQuery.js";

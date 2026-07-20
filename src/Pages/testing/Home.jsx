@@ -56,12 +56,6 @@ const StatusBadge = ({state, days, t}) => {
     return <span className="td-badge td-badge--not-started">{t('Not started')}</span>;
 };
 
-const StateBadge = ({state, t}) => (
-    <span className={`td-state-badge td-state-badge--${state ?? 'draft'}`}>
-        {t(state === 'draft' ? 'Not started' : (state ?? 'Not started'))}
-    </span>
-);
-
 // ── PlanRow ───────────────────────────────────────────────────────────────────
 
 const PlanRow = ({plan, t, projectName}) => {

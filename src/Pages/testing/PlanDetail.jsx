@@ -671,7 +671,6 @@ const QuestionDrawer = ({question, answer, index, total, onClose, onSaved, t}) =
 
     // Use fresh API data as the effective answer (falls back to prop snapshot while loading)
     const effectiveAnswer = freshAnswer ?? answer;
-    const isExisting = !!effectiveAnswer?.id;
 
     // Fetch file objects for each IRI (API returns plain IRIs in answer.files)
     const fileQueries = useFiles(fileIris);
@@ -1032,16 +1031,6 @@ const ProjectTab = ({plan, t}) => {
         </div>
     );
 };
-
-// ── Activity coming soon ──────────────────────────────────────────────────────
-
-const ActivityComingSoon = ({t}) => (
-    <div className="tpd-coming-soon">
-        <i className="font-icon lni lni-bolt-2"/>
-        <div className="tpd-coming-soon-title">{t('Activity feed coming soon')}</div>
-        <p>{t('We\'re working on it. Check back later!')}</p>
-    </div>
-);
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 

@@ -41,6 +41,7 @@ export const ModalCreateNewTester = ({
     const createTester = useCreateTester();
 
     const handleCreateTester = () => {
+        onProgress();
         createTester.mutate(
             {email: testerEmail},
             {

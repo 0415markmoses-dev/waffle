@@ -43,7 +43,9 @@ export const MarkdownRenderer = ({markdown}) => {
                 img({node, ...props}) {
                     // eslint-disable-next-line react/prop-types
                     if (props?.src?.includes(',size://')) {
-                        const [src, size] = props?.src.split(',size://');
+                        // Safe to drop the `?.` here — the guard above already
+                        // proved props.src exists (its .includes call ran).
+                        const [src, size] = props.src.split(',size://');
                         const [width, height] = size.split('x');
                         return <img {...props} className="d-block img-fluid mx-auto" alt={props.alt} width={width}
                                     height={height} src={src}/>
@@ -62,10 +64,11 @@ export const MarkdownRenderer = ({markdown}) => {
                             {...rest}
                             PreTag="div"
                             lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}
-                            children={String(children).replace(/\n$/, '')}
                             language={match[1]}
                             style={nightOwl}
-                        />
+                        >
+                            {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
                     ) : (
                         <code {...rest} className={className}>
                             {children}
