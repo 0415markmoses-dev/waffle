@@ -1,4 +1,4 @@
-name: CI
+name: Test n QA
 
 # main has no direct pushes (branch protection requires a PR), so this only
 # needs to run on PRs — same reasoning as testgator_server's ci.yml. This is
