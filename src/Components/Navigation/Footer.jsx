@@ -8,7 +8,7 @@ export const Footer = () => {
                 <a target="_blank" rel="noopener"
                    href="https://github.com/arkdevuk/testgator_client/">Github</a>
                 <a target="_blank" rel="noopener"
-                   href="https://github.com/arkdevuk/testgator_client/tree/main/documentation">Documentation</a>
+                   href="https://github.com/arkdevuk/testgator">Documentation</a>
                 <a target="_blank" rel="noopener"
                    href="https://github.com/arkdevuk/testgator_client/issues">Issues</a>
                 <a target="_blank" rel="noopener"
