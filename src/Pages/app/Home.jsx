@@ -17,7 +17,7 @@ import {Loader} from "../../Components/UI/Loader.jsx";
 import {useProject, useProjectStats} from "../../Hooks/queries/useProjectsQuery.js";
 import {useTestPlansPage} from "../../Hooks/queries/useTestPlansQuery.js";
 import {usePlanHealth, questionKeys} from "../../Hooks/queries/useQuestionsQuery.js";
-import {HEALTH_COLORS} from "../../Components/Health/HealthDisplay.jsx";
+import {HEALTH_COLORS} from "../../Components/Health/HealthColors.js";
 import {useRecentProjectAnswers} from "../../Hooks/queries/useAnswersQuery.js";
 import {useQueries} from "@tanstack/react-query";
 import QuestionsService from "../../Services/PrivateApi/QuestionsService.js";

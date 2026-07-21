@@ -55,7 +55,11 @@ export const TabWrapper = ({
         }
     };
 
-    // Fire onChange when active tab changes
+    // Fire onChange only when the active tab index actually changes — not on
+    // every render. `tabs` is recomputed from `children` on every render (new
+    // array reference each time) and `onChange` is a caller-supplied prop that
+    // may not be memoized, so including either would fire this on every
+    // parent re-render instead of just on selection changes.
     useEffect(() => {
         const myTab = tabs[activeTab];
         if (!myTab) {
@@ -63,6 +67,7 @@ export const TabWrapper = ({
             return;
         }
         onChange({name: myTab.props.name, title: myTab.props.title, icon: myTab.props.icon, index: activeTab});
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
     return (

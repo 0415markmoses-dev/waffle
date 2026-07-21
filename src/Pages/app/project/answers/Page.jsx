@@ -5,7 +5,8 @@ import Modal from 'react-modal';
 import {useAnswer, useAnswers, useUpdateAnswer} from '../../../../Hooks/queries/useAnswersQuery.js';
 import {useFiles} from '../../../../Hooks/queries/useFilesQuery.js';
 import FilesService from '../../../../Services/PrivateApi/FilesService.js';
-import AttachmentItem, {IMAGE_EXTS, VIDEO_EXTS} from '../../../../Components/UI/Uploader/AttachmentItem.jsx';
+import AttachmentItem from '../../../../Components/UI/Uploader/AttachmentItem.jsx';
+import {IMAGE_EXTS, VIDEO_EXTS} from '../../../../Components/UI/Uploader/attachmentHelpers.js';
 import ImageLightbox from '../../../../Components/UI/Lightbox/ImageLightbox.jsx';
 import VideoLightbox from '../../../../Components/UI/Lightbox/VideoLightbox.jsx';
 
@@ -27,7 +28,7 @@ import {CardHeader} from '../../../../Components/UI/Card/CardHeader.jsx';
 import {Button} from '../../../../Components/UI/Buttons/Button.jsx';
 import {CardGroup} from '../../../../Components/UI/Card/CardGroup.jsx';
 import {ReleaseDescription} from '../../../../Components/Releases/ReleaseDescription.jsx';
-import {HEALTH_COLORS} from '../../../../Components/Health/HealthDisplay.jsx';
+import {HEALTH_COLORS} from '../../../../Components/Health/HealthColors.js';
 
 // ── System info icon map ──────────────────────────────────────────────────────
 

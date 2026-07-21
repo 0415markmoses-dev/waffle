@@ -11,7 +11,7 @@ import {
     PointElement,
     Tooltip,
 } from 'chart.js';
-import {HEALTH_COLORS} from './HealthDisplay.jsx';
+import {HEALTH_COLORS} from './HealthColors.js';
 import {ErrorState} from '../UI/ErrorState.jsx';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Filler, Tooltip);
@@ -109,8 +109,9 @@ export const HealthOverTimeLineChart = ({
     const [groupBy, setGroupBy] = useState('day');
 
     useEffect(() => {
+        const chart = chartRef.current;
         return () => {
-            chartRef.current?.destroy();
+            chart?.destroy();
         };
     }, []);
 

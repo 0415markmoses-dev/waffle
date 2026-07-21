@@ -11,6 +11,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "check:imports": "node scripts/check-imports.mjs",
+    "verify": "npm run lint && npm run check:imports && npm run test:run",
     "sim:tests": "docker build -f tests/docker/Dockerfile -t testgator-sim-tests . && docker run --rm testgator-sim-tests"
   },
   "dependencies": {

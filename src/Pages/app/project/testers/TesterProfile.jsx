@@ -24,7 +24,7 @@ import {CardHeader} from '../../../../Components/UI/Card/CardHeader.jsx';
 import {TabWrapper} from '../../../../Components/UI/Tabs/TabWrapper.jsx';
 import {Tab} from '../../../../Components/UI/Tabs/Tab.jsx';
 import {Pagination} from '../../../../Components/UI/Pagination/Pagination.jsx';
-import {HEALTH_COLORS} from '../../../../Components/Health/HealthDisplay.jsx';
+import {HEALTH_COLORS} from '../../../../Components/Health/HealthColors.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 import {useAuthStore, isTester} from "../Store/auth.js";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {Button} from "../Components/UI/Buttons/Button.jsx";
 import {AuthCodeInput} from "../Components/UI/Form/Inputs/AuthCodeInput.jsx";
@@ -27,7 +27,7 @@ export const Login = () => {
 
     console.log('code', code)
 
-    const sendCode = async (email) => {
+    const sendCode = useCallback(async (email) => {
         setLoading(true);
         setError(undefined);
         setUsername(email);
@@ -39,7 +39,7 @@ export const Login = () => {
             setError('An error occurred');
         }
         setLoading(false);
-    };
+    }, [generateCode]);
 
     // Fetch auth mode on mount
     useEffect(() => {
@@ -59,13 +59,13 @@ export const Login = () => {
                 sendCode(emailParam);
             }
         }
-    }, [])
+    }, [sendCode])
 
     useEffect(() => {
         if (user !== null && !isLoadingUser) {
             navigate(isTester(user) ? "/testing/" : "/app/");
         }
-    }, [user, isLoadingUser]);
+    }, [user, isLoadingUser, navigate]);
 
     const tryLogin = async (e) => {
         e.preventDefault();

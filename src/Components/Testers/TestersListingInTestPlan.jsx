@@ -64,7 +64,7 @@ const Tooltip = ({label, children}) => {
 
 // ── Cell renderers ────────────────────────────────────────────────────────────
 
-const AvatarCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
+const AvatarCellRenderer = ({data}) => {
     const avatarUrl = data?.profilePictureUrl;
     const label = data?.nickname ?? data?.email ?? '';
     const isDefault = !avatarUrl || avatarUrl === DEFAULT_AVATAR;
@@ -78,7 +78,7 @@ const AvatarCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
     );
 };
 
-const ProgressCellRenderer = ({data, context}) => { // eslint-disable-line react/prop-types
+const ProgressCellRenderer = ({data, context}) => {
     const {testPlan} = context;
     const testerIri = data?.['@id'] ?? (data?.id ? `/api/testers/${data.id}` : null);
     const planId = testPlan?.id;
@@ -110,7 +110,7 @@ const ProgressCellRenderer = ({data, context}) => { // eslint-disable-line react
     );
 };
 
-const ActionsCellRenderer = ({data, context}) => { // eslint-disable-line react/prop-types
+const ActionsCellRenderer = ({data, context}) => {
     const {t} = useTranslation();
     const {onKick} = context;
     const [kicking, setKicking] = useState(false);

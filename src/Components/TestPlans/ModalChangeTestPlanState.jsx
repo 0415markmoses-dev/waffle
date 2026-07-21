@@ -41,8 +41,12 @@ export const ModalChangeTestPlanState = ({
     const [state, setState] = useState(testPlan?.state ?? 'draft');
     const updateTestPlan = useUpdateTestPlan();
 
+    // Reset the selection only when a different plan is loaded into the modal —
+    // not on every testPlan.state change, or the user's in-progress selection
+    // would get clobbered right after they click a card.
     useEffect(() => {
         setState(testPlan?.state ?? 'draft');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [testPlan?.id]);
 
     const handleUpdateTestPlan = () => {

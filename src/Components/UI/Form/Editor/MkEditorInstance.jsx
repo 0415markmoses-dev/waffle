@@ -35,10 +35,8 @@ import UploadService from "../../../../Services/Upload/UploadService.js";
 export const MkEditorInstance = ({value, onChange, className = ''}) => {
     const [originalValue, setOriginalValue] = useState(value);
     useEffect(() => {
-        if (originalValue !== value) {
-            setOriginalValue(value);
-        }
-    }, [])
+        setOriginalValue(value);
+    }, [value])
 
     const handleUpload = async (image) => {
         try {

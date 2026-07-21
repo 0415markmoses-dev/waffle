@@ -19,7 +19,8 @@ import {useAnswers, useCreateAnswer, useUpdateAnswer} from "../../Hooks/queries/
 import {useFiles} from "../../Hooks/queries/useFilesQuery.js";
 import FilesService from "../../Services/PrivateApi/FilesService.js";
 import Uploader from "../../Components/UI/Uploader/Uploader.jsx";
-import AttachmentItem, {IMAGE_EXTS, VIDEO_EXTS} from "../../Components/UI/Uploader/AttachmentItem.jsx";
+import AttachmentItem from "../../Components/UI/Uploader/AttachmentItem.jsx";
+import {IMAGE_EXTS, VIDEO_EXTS} from "../../Components/UI/Uploader/attachmentHelpers.js";
 import ImageLightbox from "../../Components/UI/Lightbox/ImageLightbox.jsx";
 import VideoLightbox from "../../Components/UI/Lightbox/VideoLightbox.jsx";
 import {MkEditorInstance} from "../../Components/UI/Form/Editor/MkEditorInstance.jsx";
@@ -135,7 +136,6 @@ const SvgDonut = ({data, size = 160, thickness = 26}) => {
 
 const StatusDonut = ({plan, t}) => {
     const planId = typeof plan?.id === 'string' ? plan.id.split('/').pop() : plan?.id;
-    const questionsOrder = plan?.questionsOrder ?? [];
 
     const {data: questions = []} = useQuestions({
         plan: `/api/test_plans/${planId}`,
@@ -144,12 +144,13 @@ const StatusDonut = ({plan, t}) => {
 
     const sorted = useMemo(() => {
         if (!questions.length) return [];
+        const questionsOrder = plan?.questionsOrder ?? [];
         if (questionsOrder.length) {
             const indexMap = Object.fromEntries(questionsOrder.map((iri, i) => [iri, i]));
             return [...questions].sort((a, b) => (indexMap[a['@id']] ?? Infinity) - (indexMap[b['@id']] ?? Infinity));
         }
         return [...questions].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-    }, [questions, questionsOrder]);
+    }, [questions, plan?.questionsOrder]);
 
     const answerQueries = useQueries({
         queries: sorted.map(q => ({
@@ -212,7 +213,6 @@ const StatusDonut = ({plan, t}) => {
 
 const RecentActivity = ({plan, t, onOpenDrawer}) => {
     const planId = typeof plan?.id === 'string' ? plan.id.split('/').pop() : plan?.id;
-    const questionsOrder = plan?.questionsOrder ?? [];
 
     const {data: questions = []} = useQuestions({
         plan: `/api/test_plans/${planId}`,
@@ -221,12 +221,13 @@ const RecentActivity = ({plan, t, onOpenDrawer}) => {
 
     const sorted = useMemo(() => {
         if (!questions.length) return [];
+        const questionsOrder = plan?.questionsOrder ?? [];
         if (questionsOrder.length) {
             const indexMap = Object.fromEntries(questionsOrder.map((iri, i) => [iri, i]));
             return [...questions].sort((a, b) => (indexMap[a['@id']] ?? Infinity) - (indexMap[b['@id']] ?? Infinity));
         }
         return [...questions].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-    }, [questions, questionsOrder]);
+    }, [questions, plan?.questionsOrder]);
 
     const answerQueries = useQueries({
         queries: sorted.map(q => ({
@@ -376,7 +377,6 @@ const QuestionsList = ({
                            onConsumeTargetQuestion,
                        }) => {
     const planId = typeof plan?.id === 'string' ? plan.id.split('/').pop() : plan?.id;
-    const questionsOrder = plan?.questionsOrder ?? [];
 
     const {data: questions = [], isLoading} = useQuestions({
         plan: `/api/test_plans/${planId}`,
@@ -389,6 +389,7 @@ const QuestionsList = ({
     // Sort by questionsOrder IRI array (same logic as ListQuestionsOrdered)
     const sorted = useMemo(() => {
         if (!questions.length) return [];
+        const questionsOrder = plan?.questionsOrder ?? [];
         if (questionsOrder.length) {
             const indexMap = Object.fromEntries(questionsOrder.map((iri, i) => [iri, i]));
             return [...questions].sort((a, b) => {
@@ -398,7 +399,7 @@ const QuestionsList = ({
             });
         }
         return [...questions].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-    }, [questions, questionsOrder]);
+    }, [questions, plan?.questionsOrder]);
 
     // Client-side search on name + content
     const filtered = useMemo(() => {

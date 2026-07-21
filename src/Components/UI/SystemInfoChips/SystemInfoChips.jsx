@@ -104,7 +104,7 @@ const SystemInfoChips = ({t, onceFinished}) => {
                 });
             }
         });
-    }, []);
+    }, [os, browser, hasTouch, resolution, onceFinished]);
 
     const displayOS = enhancedOS ?? os;
     const displayBrowser = enhancedBrowser ?? browser;

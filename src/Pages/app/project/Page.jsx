@@ -30,9 +30,12 @@ export const Page = () => {
     const [name, setName] = useState('');
     const [editedDesc, setEditedDesc] = useState(null); // null = not yet edited
 
-    // Sync name only (editor gets value directly from project)
+    // Sync name only (editor gets value directly from project). Intentionally
+    // keyed on project.id only — re-syncing on every `project` object change
+    // (e.g. after a save) would clobber the user's in-progress edits.
     useEffect(() => {
         if (project) setName(project.name ?? '');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [project?.id]);
 
     const handleSave = () => {

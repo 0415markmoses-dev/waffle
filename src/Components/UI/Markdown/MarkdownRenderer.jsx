@@ -41,7 +41,6 @@ export const MarkdownRenderer = ({markdown}) => {
             components={{
                 // the point is to handle the bad formatting of images in the editor that add html in markdown
                 img({node, ...props}) {
-                    // eslint-disable-next-line react/prop-types
                     if (props?.src?.includes(',size://')) {
                         // Safe to drop the `?.` here — the guard above already
                         // proved props.src exists (its .includes call ran).
@@ -54,7 +53,6 @@ export const MarkdownRenderer = ({markdown}) => {
                     return <img {...props} className="img-fluid" alt={props.alt}/>
                 },
                 code(props) {
-                    // eslint-disable-next-line react/prop-types
                     const {children, className, node, ...rest} = props
                     const match = /language-(\w+)/.exec(className || '')
                     return match ? (

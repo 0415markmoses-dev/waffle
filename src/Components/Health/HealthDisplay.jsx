@@ -3,16 +3,9 @@ import {useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Doughnut} from "react-chartjs-2";
 import {ArcElement, Chart as ChartJS, Tooltip} from "chart.js";
+import {HEALTH_COLORS} from "./HealthColors.js";
 
 ChartJS.register(ArcElement, Tooltip);
-
-export const HEALTH_COLORS = {
-    pass: '#69BC9E',
-    passWithBugs: '#a8d5c2',
-    failed: '#ef4444',
-    blocked: '#f59e0b',
-    pending: '#d1d5db',
-};
 
 const pct = (value, total) =>
     total === 0 ? 0 : Math.round((value / total) * 100);
@@ -55,8 +48,9 @@ export const HealthDisplay = ({
     const total = pass + passWithBugs + failed + blocked + pending;
 
     useEffect(() => {
+        const chart = chartRef.current;
         return () => {
-            chartRef.current?.destroy();
+            chart?.destroy();
         };
     }, []);
 

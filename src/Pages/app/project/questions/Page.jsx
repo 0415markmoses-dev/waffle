@@ -25,7 +25,8 @@ import {FormGroupLabel} from "../../../../Components/UI/Form/FormGroupLabel.jsx"
 import {FormGroupWrapper} from "../../../../Components/UI/Form/FormGroupWrapper.jsx";
 import {MkEditorInstance} from "../../../../Components/UI/Form/Editor/MkEditorInstance.jsx";
 import {ReleaseDescription} from "../../../../Components/Releases/ReleaseDescription.jsx";
-import {HealthDisplay, HEALTH_COLORS} from "../../../../Components/Health/HealthDisplay.jsx";
+import {HealthDisplay} from "../../../../Components/Health/HealthDisplay.jsx";
+import {HEALTH_COLORS} from "../../../../Components/Health/HealthColors.js";
 import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
 import {HealthOverTimeLineChart} from "../../../../Components/Health/HealthOverTimeLineChart.jsx";
 import {AnswerCardPreview} from "../../../../Components/Answers/AnswerCardPreview.jsx";

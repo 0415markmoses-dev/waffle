@@ -15,36 +15,19 @@ import UploadService from '../../src/Services/Upload/UploadService.js';
 describe('UploadService', () => {
     beforeEach(() => vi.clearAllMocks());
 
-    describe('getUploadRequest', () => {
-        it('calls POST /api/uploads/request with filename and size', async () => {
-            Http.post.mockResolvedValue({data: {uploadUrl: '/upload/token', jwt: 'upload-jwt'}});
-            await UploadService.getUploadRequest('photo.png', 204800);
-            expect(Http.post).toHaveBeenCalledWith('/api/uploads/request', {
-                filename: 'photo.png',
-                size: 204800,
-            });
-        });
-
-        it('returns the upload URL response', async () => {
-            Http.post.mockResolvedValue({data: {uploadUrl: '/upload/abc', jwt: 'tok'}});
-            const result = await UploadService.getUploadRequest('doc.pdf', 512000);
-            expect(result.data.uploadUrl).toBe('/upload/abc');
-            expect(result.data.jwt).toBe('tok');
-        });
-    });
-
     describe('uploadFile', () => {
-        it('calls POST /public/apx/upload with FormData and Bearer jwt', async () => {
+        it('calls POST /public/apx/upload with FormData and multipart Content-Type', async () => {
+            // Authorization is not set here — it's added automatically by the
+            // Http request interceptor (see Http.test.js), not by UploadService.
             const file = new File(['content'], 'test.png', {type: 'image/png'});
             Http.post.mockResolvedValue({data: {url: '/uploads/test.png'}});
-            await UploadService.uploadFile(file, 'my-jwt-token');
+            await UploadService.uploadFile(file);
             expect(Http.post).toHaveBeenCalledWith(
                 '/public/apx/upload',
                 expect.any(FormData),
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Authorization': 'Bearer my-jwt-token',
                     },
                 },
             );
@@ -57,7 +40,7 @@ describe('UploadService', () => {
                 capturedFormData = formData;
                 return Promise.resolve({data: {}});
             });
-            await UploadService.uploadFile(file, 'tok');
+            await UploadService.uploadFile(file);
             expect(capturedFormData.get('file')).toBe(file);
         });
     });

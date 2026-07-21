@@ -11,7 +11,7 @@ import {Button} from "../UI/Buttons/Button.jsx";
 import {Alert} from "../UI/Alert/Alert.jsx";
 import {useUpdateTestPlan} from "../../Hooks/queries/useTestPlansQuery.js";
 import {useQuestions, useQuestionStats} from "../../Hooks/queries/useQuestionsQuery.js";
-import {HEALTH_COLORS} from "../Health/HealthDisplay.jsx";
+import {HEALTH_COLORS} from "../Health/HealthColors.js";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

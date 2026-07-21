@@ -14,12 +14,16 @@ const CustomParamValueRange = ({
     const [enabled, setEnabled] = useState(value !== undefined);
     const [internalValue, setInternalValue] = useState(value ?? min);
 
+    // Intentionally excludes `onChange` — it's a prop the caller may pass as a
+    // new inline function on every render, and this effect must only fire when
+    // the actual value changes, not on every parent re-render.
     useEffect(() => {
         if (!enabled) {
             onChange(undefined);
         } else {
             onChange(internalValue);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [enabled, internalValue]);
 
     const handleCheckboxChange = (e) => {

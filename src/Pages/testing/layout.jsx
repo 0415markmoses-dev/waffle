@@ -14,7 +14,7 @@ export const Layout = () => {
         if (user?.id === null || user?.id === undefined) {
             navigate("/");
         }
-    }, [user]);
+    }, [user, navigate]);
 
     return (
         <div className="w-100 app-wrapper">

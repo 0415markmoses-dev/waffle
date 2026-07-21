@@ -1,9 +1,7 @@
 import {useState} from "react";
+import {IMAGE_EXTS, VIDEO_EXTS, formatBytes} from "./attachmentHelpers.js";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-export const IMAGE_EXTS = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
-export const VIDEO_EXTS = new Set(['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv']);
 
 const forceDownload = async (url, filename) => {
     try {
@@ -20,13 +18,6 @@ const forceDownload = async (url, filename) => {
     } catch {
         window.open(url, '_blank');
     }
-};
-
-export const formatBytes = (bytes) => {
-    if (!bytes) return '';
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
 // ── AttachmentItem ────────────────────────────────────────────────────────────

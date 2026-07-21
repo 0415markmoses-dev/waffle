@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {createPortal} from "react-dom";
 
 const formatBytes = (bytes) => {
@@ -39,12 +39,12 @@ const ImageLightbox = ({images, initialIndex = 0, onClose}) => {
     const count = images.length;
     const overlayRef = useRef(null);
 
-    const goTo = (nextIdx) => {
+    const goTo = useCallback((nextIdx) => {
         setIdx(nextIdx);
         setDimensions(null);
-    };
-    const prev = () => goTo((idx - 1 + count) % count);
-    const next = () => goTo((idx + 1) % count);
+    }, []);
+    const prev = useCallback(() => goTo((idx - 1 + count) % count), [goTo, idx, count]);
+    const next = useCallback(() => goTo((idx + 1) % count), [goTo, idx, count]);
 
     useEffect(() => {
         const handleKey = (e) => {
@@ -60,7 +60,7 @@ const ImageLightbox = ({images, initialIndex = 0, onClose}) => {
         };
         window.addEventListener('keydown', handleKey);
         return () => window.removeEventListener('keydown', handleKey);
-    }, [idx, count, onClose]);
+    }, [prev, next, onClose]);
 
     useEffect(() => {
         const prev = document.body.style.overflow;

@@ -37,16 +37,18 @@ export const DuplicateTestingPlan = ({sourceTestPlanId, onCancel}) => {
 
     const {data: sourcePlan} = useTestPlan(sourceTestPlanId);
     const {data: projectsData} = useProjects();
-    const projects = projectsData?.member ?? [];
 
     const {data: releases = []} = useReleases({project: selectedProject?.id});
     const {data: questions = []} = useQuestions({plan: `/api/test_plans/${sourceTestPlanId}`});
 
-    // Pre-fill plan name from source when it loads
+    // Pre-fill plan name from source when it loads. Intentionally excludes
+    // `planName` — including it would re-run whenever the user clears the
+    // field and stomp their edit back to the source name.
     useEffect(() => {
         if (sourcePlan?.name && !planName) {
             setPlanName(sourcePlan.name);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sourcePlan?.name]);
 
     const orderedQuestions = useMemo(() => {
@@ -70,8 +72,8 @@ export const DuplicateTestingPlan = ({sourceTestPlanId, onCancel}) => {
 
     // Sorted newest → oldest by id
     const sortedProjects = useMemo(() =>
-            [...projects].sort((a, b) => b.id - a.id),
-        [projects]
+            [...(projectsData?.member ?? [])].sort((a, b) => b.id - a.id),
+        [projectsData?.member]
     );
 
     const sortedReleases = useMemo(() =>

@@ -62,5 +62,11 @@ export default defineConfig({
         url: 'http://localhost/',
       },
     },
+      // Force a clean env for tests regardless of a developer's local .env.local
+      // (e.g. VITE_API_URL pointing at their own backend port). Vite never lets
+      // .env files override an already-set process.env value, so this wins.
+      env: {
+          VITE_API_URL: '',
+      },
   },
 })

@@ -17,13 +17,13 @@ export const Layout = () => {
         if (!currentProject?.id) {
             openSelectionModal();
         }
-    }, [currentProject?.id]);
+    }, [currentProject?.id, openSelectionModal]);
 
     useEffect(() => {
         if (isError) {
             clearCurrentProject();
         }
-    }, [isError]);
+    }, [isError, clearCurrentProject]);
 
     return <>
         <div className="w-100 app-wrapper">

@@ -24,7 +24,7 @@ const initials = (str = '') => {
     return parts.slice(0, 2).map(p => p[0]?.toUpperCase() ?? '').join('') || '?';
 };
 
-const AvatarCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
+const AvatarCellRenderer = ({data}) => {
     const avatarUrl = data?.profilePictureUrl;
     const label = data?.nickname ?? data?.email ?? '';
     const isDefault = !avatarUrl || avatarUrl === DEFAULT_AVATAR;
@@ -38,7 +38,7 @@ const AvatarCellRenderer = ({data}) => { // eslint-disable-line react/prop-types
     );
 };
 
-const ActionsCellRenderer = ({data, api}) => { // eslint-disable-line react/prop-types
+const ActionsCellRenderer = ({data, api}) => {
     const {t} = useTranslation();
     const deleteTester = useDeleteTester();
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -82,7 +82,7 @@ const ActionsCellRenderer = ({data, api}) => { // eslint-disable-line react/prop
     );
 };
 
-const ActiveToggleCellRenderer = ({value, data, api}) => { // eslint-disable-line react/prop-types
+const ActiveToggleCellRenderer = ({value, data, api}) => {
     const updateTester = useUpdateTester();
     const [active, setActive] = useState(!!value);
 

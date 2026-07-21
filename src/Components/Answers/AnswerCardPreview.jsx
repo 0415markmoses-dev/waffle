@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import {HEALTH_COLORS} from '../Health/HealthDisplay.jsx';
+import {HEALTH_COLORS} from '../Health/HealthColors.js';
 import {useTester} from '../../Hooks/queries/useTestersQuery.js';
 import {useFiles} from '../../Hooks/queries/useFilesQuery.js';
 import {TesterTagEditor} from '../Testers/TesterTagEditor.jsx';
