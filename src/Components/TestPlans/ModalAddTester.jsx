@@ -40,7 +40,7 @@ export const ModalAddTester = ({
     const [email, setEmail] = useState('');
     const [debouncedEmail, setDebounced] = useState('');
     const [selected, setSelected] = useState(null);
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const updateTestPlan = useUpdateTestPlan();
 
     // Debounce
@@ -60,7 +60,7 @@ export const ModalAddTester = ({
 
     const searchEnabled = debouncedEmail.length >= 2 && !selected;
     const {data: searchResults = [], isFetching} = useTesters(
-        searchEnabled ? {project: currentProject?.id, email: debouncedEmail} : {project: null}
+        searchEnabled ? {project: currentProjectId, email: debouncedEmail} : {project: null}
     );
 
     // Build autocomplete list for TextInput

@@ -2,7 +2,7 @@ import {PageTitle} from "../../../../Components/Navigation/PageTitle.jsx";
 import {Button} from "../../../../Components/UI/Buttons/Button.jsx";
 import {PageContentWrapper} from "../../../../Components/Navigation/PageContentWrapper.jsx";
 import {useNavigate, useParams} from "react-router";
-import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
+import {useGetCurrentProject} from "../../../../Hooks/Projects/useGetCurrentProject.js";
 import {PageElementWrapper} from "../../../../Components/Navigation/PageElementWrapper.jsx";
 import {Row} from "../../../../Components/UI/Grid/Row.jsx";
 import {Col} from "../../../../Components/UI/Grid/Col.jsx";
@@ -30,7 +30,7 @@ export const Page = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const params = useParams();
-    const {currentProject} = useProjectStore();
+    const {project: currentProject, projectId: currentProjectId} = useGetCurrentProject();
     const [editMode, setEditMode] = useState(false);
     const [currentTab, setCurrentTab] = useState(undefined);
 
@@ -38,7 +38,7 @@ export const Page = () => {
     const {data: releaseStats = {}} = useReleaseStats(params.rid);
 
     const projectMismatch = !isLoading && !isError && !!releaseData
-        && String(releaseData.project?.id) !== String(currentProject?.id);
+        && String(releaseData.project?.id) !== String(currentProjectId);
 
     const truncatedName = (releaseData?.name ?? '').length > 120
         ? releaseData.name.slice(0, 120) + '…'
@@ -48,7 +48,7 @@ export const Page = () => {
         {label: currentProject?.name ?? 'Project', path: '/app/'},
     ];
 
-    if (!currentProject?.id) {
+    if (!currentProjectId) {
         navigate('/app/');
         return null;
     }
@@ -66,7 +66,7 @@ export const Page = () => {
     return (
         <PageContentWrapper>
             <PageTitle
-                title={currentProject.name + " - Release " + (releaseData?.name ?? '')}
+                title={(currentProject?.name ?? '') + " - Release " + (releaseData?.name ?? '')}
                 breadcrumbParents={breadcrumbParents}
                 breadcrumbLabel={truncatedName}
             >

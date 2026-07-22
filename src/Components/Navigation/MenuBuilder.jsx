@@ -9,7 +9,7 @@ export const MenuBuilder = ({
                                 name = '',
                             }) => {
     const useCurrentPath_ = useCurrentPath();
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
 
     let data = {};
     switch (name) {
@@ -24,7 +24,7 @@ export const MenuBuilder = ({
     }
 
     const vars = {
-        currentProjectId: currentProject?.id
+        currentProjectId: currentProjectId
     }
 
     const checkActive = (element) => {

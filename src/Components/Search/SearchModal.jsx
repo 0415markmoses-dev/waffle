@@ -73,15 +73,15 @@ export const SearchModal = ({isOpen, onClose}) => {
     const navigate = useNavigate();
     const {user} = useAuthStore();
     const tester = isTester(user);
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const inputRef = useRef(null);
     const [query, setQuery] = useState('');
     const [focusedIdx, setFocusedIdx] = useState(0);
     const debouncedQuery = useDebounce(query, 300);
 
     const {data: results = [], isFetching} = useQuery({
-        queryKey: ['search', debouncedQuery, currentProject?.id],
-        queryFn: () => SearchService.search(debouncedQuery, [], currentProject?.id).then(r => r.data),
+        queryKey: ['search', debouncedQuery, currentProjectId],
+        queryFn: () => SearchService.search(debouncedQuery, [], currentProjectId).then(r => r.data),
         enabled: debouncedQuery.trim().length >= 2,
         staleTime: 30_000,
     });

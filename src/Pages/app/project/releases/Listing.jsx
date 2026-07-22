@@ -7,7 +7,7 @@ import {Col} from "../../../../Components/UI/Grid/Col.jsx";
 import {Card} from "../../../../Components/UI/Card/Card.jsx";
 import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
 import {ListReleases} from "../../../../Components/Releases/ListReleases.jsx";
-import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
+import {useGetCurrentProject} from "../../../../Hooks/Projects/useGetCurrentProject.js";
 import {useNavigate} from "react-router";
 import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 import {Trans, useTranslation} from "react-i18next";
@@ -15,13 +15,13 @@ import {Trans, useTranslation} from "react-i18next";
 export const Listing = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
-    const {currentProject} = useProjectStore();
+    const {project: currentProject, projectId: currentProjectId} = useGetCurrentProject();
 
     const handleNewReleaseClick = () => {
         navigate('/app/project/releases/create');
     }
 
-    if (currentProject?.id === undefined) {
+    if (currentProjectId === undefined || currentProjectId === null) {
         // Redirect to dashboard
         navigate('/app/');
         return null;
@@ -29,7 +29,7 @@ export const Listing = () => {
 
     return <>
         <PageContentWrapper>
-            <PageTitle title={currentProject.name + " - " + t('All Releases')}>
+            <PageTitle title={(currentProject?.name ?? '') + " - " + t('All Releases')}>
                 <Button icon="lni-plus" onClick={handleNewReleaseClick}
                         type="primary" size="sm">{t('New release')}</Button>
             </PageTitle>

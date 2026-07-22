@@ -16,7 +16,7 @@ import {useTestPlan} from '../../../../Hooks/queries/useTestPlansQuery.js';
 import {useRelease} from '../../../../Hooks/queries/useReleasesQuery.js';
 import {useTester} from '../../../../Hooks/queries/useTestersQuery.js';
 import {TesterTagEditor} from '../../../../Components/Testers/TesterTagEditor.jsx';
-import {useProjectStore} from '../../../../Store/PrivateData/ProjectsStore.js';
+import {useGetCurrentProject} from '../../../../Hooks/Projects/useGetCurrentProject.js';
 import {PageContentWrapper} from '../../../../Components/Navigation/PageContentWrapper.jsx';
 import {PageTitle} from '../../../../Components/Navigation/PageTitle.jsx';
 import {PageElementWrapper} from '../../../../Components/Navigation/PageElementWrapper.jsx';
@@ -182,7 +182,7 @@ export const Page = () => {
     const {t} = useTranslation();
     const {id} = useParams();
     const navigate = useNavigate();
-    const {currentProject} = useProjectStore();
+    const {project: currentProject, projectId: currentProjectId} = useGetCurrentProject();
 
     // Core answer
     const {data: answer, isLoading, isError} = useAnswer(id);
@@ -258,7 +258,7 @@ export const Page = () => {
     const prevAnswer = currentIdx > 0 ? siblings[currentIdx - 1] : null;
     const nextAnswer = currentIdx < siblings.length - 1 ? siblings[currentIdx + 1] : null;
 
-    if (!currentProject?.id) {
+    if (!currentProjectId) {
         navigate('/app/');
         return null;
     }

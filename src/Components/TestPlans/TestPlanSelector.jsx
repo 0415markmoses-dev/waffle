@@ -13,7 +13,7 @@ export const TestPlanSelector = ({
                                      value, onChange = () => {
     }
                                  }) => {
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const {t} = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [finalQuery] = useDebounce(searchQuery, 420);
@@ -27,7 +27,7 @@ export const TestPlanSelector = ({
         page: 1,
         size: 10,
         name: finalQuery,
-        'release.project': currentProject?.['@id'],
+        'release.project': currentProjectId ? `/api/projects/${currentProjectId}` : undefined,
     });
     const queryResults = finalQuery.length >= 3 ? (searchResults ?? []) : [];
 

@@ -27,7 +27,7 @@ import {MkEditorInstance} from "../../../../Components/UI/Form/Editor/MkEditorIn
 import {ReleaseDescription} from "../../../../Components/Releases/ReleaseDescription.jsx";
 import {HealthDisplay} from "../../../../Components/Health/HealthDisplay.jsx";
 import {HEALTH_COLORS} from "../../../../Components/Health/HealthColors.js";
-import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
+import {useGetCurrentProject} from "../../../../Hooks/Projects/useGetCurrentProject.js";
 import {HealthOverTimeLineChart} from "../../../../Components/Health/HealthOverTimeLineChart.jsx";
 import {AnswerCardPreview} from "../../../../Components/Answers/AnswerCardPreview.jsx";
 import {Pagination} from "../../../../Components/UI/Pagination/Pagination.jsx";
@@ -51,7 +51,7 @@ export const Page = () => {
     const {t} = useTranslation();
     const {qid} = useParams();
     const navigate = useNavigate();
-    const {currentProject} = useProjectStore();
+    const {project: currentProject, projectId: currentProjectId} = useGetCurrentProject();
 
     const {data: question, isError, isLoading} = useQuestion(qid);
     const {data: stats, isLoading: statsLoading} = useQuestionStats(qid);
@@ -131,7 +131,7 @@ export const Page = () => {
         return next;
     }, {replace: false});
 
-    if (!currentProject?.id) {
+    if (!currentProjectId) {
         navigate('/app/');
         return null;
     }

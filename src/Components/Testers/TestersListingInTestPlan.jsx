@@ -152,12 +152,12 @@ const ActionsCellRenderer = ({data, context}) => {
 
 export const TestersListingInTestPlan = ({testPlan}) => {
     const {t} = useTranslation();
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const gridRef = useRef();
     const updateTestPlan = useUpdateTestPlan();
 
     const {data: allTesters = [], isLoading} = useTesters({
-        project: currentProject?.id,
+        project: currentProjectId,
         'order[id]': 'desc',
     });
 

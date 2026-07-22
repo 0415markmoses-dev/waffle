@@ -23,8 +23,8 @@ import toast from "react-hot-toast";
 
 export const Page = () => {
     const {t} = useTranslation();
-    const {currentProject} = useProjectStore();
-    const {data: project, isLoading} = useProject(currentProject?.id);
+    const {currentProjectId} = useProjectStore();
+    const {data: project, isLoading} = useProject(currentProjectId);
     const updateProject = useUpdateProject();
 
     const [name, setName] = useState('');
