@@ -50,12 +50,12 @@ ActionsCellRenderer.propTypes = StateCellRenderer.propTypes = LinkCellRenderer.p
 
 export const ListTestPlans = ({release = undefined}) => {
     const {t} = useTranslation();
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const gridRef = useRef();
 
     const params = {
         'order[id]': 'desc',
-        ...(release?.id ? {release: '/api/releases/' + release.id} : {project: currentProject?.id}),
+        ...(release?.id ? {release: '/api/releases/' + release.id} : {project: currentProjectId}),
     };
 
     const {data: rowData = [], isLoading} = useTestPlans(params);

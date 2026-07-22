@@ -2,13 +2,17 @@ import {create} from 'zustand'
 import {persist} from 'zustand/middleware'
 import createSelector from "../../Utils/store.createSelector.js";
 
+// Stores only the selected project's id — never a snapshot of its fields
+// (name, description, etc). Any component that needs display data should
+// read it live via useProject(currentProjectId) / useGetCurrentProject(),
+// so it can never go stale after an edit elsewhere.
 export const useProjectStore = createSelector(create(persist((set) => ({
-    currentProject: null,
+    currentProjectId: null,
     selectionModalVisible: false,
     openSelectionModal: () => set({selectionModalVisible: true}),
     closeSelectionModal: () => set({selectionModalVisible: false}),
-    setCurrentProject: (projectData) => set({currentProject: projectData, selectionModalVisible: false}),
-    clearCurrentProject: () => set({currentProject: null, selectionModalVisible: true}),
+    setCurrentProjectId: (id) => set({currentProjectId: id, selectionModalVisible: false}),
+    clearCurrentProjectId: () => set({currentProjectId: null, selectionModalVisible: true}),
 }), {
     name: 'testgator-projects-storage',
     partialize: (state) =>

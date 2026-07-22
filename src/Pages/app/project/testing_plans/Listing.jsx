@@ -9,22 +9,22 @@ import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
 import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 import {ListTestPlans} from "../../../../Components/TestPlans/ListTestPlans.jsx";
 import {CreateTestPlanButton} from "../../../../Components/TestPlans/ModalCreateTestPlan.jsx";
-import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
+import {useGetCurrentProject} from "../../../../Hooks/Projects/useGetCurrentProject.js";
 import {useNavigate} from "react-router";
 
 export const Listing = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
-    const {currentProject} = useProjectStore();
+    const {project: currentProject, projectId: currentProjectId} = useGetCurrentProject();
 
-    if (currentProject?.id === undefined) {
+    if (currentProjectId === undefined || currentProjectId === null) {
         navigate('/app/');
         return null;
     }
 
     return (
         <PageContentWrapper>
-            <PageTitle title={currentProject.name + " - " + t('All Testing Plans')}>
+            <PageTitle title={(currentProject?.name ?? '') + " - " + t('All Testing Plans')}>
                 <CreateTestPlanButton/>
             </PageTitle>
             <PageElementWrapper>

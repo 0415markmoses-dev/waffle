@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
+import {useGetCurrentProject} from "../../Hooks/Projects/useGetCurrentProject.js";
 import {useAuthStore, isTester} from "../../Store/auth.js";
 import {DropdownMenu} from "radix-ui";
 import {SearchModal} from "../Search/SearchModal.jsx";
@@ -8,7 +9,8 @@ import {useAdminModalStore} from "../../Store/UI/adminModalStore.js";
 
 export const TopBar = () => {
     const {t} = useTranslation();
-    const {currentProject, openSelectionModal} = useProjectStore();
+    const {openSelectionModal} = useProjectStore();
+    const {project: currentProject} = useGetCurrentProject();
     const {user} = useAuthStore();
     const tester = isTester(user);
     const [searchOpen, setSearchOpen] = useState(false);

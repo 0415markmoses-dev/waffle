@@ -232,7 +232,7 @@ const ActivityFeed = ({testerIri, projectId}) => {
 
 const PlanEnrollSearch = ({testerIri}) => {
     const {t} = useTranslation();
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [focusedIdx, setFocusedIdx] = useState(0);
@@ -248,13 +248,13 @@ const PlanEnrollSearch = ({testerIri}) => {
         }
     }, [open]);
 
-    const searchEnabled = debouncedQuery.trim().length >= 2 && !!currentProject?.id;
+    const searchEnabled = debouncedQuery.trim().length >= 2 && !!currentProjectId;
 
     const {data: results = [], isFetching} = useQuery({
-        queryKey: ['plan-enroll-search', currentProject?.id, debouncedQuery],
+        queryKey: ['plan-enroll-search', currentProjectId, debouncedQuery],
         queryFn: () =>
             TestPlansService.getTestPlans({
-                project: currentProject.id,
+                project: currentProjectId,
                 name: debouncedQuery,
                 itemsPerPage: 5,
             }).then(r => (r.data['member'] ?? []).slice(0, 5)),
@@ -467,7 +467,7 @@ export const TesterProfile = () => {
     const {t} = useTranslation();
     const {testerId} = useParams();
     const navigate = useNavigate();
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
 
     const {data: tester, isLoading, isError} = useTester(testerId);
     const deleteTester = useDeleteTester();
@@ -475,7 +475,7 @@ export const TesterProfile = () => {
 
     const testerIri = tester?.['@id'] ?? (testerId ? `/api/testers/${testerId}` : null);
 
-    if (!currentProject?.id) {
+    if (!currentProjectId) {
         navigate('/app/');
         return null;
     }
@@ -592,7 +592,7 @@ export const TesterProfile = () => {
                                         <CardBody>
                                             <ActivityFeed
                                                 testerIri={testerIri}
-                                                projectId={currentProject.id}
+                                                projectId={currentProjectId}
                                             />
                                         </CardBody>
                                     </Card>

@@ -21,7 +21,7 @@ export const EditTestPlanForm = ({
                                      },
                                  }) => {
     const {t} = useTranslation();
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const [entityName, setEntityName] = useState(testPlan.name ?? '');
     const [entityDeadline, setEntityDeadline] = useState(testPlan.dueDate ?? '');
     const [entityDescription, setEntityDescription] = useState(testPlan.description ?? '');
@@ -46,7 +46,7 @@ export const EditTestPlanForm = ({
                 {onSuccess: (data) => onUpdate(data)}
             );
         } else {
-            if (!currentProject) {
+            if (!currentProjectId) {
                 console.error("No current project selected");
                 return;
             }

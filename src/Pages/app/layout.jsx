@@ -8,22 +8,22 @@ import {useProjectStore} from "../../Store/PrivateData/ProjectsStore.js";
 import {useProject} from "../../Hooks/queries/useProjectsQuery.js";
 
 export const Layout = () => {
-    const {currentProject, openSelectionModal, clearCurrentProject} = useProjectStore();
+    const {currentProjectId, openSelectionModal, clearCurrentProjectId} = useProjectStore();
 
     // Keep project data fresh; if it 404s or errors, reset and show selector
-    const {isError} = useProject(currentProject?.id);
+    const {isError} = useProject(currentProjectId);
 
     useEffect(() => {
-        if (!currentProject?.id) {
+        if (!currentProjectId) {
             openSelectionModal();
         }
-    }, [currentProject?.id, openSelectionModal]);
+    }, [currentProjectId, openSelectionModal]);
 
     useEffect(() => {
         if (isError) {
-            clearCurrentProject();
+            clearCurrentProjectId();
         }
-    }, [isError, clearCurrentProject]);
+    }, [isError, clearCurrentProjectId]);
 
     return <>
         <div className="w-100 app-wrapper">

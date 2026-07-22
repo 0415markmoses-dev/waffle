@@ -2,7 +2,7 @@ import {PageTitle} from "../../../../Components/Navigation/PageTitle.jsx";
 import {Button} from "../../../../Components/UI/Buttons/Button.jsx";
 import {PageContentWrapper} from "../../../../Components/Navigation/PageContentWrapper.jsx";
 import {useNavigate, useParams} from "react-router";
-import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
+import {useGetCurrentProject} from "../../../../Hooks/Projects/useGetCurrentProject.js";
 import {PageElementWrapper} from "../../../../Components/Navigation/PageElementWrapper.jsx";
 import {Row} from "../../../../Components/UI/Grid/Row.jsx";
 import {Col} from "../../../../Components/UI/Grid/Col.jsx";
@@ -48,7 +48,7 @@ export const Page = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const params = useParams();
-    const {currentProject} = useProjectStore();
+    const {project: currentProject, projectId: currentProjectId} = useGetCurrentProject();
     const [editMode, setEditMode] = useState(false);
     const [currentTab, setCurrentTab] = useState(undefined);
     const [modalState, setModalState] = useState(false);
@@ -72,7 +72,7 @@ export const Page = () => {
         ? releaseProjectIri.split('/').pop()
         : releaseProjectIri?.id;
     const projectMismatch = !isLoading && !isError && !!testPlanData
-        && String(releaseProjectId) !== String(currentProject?.id);
+        && String(releaseProjectId) !== String(currentProjectId);
     const {
         isLoading: healthLoading,
         pass,
@@ -98,7 +98,7 @@ export const Page = () => {
         ...(parentRelease ? [{label: parentRelease.name, path: '/app/project/releases/' + parentRelease.id}] : []),
     ];
 
-    if (!currentProject?.id) {
+    if (!currentProjectId) {
         navigate('/app/');
         return null;
     }
@@ -121,7 +121,7 @@ export const Page = () => {
         <>
             <PageContentWrapper>
                 <PageTitle
-                    title={currentProject.name + " - " + t('Testing plan') + " " + (testPlanData?.name ?? '')}
+                    title={(currentProject?.name ?? '') + " - " + t('Testing plan') + " " + (testPlanData?.name ?? '')}
                     breadcrumbParents={breadcrumbParents}
                     breadcrumbLabel={truncatedName}
                 >

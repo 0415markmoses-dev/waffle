@@ -6,7 +6,7 @@ import {Row} from "../../../../Components/UI/Grid/Row.jsx";
 import {Col} from "../../../../Components/UI/Grid/Col.jsx";
 import {Card} from "../../../../Components/UI/Card/Card.jsx";
 import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
-import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
+import {useGetCurrentProject} from "../../../../Hooks/Projects/useGetCurrentProject.js";
 import {useNavigate} from "react-router";
 import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 import {Trans, useTranslation} from "react-i18next";
@@ -17,7 +17,7 @@ import {useState} from "react";
 export const Page = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
-    const {currentProject} = useProjectStore();
+    const {project: currentProject, projectId: currentProjectId} = useGetCurrentProject();
     const [modalVisible, setModalVisible] = useState(false);
 
     const handleNewReleaseClick = () => {
@@ -25,7 +25,7 @@ export const Page = () => {
         setModalVisible(true);
     }
 
-    if (currentProject?.id === undefined) {
+    if (currentProjectId === undefined || currentProjectId === null) {
         // Redirect to dashboard
         navigate('/app/');
         return null;
@@ -33,7 +33,7 @@ export const Page = () => {
 
     return <>
         <PageContentWrapper>
-            <PageTitle title={currentProject.name + " - " + t('All Testers')}>
+            <PageTitle title={(currentProject?.name ?? '') + " - " + t('All Testers')}>
                 <Button icon="lni-plus" onClick={handleNewReleaseClick}
                         type="primary" size="sm">{t('Create tester')}</Button>
             </PageTitle>

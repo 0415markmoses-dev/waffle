@@ -16,7 +16,7 @@ export const EditReleaseForm = ({
                                     onCancel = () => {
                                     },
                                 }) => {
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const [releaseName, setReleaseName] = useState(release.name ?? '');
     const [releaseDescription, setReleaseDescription] = useState(release.description ?? '');
 
@@ -33,7 +33,7 @@ export const EditReleaseForm = ({
             );
         } else {
             createRelease.mutate(
-                {name: releaseName, description: releaseDescription, project: currentProject['@id']},
+                {name: releaseName, description: releaseDescription, project: `/api/projects/${currentProjectId}`},
                 {onSuccess: (data) => onUpdate(data)}
             );
         }

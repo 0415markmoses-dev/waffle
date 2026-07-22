@@ -23,11 +23,11 @@ LinkCellRenderer.propTypes = {
 };
 
 export const ListReleases = () => {
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const gridRef = useRef();
 
     const {data: rowData = [], isLoading} = useReleases({
-        project: currentProject?.id,
+        project: currentProjectId,
         'order[id]': 'desc',
     });
 

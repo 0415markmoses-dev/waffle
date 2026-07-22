@@ -8,7 +8,7 @@ import {Col} from "../../../../Components/UI/Grid/Col.jsx";
 import {Card} from "../../../../Components/UI/Card/Card.jsx";
 import {CardBody} from "../../../../Components/UI/Card/CardBody.jsx";
 import {useState} from "react";
-import {useProjectStore} from "../../../../Store/PrivateData/ProjectsStore.js";
+import {useGetCurrentProject} from "../../../../Hooks/Projects/useGetCurrentProject.js";
 import {EditReleaseForm} from "../../../../Components/Releases/EditReleaseForm.jsx";
 import {CardHeader} from "../../../../Components/UI/Card/CardHeader.jsx";
 import {useNavigate} from "react-router";
@@ -16,7 +16,7 @@ import {useNavigate} from "react-router";
 export const Create = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
-    const {currentProject} = useProjectStore();
+    const {project: currentProject} = useGetCurrentProject();
     const [newRelease] = useState({
         name: '',
         description: '',

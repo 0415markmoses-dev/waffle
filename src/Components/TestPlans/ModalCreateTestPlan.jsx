@@ -41,7 +41,7 @@ export const ModalCreateTestPlan = ({
                                         },
                                     }) => {
     const navigate = useNavigate();
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const [name, setName] = useState('');
     const [selectedReleaseId, setSelectedReleaseId] = useState('');
     const [dueDate, setDueDate] = useState('');
@@ -49,7 +49,7 @@ export const ModalCreateTestPlan = ({
 
     // Only fetch releases when no release is pre-set
     const {data: releases = [], isLoading: releasesLoading} = useReleases(
-        release ? {} : {project: currentProject?.id}
+        release ? {} : {project: currentProjectId}
     );
 
     const activeRelease = release ?? releases.find(r => String(r.id) === String(selectedReleaseId));

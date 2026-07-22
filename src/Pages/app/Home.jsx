@@ -274,18 +274,20 @@ const LatestPlanRow = ({testPlan}) => {
 
 export const Home = () => {
     const {t} = useTranslation();
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
 
-    const {data: projectDetail} = useProject(currentProject?.id);
+    // Always the live record for the selected project — never a stale
+    // snapshot, so renames/edits made elsewhere show up immediately.
+    const {data: projectDetail} = useProject(currentProjectId);
 
     const {data: testPlans = [], isLoading: loadingTestPlans} = useTestPlansPage({
         'order[created]': 'desc',
-        'release.project': currentProject?.id,
+        'release.project': currentProjectId,
         itemsPerPage: 5,
         page: 1,
     });
 
-    const {data: projectStats} = useProjectStats(currentProject?.id);
+    const {data: projectStats} = useProjectStats(currentProjectId);
 
     return (
         <PageContentWrapper>
@@ -319,12 +321,12 @@ export const Home = () => {
                                 <Card>
                                     <CardHeader title={t('About')}/>
                                     <CardBody>
-                                        {currentProject && (
+                                        {projectDetail && (
                                             <div className="w-100 d-flex flex-column gap-lg">
                                                 <div className="d-flex justify-content-center align-items-center">
                                                     <div className="project-picture-wrapper size-lg">
                                                         <img
-                                                            src={projectDetail?.projectPictureUrl ?? currentProject.projectPictureUrl ?? '/assets/gator_avatar.png'}
+                                                            src={projectDetail?.projectPictureUrl ?? '/assets/gator_avatar.png'}
                                                             alt=""/>
                                                     </div>
                                                 </div>
@@ -347,7 +349,7 @@ export const Home = () => {
                                 </Card>
                             </Col>
                             <Col size={12}>
-                                <RecentActivityCard projectId={currentProject?.id}/>
+                                <RecentActivityCard projectId={currentProjectId}/>
                             </Col>
                         </Row>
                     </Col>
@@ -369,11 +371,11 @@ export const Home = () => {
                             </Col>
                             <Col size={12}>
                                 <Card>
-                                    <CardHeader title={currentProject?.name ?? t('About')}/>
+                                    <CardHeader title={projectDetail?.name ?? t('About')}/>
                                     <CardBody>
                                         <div className="markdown-renderer">
                                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                {currentProject?.description ?? ''}
+                                                {projectDetail?.description ?? ''}
                                             </ReactMarkdown>
                                         </div>
                                     </CardBody>

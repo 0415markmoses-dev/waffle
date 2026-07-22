@@ -32,13 +32,13 @@ export const ModalSelectProject = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const {
-        currentProject,
+        currentProjectId,
         selectionModalVisible,
-        setCurrentProject,
+        setCurrentProjectId,
         openSelectionModal,
         closeSelectionModal,
     } = useProjectStore();
-    const [targetProject, setTargetProject] = useState(currentProject);
+    const [targetProjectId, setTargetProjectId] = useState(currentProjectId);
     const [createModalOpen, setCreateModalOpen] = useState(false);
 
     const {data, isLoading} = useProjects({limit: 100, page: 1});
@@ -46,8 +46,8 @@ export const ModalSelectProject = () => {
 
     const handleSelectButton = (e) => {
         e?.preventDefault();
-        if (targetProject) {
-            setCurrentProject(targetProject);
+        if (targetProjectId) {
+            setCurrentProjectId(targetProjectId);
             navigate('/app/');
         }
     };
@@ -64,7 +64,7 @@ export const ModalSelectProject = () => {
 
     const handleProjectCreated = (project) => {
         setCreateModalOpen(false);
-        setCurrentProject(project);
+        setCurrentProjectId(project.id);
         navigate('/app/project-settings');
     };
 
@@ -91,11 +91,11 @@ export const ModalSelectProject = () => {
                             {projects.map(project => (
                                 <ProjectDisplayCard
                                     key={project.id}
-                                    active={targetProject?.id === project.id}
+                                    active={targetProjectId === project.id}
                                     interractive
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        setTargetProject(project);
+                                        setTargetProjectId(project.id);
                                     }}
                                     project={project}
                                 />
@@ -105,7 +105,7 @@ export const ModalSelectProject = () => {
                 </ModalBody>
                 <ModalFooter>
                     <Button
-                        disabled={!targetProject}
+                        disabled={!targetProjectId}
                         onClick={handleSelectButton}
                         icon="lni-check"
                         type="primary"

@@ -113,11 +113,11 @@ const ActiveToggleCellRenderer = ({value, data, api}) => {
 };
 
 export const ListTesters = ({testPlan = undefined}) => {
-    const {currentProject} = useProjectStore();
+    const {currentProjectId} = useProjectStore();
     const gridRef = useRef();
 
     const params = {
-        project: currentProject?.id,
+        project: currentProjectId,
         'order[id]': 'desc',
     };
 
