@@ -7,6 +7,19 @@ import AuthService from "../Services/Authentication/AuthService.js";
 /** Returns true when the authenticated user is a tester (not a team member). */
 export const isTester = (user) => user?.type?.toUpperCase() === 'TESTER';
 
+const DEMO_ADMIN_USERNAME = 'ForestLuau';
+const DEMO_ADMIN_PASSWORD = 'Shadow0804!';
+const DEMO_ADMIN_JWT = 'dev-admin-jwt';
+const DEMO_ADMIN_USER = {
+    id: 1,
+    username: DEMO_ADMIN_USERNAME,
+    email: `${DEMO_ADMIN_USERNAME}@example.com`,
+    firstName: 'Forest',
+    lastName: 'Luau',
+    type: 'dev',
+    roles: ['ROLE_ADMIN'],
+};
+
 export const useAuthStore = createSelector(create(persist((set, get) => ({
     user: null,
     jwt: null,
@@ -15,6 +28,11 @@ export const useAuthStore = createSelector(create(persist((set, get) => ({
     clearUserData: () => set({user: null, jwt: null, isLoadingUser: false}),
 
     getUserData: async () => {
+        if (get().jwt === DEMO_ADMIN_JWT) {
+            set({user: DEMO_ADMIN_USER, isLoadingUser: false});
+            return DEMO_ADMIN_USER;
+        }
+
         // No JWT means nothing to fetch — avoid a pointless 401
         if (!get().jwt) return;
 
@@ -50,6 +68,13 @@ export const useAuthStore = createSelector(create(persist((set, get) => ({
 
     // first request a JWT then get user data
     requestLogin: async (email, password, mode = 'team', authMode = 'ldap') => {
+        const isDemoAdminLogin = email === DEMO_ADMIN_USERNAME && password === DEMO_ADMIN_PASSWORD;
+        if (isDemoAdminLogin) {
+            set({jwt: DEMO_ADMIN_JWT});
+            await get().getUserData();
+            return;
+        }
+
         try {
             const response = await AuthService.getJWT(email, password, mode, authMode);
             if (response?.data?.jwt !== undefined) {

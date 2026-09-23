@@ -4,7 +4,7 @@ const fr = {
         "Use your AD login name without the @domain.tld": "Votre nom de connexion AD <i>sans le @domain.tld</i>",
         'Username': 'Nom d\'utilisateur',
         'Email': 'Email',
-        'Use the email you received your invitation to': 'Utilisez l\'email sur lequel vous avez reçu l\'invitation',
+        'Use the email you received your invitation to': 'Utilisez l\'adresse e-mail que vous fournissez',
         'Password': 'Mot de passe',
         'Login': 'Connexion',
         'Request Code': 'Demander un code',

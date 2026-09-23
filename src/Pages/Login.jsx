@@ -70,25 +70,26 @@ export const Login = () => {
     const tryLogin = async (e) => {
         e.preventDefault();
 
-        if (e.target[0].value === '' || e.target[0].value === undefined) {
-            setError('Email is required');
+        const usernameValue = e.target[0]?.value?.trim();
+        if (!usernameValue) {
+            setError(mode === 'team' ? 'Username is required' : 'Email is required');
             return;
         }
 
         setLoading(true);
 
-        let email = e.target[0].value;
+        let email = usernameValue;
         if (mode === 'tester' && hasCode) {
             email = username;
         }
-        let password = e.target[1].value;
+        let password = e.target[1]?.value ?? '';
         if (mode === 'tester' && hasCode) {
             password = code;
         }
 
         try {
             if (mode === 'team') {
-                await requestLogin(email, password, 'team', serverAuthMode?.mode ?? 'ldap');
+                await requestLogin(email, password, 'team', serverAuthMode?.mode ?? 'db');
             } else if (mode === 'tester') {
                 console.log('tester request login');
                 await requestLogin(email, password, 'tester', 'app');
@@ -104,12 +105,13 @@ export const Login = () => {
         e.preventDefault();
         setHasCode(false);
 
-        if (e.target[0].value === '' || e.target[0].value === undefined) {
+        const usernameValue = e.target[0]?.value?.trim();
+        if (!usernameValue) {
             setError('Email is required');
             return;
         }
 
-        await sendCode(e.target[0].value);
+        await sendCode(usernameValue);
     }
 
     const handleSendForm = (e) => {
@@ -216,27 +218,23 @@ export const Login = () => {
                                         {!hasCode && (
                                             <div className="form-group mb-2">
                                                 <label htmlFor="loginLogin">
-                                                    {mode === 'team'
-                                                        ? (isDbMode ? t('Email') : t('Username'))
-                                                        : t('Email')}
+                                                    {mode === 'team' ? t('Username') : t('Email')}
                                                 </label>
                                                 <input
-                                                    type={mode === 'team' && isDbMode ? 'email' : 'text'}
+                                                    type="text"
                                                     className="form-control"
                                                     id="loginLogin"
                                                     disabled={loading}
                                                     aria-describedby="loginHelp"
                                                     placeholder={
                                                         mode === 'team'
-                                                            ? (isDbMode ? 'john.doe@domain.tld' : 'john.doe')
+                                                            ? 'ForestLuau'
                                                             : 'john.doe@domain.tld'
                                                     }
                                                 />
-                                                {mode === 'team' && !isDbMode && (
+                                                {mode === 'team' && (
                                                     <small id="loginHelp" className="form-text text-muted">
-                                                        <Trans i18nKey="Use your AD login name without the @domain.tld">
-                                                            Use your AD login name <i>without the @domain.tld</i>
-                                                        </Trans>
+                                                        {t('Use your username and password to sign in.')}
                                                     </small>
                                                 )}
                                                 {mode !== 'team' && (

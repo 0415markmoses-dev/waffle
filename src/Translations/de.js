@@ -4,7 +4,7 @@ const de = {
         "Use your AD login name without the @domain.tld": "Verwenden Sie Ihren AD-Benutzernamen <i>ohne @domain.tld</i>",
         'Username': 'Benutzername',
         'Email': 'E-Mail',
-        'Use the email you received your invitation to': 'Verwenden Sie die E-Mail-Adresse, an die Sie die Einladung erhalten haben',
+        'Use the email you received your invitation to': 'Verwenden Sie die E-Mail-Adresse, die Sie angeben',
         'Password': 'Passwort',
         'Login': 'Anmelden',
         'Request Code': 'Code anfordern',
