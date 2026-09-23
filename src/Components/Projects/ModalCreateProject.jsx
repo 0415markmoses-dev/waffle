@@ -53,7 +53,13 @@ export const ModalCreateProject = ({
                     toast.success(t('Project created successfully.'));
                     onCreated(data);
                 },
-                onError: () => toast.error(t('Failed to create project.')),
+                onError: (err) => {
+                    const detail = err?.response?.data?.detail
+                        ?? err?.response?.data?.['hydra:description']
+                        ?? err?.response?.data?.message
+                        ?? t('Failed to create project.');
+                    toast.error(detail);
+                },
             }
         );
     };

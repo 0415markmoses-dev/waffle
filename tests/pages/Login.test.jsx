@@ -1,19 +1,16 @@
 import '@testing-library/jest-dom/vitest';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import {MemoryRouter} from 'react-router';
 import {Login} from '../../src/Pages/Login.jsx';
 
 const mockRequestLogin = vi.fn();
-const mockGenerateCode = vi.fn();
 
 vi.mock('../../src/Store/auth.js', () => ({
     useAuthStore: () => ({
         user: null,
         isLoadingUser: false,
         requestLogin: mockRequestLogin,
-        generateCode: mockGenerateCode,
     }),
-    isTester: (user) => user?.type?.toUpperCase() === 'TESTER',
 }));
 
 vi.mock('../../src/Services/Authentication/AuthService.js', () => ({
@@ -25,10 +22,9 @@ vi.mock('../../src/Services/Authentication/AuthService.js', () => ({
 describe('Login', () => {
     beforeEach(() => {
         mockRequestLogin.mockReset();
-        mockGenerateCode.mockReset();
     });
 
-    it('asks for a username and password instead of an email for team login', async () => {
+    it('shows the username/password sign-in form without a tester option or helper text', async () => {
         render(
             <MemoryRouter>
                 <Login />
@@ -36,16 +32,11 @@ describe('Login', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByRole('button', {name: /Login as Team Member/i})).toBeInTheDocument();
-        });
-
-        fireEvent.click(screen.getByRole('button', {name: /Login as Team Member/i}));
-
-        await waitFor(() => {
             expect(screen.getByLabelText('Username')).toBeInTheDocument();
+            expect(screen.getByLabelText('Password')).toBeInTheDocument();
         });
 
-        expect(screen.getByLabelText('Password')).toBeInTheDocument();
-        expect(screen.queryByText('Email')).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /Login as Tester/i})).not.toBeInTheDocument();
+        expect(screen.queryByText(/username and password to sign in/i)).not.toBeInTheDocument();
     });
 });

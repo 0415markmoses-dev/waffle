@@ -1,47 +1,22 @@
-import {useAuthStore, isTester} from "../Store/auth.js";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useAuthStore} from "../Store/auth.js";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {Button} from "../Components/UI/Buttons/Button.jsx";
-import {AuthCodeInput} from "../Components/UI/Form/Inputs/AuthCodeInput.jsx";
-import {Trans, useTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {Row} from "../Components/UI/Grid/Row.jsx";
 import {Col} from "../Components/UI/Grid/Col.jsx";
-import {Separator} from "../Components/UI/Separator/Separator.jsx";
-import {Alert} from "../Components/UI/Alert/Alert.jsx";
 import AuthService from "../Services/Authentication/AuthService.js";
 
 
 export const Login = () => {
     const {t} = useTranslation();
-    let navigate = useNavigate();
-    const {user, isLoadingUser, requestLogin, generateCode} = useAuthStore();
-    const autoCodeSent = useRef(false);
+    const navigate = useNavigate();
+    const {user, isLoadingUser, requestLogin} = useAuthStore();
     const [error, setError] = useState(undefined);
     const [loading, setLoading] = useState(false);
-    const [mode, setMode] = useState('none'); // none(default), team or tester
-    const [hasCode, setHasCode] = useState(false);
-    const [code, setCode] = useState('');
-    const [username, setUsername] = useState('');
-    const [serverAuthMode, setServerAuthMode] = useState(null); // { mode: 'db'|'ldap', usernameIsEmail: bool }
+    const [serverAuthMode, setServerAuthMode] = useState(null);
     const [fetchingAuthMode, setFetchingAuthMode] = useState(true);
 
-    console.log('code', code)
-
-    const sendCode = useCallback(async (email) => {
-        setLoading(true);
-        setError(undefined);
-        setUsername(email);
-        try {
-            await generateCode(email);
-            setHasCode(true);
-        } catch (error) {
-            console.error(error);
-            setError('An error occurred');
-        }
-        setLoading(false);
-    }, [generateCode]);
-
-    // Fetch auth mode on mount
     useEffect(() => {
         AuthService.getAuthMode()
             .then(r => setServerAuthMode(r.data))
@@ -50,20 +25,8 @@ export const Login = () => {
     }, []);
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('mode') === 'tester') {
-            setMode('tester');
-            const emailParam = urlParams.get('email');
-            if (emailParam && !autoCodeSent.current) {
-                autoCodeSent.current = true;
-                sendCode(emailParam);
-            }
-        }
-    }, [sendCode])
-
-    useEffect(() => {
         if (user !== null && !isLoadingUser) {
-            navigate(isTester(user) ? "/testing/" : "/app/");
+            navigate('/app/');
         }
     }, [user, isLoadingUser, navigate]);
 
@@ -71,60 +34,31 @@ export const Login = () => {
         e.preventDefault();
 
         const usernameValue = e.target[0]?.value?.trim();
+        const passwordValue = e.target[1]?.value ?? '';
+
         if (!usernameValue) {
-            setError(mode === 'team' ? 'Username is required' : 'Email is required');
+            setError('Username is required');
+            return;
+        }
+
+        if (!passwordValue) {
+            setError('Password is required');
             return;
         }
 
         setLoading(true);
 
-        let email = usernameValue;
-        if (mode === 'tester' && hasCode) {
-            email = username;
-        }
-        let password = e.target[1]?.value ?? '';
-        if (mode === 'tester' && hasCode) {
-            password = code;
-        }
-
         try {
-            if (mode === 'team') {
-                await requestLogin(email, password, 'team', serverAuthMode?.mode ?? 'db');
-            } else if (mode === 'tester') {
-                console.log('tester request login');
-                await requestLogin(email, password, 'tester', 'app');
-            }
+            await requestLogin(usernameValue, passwordValue, 'team', serverAuthMode?.mode ?? 'db');
         } catch (error) {
-            console.error(error)
+            console.error(error);
             setError('An error occurred');
         }
         setLoading(false);
     }
 
-    const requestCode = async (e) => {
-        e.preventDefault();
-        setHasCode(false);
-
-        const usernameValue = e.target[0]?.value?.trim();
-        if (!usernameValue) {
-            setError('Email is required');
-            return;
-        }
-
-        await sendCode(usernameValue);
-    }
-
     const handleSendForm = (e) => {
-        if (mode === 'team') {
-            tryLogin(e);
-        } else {
-            if (hasCode) {
-                // do something with the code
-                tryLogin(e);
-            } else {
-                requestCode(e);
-            }
-        }
+        tryLogin(e);
     }
 
     if (isLoadingUser || fetchingAuthMode) {
@@ -140,8 +74,6 @@ export const Login = () => {
             </div>
         );
     }
-
-    const isDbMode = serverAuthMode?.mode === 'db';
 
     return <>
         <div className="w-100 login-container position-relative">
@@ -169,123 +101,38 @@ export const Login = () => {
                                     {t('Login to TestGator')}
                                 </h1>
                             </div>
-                            {mode === 'none' && (
-                                <>
-                                    <div
-                                        className="d-flex justify-content-center align-items-center flex-column gap-lg">
-                                        <Button type="primary"
-                                                icon="lni-bug-1"
-                                                onClick={() => setMode('tester')}>
-                                            {t('Login as Tester')}
-                                        </Button>
-                                        <Separator text={t('OR')}/>
-                                        <Button type="light"
-                                                icon="lni-user-multiple-4"
-                                                onClick={() => setMode('team')}>
-                                            {t('Login as Team Member')}
-                                        </Button>
-                                    </div>
-                                </>
-                            )}
-                            {mode !== 'none' && (
-                                <>
-                                    <form onSubmit={(e) => handleSendForm(e)}>
-                                        <div className="w-100 mb-2">
-                                            {error !== undefined && (
-                                                <div className="alert alert-danger">
-                                                    {error}
-                                                </div>
-                                            )}
+                            <form onSubmit={(e) => handleSendForm(e)}>
+                                <div className="w-100 mb-2">
+                                    {error !== undefined && (
+                                        <div className="alert alert-danger">
+                                            {error}
                                         </div>
-                                        {mode === 'tester' && hasCode && (
-                                            <>
-                                                <Alert type='info'>
-                                                    {t('A code has been sent to your email.')}
-                                                </Alert>
-                                                <div className="form-group mt-3 mb-2">
-                                                    <label className="mb-2">
-                                                        {t('One time code')}
-                                                    </label>
-                                                    <AuthCodeInput codeLength={6}
-                                                                   onChange={(code) => {
-                                                                       console.log('me-code', code)
-                                                                       setCode(code)
-                                                                   }}/>
-                                                </div>
-
-                                            </>
-                                        )}
-                                        {!hasCode && (
-                                            <div className="form-group mb-2">
-                                                <label htmlFor="loginLogin">
-                                                    {mode === 'team' ? t('Username') : t('Email')}
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    id="loginLogin"
-                                                    disabled={loading}
-                                                    aria-describedby="loginHelp"
-                                                    placeholder={
-                                                        mode === 'team'
-                                                            ? 'ForestLuau'
-                                                            : 'john.doe@domain.tld'
-                                                    }
-                                                />
-                                                {mode === 'team' && (
-                                                    <small id="loginHelp" className="form-text text-muted">
-                                                        {t('Use your username and password to sign in.')}
-                                                    </small>
-                                                )}
-                                                {mode !== 'team' && (
-                                                    <small id="loginHelp" className="form-text text-muted">
-                                                        {t('Use the email you received your invitation to')}
-                                                    </small>
-                                                )}
-                                            </div>
-                                        )}
-                                        {mode === 'team' && (
-                                            <div className="form-group mb-2">
-                                                <label htmlFor="passwordLogin">{t('Password')}</label>
-                                                <input type="password" className="form-control" id="passwordLogin"
-                                                       disabled={loading} placeholder="**********"/>
-                                            </div>
-                                        )}
-                                        <div className="form-group mt-4">
-                                            {mode === 'team' && (
-                                                <Button type="primary"
-                                                        loading={loading}
-                                                        fullWidth isSubmit
-                                                        size="md">
-                                                    {t('Login')}
-                                                </Button>
-                                            )}
-                                            {mode !== 'team' && !hasCode && (
-                                                <Button type="primary"
-                                                        loading={loading}
-                                                        fullWidth isSubmit
-                                                        size="md">
-                                                    {t('Request Code')}
-                                                </Button>
-                                            )}
-                                            {mode !== 'team' && hasCode && (
-                                                <Button type="primary"
-                                                        loading={loading}
-                                                        fullWidth isSubmit
-                                                        size="md">
-                                                    {t('Login')}
-                                                </Button>
-                                            )}
-                                        </div>
-
-                                    </form>
-                                    <Separator className="mt-4 mb-4"/>
-                                    <Button type="light" fullWidth size="sm"
-                                            onClick={() => setMode('none')}>
-                                        {t('Back')}
+                                    )}
+                                </div>
+                                <div className="form-group mb-2">
+                                    <label htmlFor="loginLogin">{t('Username')}</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="loginLogin"
+                                        disabled={loading}
+                                        placeholder="ForestLuau"
+                                    />
+                                </div>
+                                <div className="form-group mb-2">
+                                    <label htmlFor="passwordLogin">{t('Password')}</label>
+                                    <input type="password" className="form-control" id="passwordLogin"
+                                           disabled={loading} placeholder="**********"/>
+                                </div>
+                                <div className="form-group mt-4">
+                                    <Button type="primary"
+                                            loading={loading}
+                                            fullWidth isSubmit
+                                            size="md">
+                                        {t('Login')}
                                     </Button>
-                                </>
-                            )}
+                                </div>
+                            </form>
 
                         </div>
                     </div>
